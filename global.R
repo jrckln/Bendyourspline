@@ -1,4 +1,5 @@
-library(shinythemes)
+library(shiny)
+library(shinyjs)
 
 #load ressources:
 tab_files <- list.files(path = "tabs", full.names = T, recursive = T)

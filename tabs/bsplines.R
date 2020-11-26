@@ -1,4 +1,4 @@
-splines <- tabPanel("Splines", value="splines", #class="my_style_1", #specify css style in tags$head in home
+bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines",
             HTML('
                 <h1> Hi you all, nice to see you again! </h1>
                 <br> <p> You are on tab splines </p>
