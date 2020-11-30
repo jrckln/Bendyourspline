@@ -2,15 +2,6 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
             sidebarPanel(class="input_class", 
                 fluidRow(column(9, offset=0, h4("Input parameters"))
                 ),
-                fluidRow(column(5, offset = 0,
-                    div(style = "font-size: 13px; padding: 10px 0px; margin:0%",
-                        selectInput("variable", "Choose a variable:",names(data.FP))
-                    )
-                ),column(5, offset = 0,
-                    div(style = "font-size: 13px; padding: 10px 0px; margin:0%",
-                        uiOutput("transformation")
-                    )
-                )),
                 h5("Transformation"),
                 fluidRow(
                     div(style = "font-size: 13px; padding: 10px 0px; margin:0%",

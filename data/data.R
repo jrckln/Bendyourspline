@@ -13,8 +13,9 @@ BPdifference <-  nhanes_sample$BPXSY1 - nhanes_sample$BPXSY2
 BPdifference <- BPdifference[!is.na(BPdifference)]
 BPdifference_trans <- fp.scale(BPdifference)
 
-data.FP <- list("X"=list(X, X_trans, "none"), 
-                "Calcium"=list(Calcium, Calcium_trans, " mmol/L"), 
-                "Height"=list(Height, Height_trans, "cm"), 
-                "Blood pressure difference"=list(BPdifference, BPdifference_trans,"no idea"))
+data.FP <- list("X"=X,
+                "Calcium"=Calcium, 
+                "Height"=Height,
+                "Blood pressure difference"=BPdifference)
+
 
