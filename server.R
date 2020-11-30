@@ -11,7 +11,7 @@ function(input, output, session){
     #############################################
 
     output$plot.FP <- renderPlotly({
-        Data <- data.FP[[input$variable]]
+        Data <- data.FP[[as.character(input$variable)]]
         transformed <- (Data+input$shift)/input$scale
         DF <- cbind(Data,transformed) %>% data.frame()
         p <- plot_ly(data = DF, alpha = 0.6) %>% 
@@ -24,9 +24,13 @@ function(input, output, session){
     #######        B-splines        #############
     #############################################
     
+    observeEvent(list(input$order.bsplines, input$variable), {
+    })
+    
     output$plot.bsplines <- renderPlotly({
         degree <- input$order.bsplines
-        x <- data.FP[[input$variable]]
+        var <- as.character(input$variable)
+        x <- data.FP[[var]]
         df <- 5
         max.val <- max(x)
         knots <- seq(max.val/(df-degree+1),max.val-max.val/(df-degree+1), length.out=df-degree) # determine equally distributed knots
@@ -45,5 +49,4 @@ function(input, output, session){
         }
         ggplotly(p)
     })
-
 }
