@@ -28,9 +28,20 @@ function(input, output, session){
     #############################################
     
     ###default number of knots: degree+1? / min number of knots?
-    coefsID.bsplines <- c()
-    posID.bsplines <- c()
+    inserted.min <- c() #to remove div in case of different order of spline
+    coefsID.bsplines <- c() #to access value 
+    posID.bsplines <- c() #to access value
     observeEvent(input$order.bsplines, {
+        #remove UI after order of spline is changed: 
+        for (i in 1:length(inserted.min)){
+            removeUI(
+                selector = paste0('#', inserted.min[i])
+            )
+            inserted <<- inserted[-length(inserted)]
+            coefsID.bsplines <<- coefsID.bsplines[-length(coefsID.bsplines)]
+            posID.bsplines <<- posID.bsplines[-length(posID.bsplines)]
+        }
+        #add coef und position inputs for certain order
         for(i in 1:(input$order.bsplines+1)){
             id = paste0("minknot", i)
             insertUI(
@@ -41,15 +52,17 @@ function(input, output, session){
           )
             coefsID.bsplines <<- c(coefsID.bsplines, paste0('coef_', id))
             posID.bsplines <<- c(posID.bsplines, paste0('pos_', id))
+            inserted.min <<- c(inserted.min, id)
         }
         for(i in 1:(input$order.bsplines)){
             id = paste0("minknot", i+input$order.bsplines+1)
             insertUI(
                 selector = '#placeholder_bsplines_min', #TODO: here multihandle slider?
-                ui = tags$div(numericInput(paste0('coef_', id), paste('Coefficient ', i+input$order.bsplines),min = 0, max = 10, value = 0),
+                ui = tags$div(numericInput(paste0('coef_', id), paste('Coefficient ', i+input$order.bsplines+1),min = 0, max = 10, value = 0),
                         id=id)
           )
             coefsID.bsplines <<- c(coefsID.bsplines, paste0('coef_', id))
+            inserted.min <<- c(inserted.min, id)
         }
     })#TODO: remove UI after order of spline is changed
     
@@ -62,8 +75,8 @@ function(input, output, session){
         id <- paste0('knot', btn)
         insertUI(
           selector = '#placeholder_bsplines',
-          ui = tags$div(sliderInput(paste0('pos_', id), paste('Position for knot', btn),min = 0, max = 10, value = 0),
-                        sliderInput(paste0('coef_', id), paste('Coefficient ', btn),min = 0, max = 10, value = 0),
+          ui = tags$div(numericInput(paste0('pos_', id), paste('Position for knot', btn),min = 0, max = 10, value = 0),
+                        numericInput(paste0('coef_', id), paste('Coefficient ', btn),min = 0, max = 10, value = 0),
                         id=id)
           )
         inserted <<- c(inserted, id)
@@ -87,6 +100,8 @@ function(input, output, session){
         
         #collect coefs and position of knots
         coef.knots.ind <- match(coefsID.bsplines, names(input))
+        print(coef.knots.ind)
+        print(names(input))
         pos.knots.ind <- match(posID.bsplines, names(input))
         coefs.knots <- c()
         for(i in coef.knots.ind){ #must use single string to index into reactivevalues
@@ -96,7 +111,6 @@ function(input, output, session){
         for(i in pos.knots.ind){ #must use single string to index into reactivevalues
             pos.knots <-c(pos.knots, input[[names(input)[i]]])
         }
-        
         x <- data.FP[[var]]
         max.val <- max(x)
         #default values for knots
