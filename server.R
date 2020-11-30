@@ -11,8 +11,11 @@ function(input, output, session){
     #############################################
 
     output$plot.FP <- renderPlotly({
-        Data <- data.FP[[as.character(input$variable)]]
-        transformed <- (Data+input$shift)/input$scale
+        var <- as.character(input$variable)
+        Data <- data.FP[[var]]
+        shift <- as.numeric(input$shift)
+        scale <- as.numeric(input$scale)
+        transformed <- (Data+shift)/scale
         DF <- cbind(Data,transformed) %>% data.frame()
         p <- plot_ly(data = DF, alpha = 0.6) %>% 
             add_histogram(x = ~ Data) %>% 
@@ -24,29 +27,99 @@ function(input, output, session){
     #######        B-splines        #############
     #############################################
     
-    observeEvent(list(input$order.bsplines, input$variable), {
-    })
+    ###default number of knots: degree+1? / min number of knots?
+    coefsID.bsplines <- c()
+    posID.bsplines <- c()
+    observeEvent(input$order.bsplines, {
+        for(i in 1:(input$order.bsplines+1)){
+            id = paste0("minknot", i)
+            insertUI(
+                selector = '#placeholder_bsplines_min', #TODO: here multihandle slider?
+                ui = tags$div(numericInput(paste0('pos_', id), paste('Position for knot', i),min = 0, max = 10, value = 0),
+                              numericInput(paste0('coef_', id), paste('Coefficient ', i),min = 0, max = 10, value = 0),
+                        id=id)
+          )
+            coefsID.bsplines <<- c(coefsID.bsplines, paste0('coef_', id))
+            posID.bsplines <<- c(posID.bsplines, paste0('pos_', id))
+        }
+        for(i in 1:(input$order.bsplines)){
+            id = paste0("minknot", i+input$order.bsplines+1)
+            insertUI(
+                selector = '#placeholder_bsplines_min', #TODO: here multihandle slider?
+                ui = tags$div(numericInput(paste0('coef_', id), paste('Coefficient ', i+input$order.bsplines),min = 0, max = 10, value = 0),
+                        id=id)
+          )
+            coefsID.bsplines <<- c(coefsID.bsplines, paste0('coef_', id))
+        }
+    })#TODO: remove UI after order of spline is changed
     
-    output$plot.bsplines <- renderPlotly({
-        degree <- input$order.bsplines
+    
+    #to add and remove numeric input for number of knots
+    inserted <- c() #contains the ids of all added sliderInputs
+    
+     observeEvent(input$insertBtn, {
+        btn <- input$insertBtn
+        id <- paste0('knot', btn)
+        insertUI(
+          selector = '#placeholder_bsplines',
+          ui = tags$div(sliderInput(paste0('pos_', id), paste('Position for knot', btn),min = 0, max = 10, value = 0),
+                        sliderInput(paste0('coef_', id), paste('Coefficient ', btn),min = 0, max = 10, value = 0),
+                        id=id)
+          )
+        inserted <<- c(inserted, id)
+        coefsID.bsplines <<- c(coefsID.bsplines, paste0('coef_', id))
+        posID.bsplines <<- c(posID.bsplines, paste0('pos_', id))
+     })
+  
+     observeEvent(input$removeBtn, {
+        removeUI(
+          selector = paste0('#', inserted[length(inserted)])
+        )
+        inserted <<- inserted[-length(inserted)]
+        coefsID.bsplines <<- coefsID.bsplines[-length(coefsID.bsplines)]
+        posID.bsplines <<- posID.bsplines[-length(posID.bsplines)]
+      })
+     
+     #Data creation for bsplines plot
+     dataInput <- reactive({
+        degree <- as.numeric(input$order.bsplines)
         var <- as.character(input$variable)
+        
+        #collect coefs and position of knots
+        coef.knots.ind <- match(coefsID.bsplines, names(input))
+        pos.knots.ind <- match(posID.bsplines, names(input))
+        coefs.knots <- c()
+        for(i in coef.knots.ind){ #must use single string to index into reactivevalues
+            coefs.knots <-c(coefs.knots, input[[names(input)[i]]])
+        }
+        pos.knots <- c()
+        for(i in pos.knots.ind){ #must use single string to index into reactivevalues
+            pos.knots <-c(pos.knots, input[[names(input)[i]]])
+        }
+        
         x <- data.FP[[var]]
-        df <- 5
         max.val <- max(x)
-        knots <- seq(max.val/(df-degree+1),max.val-max.val/(df-degree+1), length.out=df-degree) # determine equally distributed knots
-        coef <- round(runif(df, min=0, max=1),2) # choose random coefficients
-        linb <- bs(x, degree = degree, knots=knots)
-        y <- linb %*% coef
+        #default values for knots
+        #knots <- seq(max.val/(df-degree+1),max.val-max.val/(df-degree+1), length.out=length(coefsID.bsplines)) # determine equally distributed knots
+        
+        linb <- bs(x, degree = degree, knots=pos.knots)
+        y <- linb %*% coefs.knots
         
         DF <- cbind(x,y, linb) %>% data.frame()
         names(DF)[1:2] <- c("x", "y")
+        DF
+    })
+    
+    #plotly plot on main panel in methods/bsplines
+    output$plot.bsplines <- renderPlotly({
+        DF <- dataInput()
         p <- ggplot(data=DF, aes(x=x)) + geom_line(aes(y=y))
         for(i in names(DF)[-c(1,2)]){ 
             p<-p+geom_line(aes_string(y=i), color="grey")
         }
-        for(i in knots){
-            p <- p + geom_vline(xintercept = i, col="lightgrey")
-        }
+        #for(i in knots){
+        #    p <- p + geom_vline(xintercept = i, col="lightgrey")
+        #}
         ggplotly(p)
     })
 }
