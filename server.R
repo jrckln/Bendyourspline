@@ -64,7 +64,7 @@ function(input, output, session){
             coefsID.bsplines <<- c(coefsID.bsplines, paste0('coef_', id))
             inserted.min <<- c(inserted.min, id)
         }
-    })#TODO: remove UI after order of spline is changed
+    })
     
     
     #to add and remove numeric input for number of knots
@@ -100,8 +100,6 @@ function(input, output, session){
         
         #collect coefs and position of knots
         coef.knots.ind <- match(coefsID.bsplines, names(input))
-        print(coef.knots.ind)
-        print(names(input))
         pos.knots.ind <- match(posID.bsplines, names(input))
         coefs.knots <- c()
         for(i in coef.knots.ind){ #must use single string to index into reactivevalues
@@ -127,7 +125,7 @@ function(input, output, session){
     #plotly plot on main panel in methods/bsplines
     output$plot.bsplines <- renderPlotly({
         DF <- dataInput()
-        p <- ggplot(data=DF, aes(x=x)) + geom_line(aes(y=y))
+        p <- ggplot(data=DF, aes(x=x)) + geom_line(aes(y=y), color ="black", size=2)+theme_minimal()
         for(i in names(DF)[-c(1,2)]){ 
             p<-p+geom_line(aes_string(y=i), color="grey")
         }
