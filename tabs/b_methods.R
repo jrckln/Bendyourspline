@@ -4,7 +4,7 @@ methods <-
                  sidebarPanel(
                      fluidRow(column(12, offset = 0,
                         div(style = "font-size: 13px; padding: 10px 0px; margin:0%",
-                            uiOutput("variable_input")
+                            selectInput("variable", "Choose a variable:",names(data.FP), selected = "X")
                         ))
                     ), 
                     fluidRow(column(12, offset = 0,

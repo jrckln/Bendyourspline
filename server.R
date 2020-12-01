@@ -1,7 +1,4 @@
 function(input, output, session){
-    output$variable_input <- renderUI({
-    selectInput("variable", "Choose a variable:",names(data.FP))
-    })
     output$transformation <- renderUI({
         HTML(paste0('Got ya!, you chose ', input$variable))
     })
@@ -31,7 +28,14 @@ function(input, output, session){
     inserted.min <- c() #to remove div in case of different order of spline
     coefsID.bsplines <- c() #to access value 
     posID.bsplines <- c() #to access value
-    observeEvent(input$order.bsplines, {
+    observeEvent(list(input$order.bsplines,input$variable), {
+        degree <-  as.numeric(input$order.bsplines)
+        df.default <- degree + degree +1 #df = number knots + order = (order +1 as default for number of knots) + order
+        var <- as.character(input$variable)
+        x <- data.FP[[var]]
+        #Calc default values for position:
+        default.pos.bsplines <- seq(max(x)/(df.default-degree+1),max(x)-max(x)/(df.default-degree+1), length.out=df.default-degree) # determine equally distributed knots
+        
         #remove UI after order of spline is changed: 
         for (i in 1:length(inserted.min)){
             removeUI(
@@ -46,8 +50,8 @@ function(input, output, session){
             id = paste0("minknot", i)
             insertUI(
                 selector = '#placeholder_bsplines_min', #TODO: here multihandle slider?
-                ui = tags$div(numericInput(paste0('pos_', id), paste('Position for knot', i),min = 0, max = 10, value = 0),
-                              numericInput(paste0('coef_', id), paste('Coefficient ', i),min = 0, max = 10, value = 0),
+                ui = tags$div(numericInput(paste0('pos_', id), paste('Position for knot', i),min = 0, max = 10, value = default.pos.bsplines[i]),
+                              numericInput(paste0('coef_', id), paste('Coefficient ', i),min = 0, max = 10, value = 1),
                         id=id)
           )
             coefsID.bsplines <<- c(coefsID.bsplines, paste0('coef_', id))
@@ -58,7 +62,7 @@ function(input, output, session){
             id = paste0("minknot", i+input$order.bsplines+1)
             insertUI(
                 selector = '#placeholder_bsplines_min', #TODO: here multihandle slider?
-                ui = tags$div(numericInput(paste0('coef_', id), paste('Coefficient ', i+input$order.bsplines+1),min = 0, max = 10, value = 0),
+                ui = tags$div(numericInput(paste0('coef_', id), paste('Coefficient ', i+input$order.bsplines+1),min = 0, max = 10, value = 1),
                         id=id)
           )
             coefsID.bsplines <<- c(coefsID.bsplines, paste0('coef_', id))
@@ -111,8 +115,6 @@ function(input, output, session){
         }
         x <- data.FP[[var]]
         max.val <- max(x)
-        #default values for knots
-        #knots <- seq(max.val/(df-degree+1),max.val-max.val/(df-degree+1), length.out=length(coefsID.bsplines)) # determine equally distributed knots
         
         linb <- bs(x, degree = degree, knots=pos.knots)
         y <- linb %*% coefs.knots
