@@ -1,7 +1,4 @@
 function(input, output, session){
-    output$variable_input <- renderUI({
-    selectInput("variable", "Choose a variable:",names(data.FP))
-    })
     output$transformation <- renderUI({
         HTML(paste0('Got ya!, you chose ', input$variable))
     })
