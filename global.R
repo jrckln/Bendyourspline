@@ -3,6 +3,7 @@ library(plotly)
 library(shinyBS)
 library(ggplot2)
 library(splines)
+library(shinyWidgets)
 
 source("function_transformation_FP.R")
 source("data/data.R")
