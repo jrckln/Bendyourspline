@@ -30,10 +30,10 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                         )
                     ), 
                     column(5, offset=0, 
-                           sliderTextInput(inputId = "power1.fp", label = "Power:", choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
+                           sliderTextInput(inputId = "power1.fp", label="",choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
                     ), 
                     column(5, offset=0, 
-                           sliderInput("coef1.fp", "Scale:",min = -3, max = 3, value = 0, step = 0.01)
+                           sliderInput("coef1.fp",label="", min = -3, max = 3, value = 0, step = 0.01)
                     )
                 ),
                 fluidRow(
@@ -43,10 +43,10 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                         )
                     ), 
                     column(5, offset=0, 
-                           sliderTextInput(inputId = "power2.fp", label = "Power:", choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
+                           sliderTextInput(inputId = "power2.fp",label="", choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
                     ), 
                     column(5, offset=0, 
-                           sliderInput("coef2.fp", "Scale:",min = -3, max = 3, value = 0, step = 0.01)
+                           sliderInput("coef2.fp",label="",min = -3, max = 3, value = 0, step = 0.01)
                     )
                 )
 ),mainPanel(plotlyOutput("plot.FP"))) 

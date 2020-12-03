@@ -1,4 +1,10 @@
 function(input, output, session){
+    
+    #############################################
+    #######         Data            #############
+    #############################################
+    
+    
     output$transformation <- renderUI({
         HTML(paste0('Got ya!, you chose ', input$variable))
     })
@@ -6,23 +12,50 @@ function(input, output, session){
     #############################################
     #######           FP            #############
     #############################################
-
+    
+    warning.fp <- reactiveVal()
+    warning.fp(" ")
+    
     output$plot.FP <- renderPlotly({
-        Data <- data.FP[[as.character(input$variable)]]
-        transformed <- (Data+input$shift)/input$scale
-        DF <- cbind(Data,transformed) %>% data.frame()
-        p <- plot_ly(data = DF, alpha = 0.6) %>% 
-            add_histogram(x = ~ Data) %>% 
-            add_histogram(x = ~ transformed)
-        p
+        var <- as.character(input$variable)
+        x <- data.FP[[var]]
+        transformed <- (x+input$shift)/input$scale
+        
+        if(any(transformed<0)) {
+            warning.fp("Warning: data has negative values")
+            p <- ggplot()
+            return(p)
+        }
+        
+        pow1 <- as.numeric(input$power1.fp)
+        if(pow1 == 0) {
+            fp1<-log(transformed)
+        } else {
+            fp1 <- transformed^pow1
+        }
+        
+        pow2 <- as.numeric(input$power2.fp)
+        if (pow2==0){
+            fp2 <- log(transformed)
+        } else {
+            fp2 <- transformed^pow2
+        }
+        if(pow1 == pow2) fp2 <- log(transformed) * fp2
+        
+        
+        fp <- as.numeric(input$coef1.fp)*fp1 + as.numeric(input$coef2.fp)*fp2
+    
+        DF <- cbind(transformed,fp) %>% data.frame()
+        p <- ggplot(data=DF, aes(x=transformed, y=fp)) +
+            geom_line() + theme_minimal()
+        ggplotly(p)
     })
+
     
     #############################################
     #######        B-splines        #############
     #############################################
     
-    observeEvent(list(input$order.bsplines, input$variable), {
-    })
     
     output$plot.bsplines <- renderPlotly({
         degree <- input$order.bsplines
