@@ -13,19 +13,15 @@ function(input, output, session){
     #######           FP            #############
     #############################################
     
-    warning.fp <- reactiveVal()
-    warning.fp(" ")
+    
     
     output$plot.FP <- renderPlotly({
         var <- as.character(input$variable)
-        x <- data.FP[[var]]
-        transformed <- (x+input$shift)/input$scale
+        var_list <- data_list[[var]]
+        x <- var_list$data[,var_list$x]
+        pT <- fp.scale(x)
+        transformed <- (x + pT$shift)/pT$scale
         
-        if(any(transformed<0)) {
-            warning.fp("Warning: data has negative values")
-            p <- ggplot()
-            return(p)
-        }
         
         pow1 <- as.numeric(input$power1.fp)
         if(pow1 == 0) {
@@ -44,10 +40,22 @@ function(input, output, session){
         
         
         fp <- as.numeric(input$coef1.fp)*fp1 + as.numeric(input$coef2.fp)*fp2
+        
+        intercept <- input$intercept.fp
     
-        DF <- cbind(transformed,fp) %>% data.frame()
-        p <- ggplot(data=DF, aes(x=transformed, y=fp)) +
-            geom_line() + theme_minimal()
+        DF <- cbind(var_list$data, transformed, fp)
+        DF <- DF %>% 
+            group_by(!!sym(var_list$x)) %>% 
+            mutate(y_mean = mean(!!sym(var_list$y)))
+        p <- ggplot(data=DF) +
+            #geom_line(aes(x=!!sym(var_list$x), y = intercept+fp*pT$scale-pT$shift)) +
+            geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue") +
+            theme_minimal()
+        
+        if(input$add_y){
+            p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
+        }
+        
         ggplotly(p)
     })
 
@@ -56,27 +64,4 @@ function(input, output, session){
     #######        B-splines        #############
     #############################################
     
-    
-    output$plot.bsplines <- renderPlotly({
-        degree <- input$order.bsplines
-        var <- as.character(input$variable)
-        x <- data.FP[[var]]
-        df <- 5
-        max.val <- max(x)
-        knots <- seq(max.val/(df-degree+1),max.val-max.val/(df-degree+1), length.out=df-degree) # determine equally distributed knots
-        coef <- round(runif(df, min=0, max=1),2) # choose random coefficients
-        linb <- bs(x, degree = degree, knots=knots)
-        y <- linb %*% coef
-        
-        DF <- cbind(x,y, linb) %>% data.frame()
-        names(DF)[1:2] <- c("x", "y")
-        p <- ggplot(data=DF, aes(x=x)) + geom_line(aes(y=y))
-        for(i in names(DF)[-c(1,2)]){ 
-            p<-p+geom_line(aes_string(y=i), color="grey")
-        }
-        for(i in knots){
-            p <- p + geom_vline(xintercept = i, col="lightgrey")
-        }
-        ggplotly(p)
-    })
 }

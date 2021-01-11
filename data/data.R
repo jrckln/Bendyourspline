@@ -1,21 +1,24 @@
-load("data/nhanes_sample.RData")
-#no transformation
-Calcium <- nhanes_sample$LBDSCASI[!is.na(nhanes_sample$LBDSCASI)]
-Calcium_trans <- fp.scale(Calcium)
-#only shift
-X <- runif(nrow(nhanes_sample), -1,1)
-X_trans <- fp.scale(X)
-#only scale
-Height <-  nhanes_sample$BMXHT[!is.na(nhanes_sample$BMXHT)]
-Height_trans <- fp.scale(Height)
-#shift and scale
-BPdifference <-  nhanes_sample$BPXSY1 - nhanes_sample$BPXSY2
-BPdifference <- BPdifference[!is.na(BPdifference)]
-BPdifference_trans <- fp.scale(BPdifference)
+load(file="data/nhanes_BP.Rdata")
 
-data.FP <- list("X"=X,
-                "Calcium"=Calcium, 
-                "Height"=Height,
-                "Blood pressure difference"=BPdifference)
+data_list <- list("bmi_age" = list("data" = nhanes_BP[,c("ID", "age", "bmi")], "x"="age", "y"="bmi"))
+
+fp.scale <- function(x){  
+  ### taken from package <mfp>
+  ### 2008-06
+  scale <- 1
+  shift <- 0
+  if (min(x) <= 0) {
+    z <- diff(sort(x))
+    shift <- min(z[z > 0]) - min(x)
+    shift <- ceiling(shift * 10)/10
+  }
+  range <- mean(x + shift)
+  scale <- 10^(sign(log10(range)) * round(abs(log10(range))))
+  
+  list(
+    shift = shift,
+    scale = scale
+  )
+}
 
 

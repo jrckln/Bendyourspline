@@ -2,7 +2,7 @@ methods <-
     tabPanel("Methods", id="methods", 
             fluidRow(column(4,
                 div(style = "font-size: 13px; padding: 10px 0px; margin:0%",
-                            selectInput("variable", "Choose a variable:",names(data.FP))
+                            selectInput("variable", "Choose a variable:",names(data_list))
                         )), 
                     column(8, div(style = "font-size: 13px; padding: 10px 0px; margin:0%",
                             uiOutput("transformation")

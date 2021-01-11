@@ -1,0 +1,3 @@
+TODO: 
+x   in tab methods: input variable to select refers to name of list of data (data_list): show different names
+x   in output$plot_FP - geom_smooth adjust cut values for different variable combinations
