@@ -18,7 +18,11 @@ function(input, output, session){
     output$plot.FP <- renderPlotly({
         var <- as.character(input$variable)
         var_list <- data_list[[var]]
-        x <- var_list$data[,var_list$x]
+        
+        ind <- sample(1:nrow(var_list$data), input$sample.size)
+        data <- var_list$data[ind,]
+        
+        x <- data[,var_list$x]
         pT <- fp.scale(x)
         transformed <- (x + pT$shift)/pT$scale
         
@@ -43,19 +47,21 @@ function(input, output, session){
         
         intercept <- input$intercept.fp
     
-        DF <- cbind(var_list$data, transformed, fp)
+        DF <- cbind(data, transformed, fp)
         DF <- DF %>% 
             group_by(!!sym(var_list$x)) %>% 
             mutate(y_mean = mean(!!sym(var_list$y)))
-        p <- ggplot(data=DF) +
-            #geom_line(aes(x=!!sym(var_list$x), y = intercept+fp*pT$scale-pT$shift)) +
-            geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue") +
-            theme_minimal()
+        
+        p <- ggplot(data=DF)
         
         if(input$add_y){
             p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
         }
         
+        p <- p +
+            geom_line(aes(x=!!sym(var_list$x), y = intercept+fp*pT$scale-pT$shift)) +
+            geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue") +
+            theme_minimal()
         ggplotly(p)
     })
 
