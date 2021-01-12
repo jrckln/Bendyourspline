@@ -5,8 +5,13 @@ function(input, output, session){
     #############################################
     
     
-    output$transformation <- renderUI({
-        HTML(paste0('Got ya!, you chose ', input$variable))
+    output$information.vars <- renderUI({
+        var <- as.character(input$variable)
+        var_list <- data_list[[var]]
+        HTML(paste0('Chosen variable pair: ', input$variable, "<br>", 
+                    var_list$x, " in ", var_list$x_unit, "<br>", 
+                    "filtered for sex: ", input$gender
+                    ))
     })
     
     var_list_reac <- reactive({
@@ -37,7 +42,7 @@ function(input, output, session){
         if(pow1 == 0) trans1 <- "log(x)"
         if(pow1 == 1) trans1 <- "x"
         
-        fp_fun <- paste(input$coef1.fp, "\\cdot", trans1)
+        fp_fun <- paste(input$intercept.fp , " + ", input$coef1.fp, "\\cdot", trans1)
         
         pow2 <- as.numeric(input$power2.fp)
         trans2 <- paste0("x^{", pow2, "}")
@@ -63,8 +68,7 @@ function(input, output, session){
         ))
     })
     
-    
-    output$plot.FP <- renderPlotly({
+    FPdata <- reactive({
         var_list <- var_list_reac()
         data <- var_list$data
         
@@ -91,9 +95,21 @@ function(input, output, session){
         
         fp <- as.numeric(input$coef1.fp)*fp1 + as.numeric(input$coef2.fp)*fp2
         
-        intercept <- input$intercept.fp
-    
         DF <- cbind(data, transformed, fp)
+        DF
+    })
+    
+    output$plot.FP <- renderPlotly({
+        var_list <- var_list_reac()
+        data <- var_list$data
+        
+        x <- data[,var_list$x]
+        pT <- fp.scale(x)
+        
+        intercept <- input$intercept.fp
+        
+        DF <- FPdata()
+        
         DF <- DF %>% 
             group_by(!!sym(var_list$x)) %>% 
             mutate(y_mean = mean(!!sym(var_list$y)))
@@ -107,13 +123,38 @@ function(input, output, session){
         p <- p +
             geom_line(aes(x=!!sym(var_list$x), y = intercept+fp*pT$scale-pT$shift)) +
             geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue") +
-            theme_minimal()
+            theme_minimal() +
+            ylab(var_list$y)
         ggplotly(p)
     })
-
+    
+    calcR2 <- reactive({
+        var_list <- var_list_reac()
+        data <- var_list$data
+        x <- data[,var_list$x]
+        pT <- fp.scale(x)
+        DF <- FPdata()
+        fp <- input$intercept.fp+DF[, "fp"]*pT$scale-pT$shift
+        
+        sstot <- sum((DF[,var_list$y]-mean(DF[,var_list$y]))^2) #total sum of squares
+        ssres <- sum((DF[, var_list$y]-fp)^2)  #residual sum of squares
+        1-ssres/sstot
+    })
+    
+    calcadjR2 <- reactive({
+        R2 <- calcR2()
+        var_list <- var_list_reac()
+        data <- var_list$data
+        p <- ifelse(input$coef1.fp == 0& input$coef2.fp == 0, 0, ifelse(any(input$coef1.fp == 0, input$coef2.fp == 0),1,2))
+        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p))
+    })
+    
+    output$stats.fp <-  renderUI({
+        stats <- calcadjR2()
+        HTML(paste0("R <sup>2</sup>: ", round(stats[1], 3), "\n adj. R <sup>2</sup>: ", round(stats[2], 3)))
+    })
     
     #############################################
     #######        B-splines        #############
     #############################################
-    
 }
