@@ -14,8 +14,7 @@ function(input, output, session){
         var_list <- data_list[[var]]
         
         var_list$data <- var_list$data[var_list$data[,"gender"] %in% gender[[input$gender]],]
-        print(nrow(var_list$data))
-        
+
         if(input$sample.size == "all"){
             n <- nrow(var_list$data)
             ind <- 1:nrow(var_list$data)
@@ -31,6 +30,38 @@ function(input, output, session){
     #######           FP            #############
     #############################################
     
+    output$formula.fp <- renderUI({
+        pow1 <- as.numeric(input$power1.fp)
+        
+        trans1 <- paste0("x^{", pow1, "}")
+        if(pow1 == 0) trans1 <- "log(x)"
+        if(pow1 == 1) trans1 <- "x"
+        
+        fp_fun <- paste(input$coef1.fp, "\\cdot", trans1)
+        
+        pow2 <- as.numeric(input$power2.fp)
+        trans2 <- paste0("x^{", pow2, "}")
+        if(pow2 == 0) trans2 <- "log(x)"
+        if(pow2 == 1) trans2 <- "x"
+        if(pow1 == pow2) trans2 <- paste(trans2, "\\cdot \\log(x)")
+          
+        fp_fun <- paste(fp_fun, "+", input$coef2.fp, "\\cdot", trans2)
+        withMathJax(paste0(
+            "$$", fp_fun, "$$"
+        ))
+    })
+    
+    output$transformation.fp <- renderUI({
+        var_list <- var_list_reac()
+        data <- var_list$data
+        
+        x <- data[,var_list$x]
+        pT <- fp.scale(x)
+        
+        withMathJax(paste0(
+            "$$ \\frac{ \\text{", var_list$x , "} + ", pT$shift, "}{", pT$scale ,"}$$"
+        ))
+    })
     
     
     output$plot.FP <- renderPlotly({

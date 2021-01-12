@@ -40,4 +40,12 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                            materialSwitch(inputId = "add_y", label = "Add response", status = "primary", right = FALSE)
                     )
                 )
-),mainPanel(plotlyOutput("plot.FP"))) 
+),mainPanel(
+    fluidRow(
+        column(4, offset = 0, h5("Transformation: "),
+               wellPanel(uiOutput("transformation.fp"))),
+        column(4, offset = 0, h5("FP-formula: "),
+               wellPanel(uiOutput("formula.fp")))
+    ),
+    plotlyOutput("plot.FP"))
+) 
