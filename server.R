@@ -9,6 +9,24 @@ function(input, output, session){
         HTML(paste0('Got ya!, you chose ', input$variable))
     })
     
+    var_list_reac <- reactive({
+        var <- as.character(input$variable)
+        var_list <- data_list[[var]]
+        
+        var_list$data <- var_list$data[var_list$data[,"gender"] %in% gender[[input$gender]],]
+        print(nrow(var_list$data))
+        
+        if(input$sample.size == "all"){
+            n <- nrow(var_list$data)
+            ind <- 1:nrow(var_list$data)
+        } else {
+            n <- sample.sizes[input$sample.size]
+            ind <- sample(1:nrow(var_list$data), n)
+        }
+        var_list$data <- var_list$data[ind,]
+        var_list
+    })
+    
     #############################################
     #######           FP            #############
     #############################################
@@ -16,11 +34,8 @@ function(input, output, session){
     
     
     output$plot.FP <- renderPlotly({
-        var <- as.character(input$variable)
-        var_list <- data_list[[var]]
-        
-        ind <- sample(1:nrow(var_list$data), input$sample.size)
-        data <- var_list$data[ind,]
+        var_list <- var_list_reac()
+        data <- var_list$data
         
         x <- data[,var_list$x]
         pT <- fp.scale(x)

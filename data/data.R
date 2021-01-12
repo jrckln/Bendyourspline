@@ -1,7 +1,8 @@
 load(file="data/nhanes_BP.Rdata")
 
-data_list <- list("bmi_age" = list("data" = nhanes_BP[,c("ID", "age", "bmi")], "x"="age", "y"="bmi"))
-sample.sizes <- c("100" = 100, "1000" = 1000, "all" = nrow(data_list$bmi_age$data))
+data_list <- list("bmi_age" = list("data" = nhanes_BP[,c("ID", "age", "bmi", "gender")], "x"="age", "y"="bmi"))
+sample.sizes <- c("100" = 100, "1000" = 1000, "all" = NA)
+gender <- list("Female"="female", "Male"="male", "Both"=c("female", "male"))
 
 fp.scale <- function(x){  
   ### taken from package <mfp>
