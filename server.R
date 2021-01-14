@@ -21,7 +21,6 @@ function(input, output, session){
         var_list$data <- var_list$data[var_list$data[,"gender"] %in% gender[[input$gender]],]
 
         if(input$sample.size == "all"){
-            n <- nrow(var_list$data)
             ind <- 1:nrow(var_list$data)
         } else {
             n <- sample.sizes[input$sample.size]
@@ -116,13 +115,15 @@ function(input, output, session){
         
         p <- ggplot(data=DF)
         
-        if(input$add_y){
+        if(input$add_y.fp){
             p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
+        }
+        if(input$add_mean.fp){
+            p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
         }
         
         p <- p +
             geom_line(aes(x=!!sym(var_list$x), y = intercept+fp*pT$scale-pT$shift)) +
-            geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue") +
             theme_minimal() +
             ylab(var_list$y)
         ggplotly(p)
@@ -145,13 +146,22 @@ function(input, output, session){
         R2 <- calcR2()
         var_list <- var_list_reac()
         data <- var_list$data
+        if(input$gender == "Both"){
+            sex_ind <- "both"
+        } else {
+            sex_ind <- gender[input$gender]
+        }
+        index <- paste0(input$sample.size,"_" ,sex_ind)
+        maxR2 <- var_list$fittedR2[[index]]
         p <- ifelse(input$coef1.fp == 0& input$coef2.fp == 0, 0, ifelse(any(input$coef1.fp == 0, input$coef2.fp == 0),1,2))
-        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p))
+        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
     })
+
     
     output$stats.fp <-  renderUI({
         stats <- calcadjR2()
-        HTML(paste0("R <sup>2</sup>: ", round(stats[1], 3), "\n adj. R <sup>2</sup>: ", round(stats[2], 3)))
+        HTML(paste0("R <sup>2</sup>: ", round(stats[1], 3), "<br> adj. R <sup>2</sup>: ", round(stats[2], 3), 
+                    "<br> max. R <sup>2</sup> for this setting: ", round(stats[3], 3)))
     })
     
     #############################################

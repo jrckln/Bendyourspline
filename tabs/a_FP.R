@@ -36,8 +36,11 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                     )
                 ), 
                 fluidRow(
-                    column(12, offset=0, 
-                           materialSwitch(inputId = "add_y", label = "Add response", status = "primary", right = FALSE)
+                    column(6, offset=0, 
+                           materialSwitch(inputId = "add_y.fp", label = "Add response", status = "primary", right = FALSE)
+                    ), 
+                    column(6, offset=0, 
+                           materialSwitch(inputId = "add_mean.fp", label = "Add Mean", status = "primary", right = FALSE)
                     )
                 )
 ),mainPanel(
@@ -46,7 +49,7 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                wellPanel(uiOutput("transformation.fp"))),
         column(4, offset = 0, h5("FP-formula: "),
                wellPanel(uiOutput("formula.fp"))), 
-        column(4, offset = 1, 
+        column(4, offset = 2, 
                uiOutput("stats.fp")
         )
     ),
