@@ -1,5 +1,6 @@
 ### Script loads nhanes data and computes the max. R2 according to mfp fit and saves the data_list
 ### Run once a new variable pair is added
+library(mfp)
 
 load(file="data/nhanes_BP.Rdata")
 
