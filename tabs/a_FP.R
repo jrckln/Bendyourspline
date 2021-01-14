@@ -1,6 +1,7 @@
 fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
             sidebarPanel(class="input_class", 
-                fluidRow(column(9, offset=0, h4("Input parameters"))
+                fluidRow(column(7, offset=0, h4("Input parameters")), 
+                         column(5, offset=0, actionButton("increase_range.fp", "Increase coefficient range"))
                 ),
                 fluidRow(
                     column(4, offset=4, 
@@ -19,7 +20,7 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                            sliderTextInput(inputId = "power1.fp", label="First",choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
                     ), 
                     column(5, offset=0, 
-                           sliderInput("coef1.fp",label="", min = -3, max = 3, value = 0, step = 0.01)
+                           uiOutput("slider.coef1.fp")
                     )
                 ),
                 fluidRow(
@@ -27,7 +28,7 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                            sliderTextInput(inputId = "power2.fp",label="Second", choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
                     ), 
                     column(5, offset=0, 
-                           sliderInput("coef2.fp",label="",min = -3, max = 3, value = 0, step = 0.01)
+                           uiOutput("slider.coef2.fp")
                     )
                 ), 
                 fluidRow(

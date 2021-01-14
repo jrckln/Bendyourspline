@@ -33,6 +33,26 @@ function(input, output, session){
     #############################################
     #######           FP            #############
     #############################################
+
+    min.range.coef.fp <- eventReactive(input$increase_range.fp,{
+        input$increase_range.fp*(-1)
+        
+    },ignoreNULL = FALSE)
+    max.range.coef.fp <- eventReactive(input$increase_range.fp,{
+        input$increase_range.fp
+        
+    },ignoreNULL = FALSE)
+    
+    output$slider.coef1.fp <- renderUI({
+        min = min.range.coef.fp()-1
+        max = max.range.coef.fp()+1
+        sliderInput("coef1.fp",label="", min = min, max = max, value = 0, step = 0.01)
+    })
+    output$slider.coef2.fp <- renderUI({
+        min = min.range.coef.fp()-1
+        max = max.range.coef.fp()+1
+        sliderInput("coef2.fp",label="",min = min, max = max, value = 0, step = 0.01)
+    })
     
     output$formula.fp <- renderUI({
         pow1 <- as.numeric(input$power1.fp)
@@ -75,7 +95,6 @@ function(input, output, session){
         pT <- fp.scale(x)
         transformed <- (x + pT$shift)/pT$scale
         
-        
         pow1 <- as.numeric(input$power1.fp)
         if(pow1 == 0) {
             fp1<-log(transformed)
@@ -93,6 +112,10 @@ function(input, output, session){
         
         
         fp <- as.numeric(input$coef1.fp)*fp1 + as.numeric(input$coef2.fp)*fp2
+        if(length(fp)==0){
+            
+            fp <- rep(0,nrow(data))
+        }
         
         DF <- cbind(data, transformed, fp)
         DF
@@ -122,8 +145,7 @@ function(input, output, session){
             p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
         }
         
-        p <- p +
-            geom_line(aes(x=!!sym(var_list$x), y = intercept+fp*pT$scale-pT$shift)) +
+        p <- p +geom_line(aes(x=!!sym(var_list$x), y = intercept+fp*pT$scale-pT$shift)) +
             theme_minimal() +
             ylab(var_list$y)
         ggplotly(p)
