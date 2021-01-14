@@ -84,7 +84,7 @@ function(input, output, session){
         pT <- fp.scale(x)
         
         withMathJax(paste0(
-            "$$ \\frac{ \\text{", var_list$x , "} + ", pT$shift, "}{", pT$scale ,"}$$"
+            "$$ x =  \\frac{ \\text{", var_list$x , "} + ", pT$shift, "}{", pT$scale ,"}$$"
         ))
     })
     
@@ -146,7 +146,7 @@ function(input, output, session){
             p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
         }
         
-        p <- p +geom_line(aes(x=!!sym(var_list$x), y = intercept+fp*pT$scale-pT$shift)) +
+        p <- p +geom_line(aes(x=!!sym(var_list$x), y = intercept+fp)) + #intercept+fp*pT$scale-pT$shift
             theme_minimal() +
             ylab(var_list$y)
         ggplotly(p)
