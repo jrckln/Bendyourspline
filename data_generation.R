@@ -37,6 +37,7 @@ for(dataset in names(data_list)){
             if(is.na(sample_size)){
                 ind <- 1:nrow(data)
             } else {
+              set.seed(14)
                 ind <- sample(1:nrow(data), sample_size)
             }
             data <- data[ind,]
@@ -45,7 +46,7 @@ for(dataset in names(data_list)){
             pT <- fp.scale(x)
             transformed <- (x + pT$shift)/pT$scale
             
-            fit <- mfp(as.formula(paste0(var_list$y, "~ fp(transformed, df=2, scale=F)")), data = data)
+            fit <- mfp(as.formula(paste0(var_list$y, "~ fp(transformed, df=4, scale=F)")), data = data)
             rss <- sum((fit$residuals)^2)
             sstot <- sum((data[,var_list$y]-mean(data[,var_list$y]))^2)
             fittedR2 <- 1-rss/sstot

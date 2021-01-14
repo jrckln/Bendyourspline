@@ -1,5 +1,5 @@
 bootstrapPage(theme = "simplex.min.css", withMathJax(),
-    navbarPage("Bend your spline!",
+    navbarPage("Bend your (sp)line!",
                           home, 
                           methods,
                           about

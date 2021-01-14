@@ -23,6 +23,7 @@ function(input, output, session){
         if(input$sample.size == "all"){
             ind <- 1:nrow(var_list$data)
         } else {
+            set.seed(14)
             n <- sample.sizes[input$sample.size]
             ind <- sample(1:nrow(var_list$data), n)
         }
