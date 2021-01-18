@@ -16,20 +16,20 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                     )
                 ),
                 fluidRow(
-                    column(5, offset=0, 
+                    column(4, offset=0, 
                            sliderTextInput(inputId = "power1.fp", label="First",choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
                     ), 
-                    column(5, offset=0, 
-                           uiOutput("slider.coef1.fp")
-                    )
+                    column(1,actionButton("minus_val_coef1.fp", "", icon = icon("minus-square"), style='padding:4px; font-size:80%')), 
+                    column(6, uiOutput("slider.coef1.fp")),
+                    column(1, actionButton("add_val_coef1.fp", "", icon = icon("plus-square"), style='padding:4px; font-size:80%'))
                 ),
                 fluidRow(
-                    column(5, offset=0, 
+                    column(4, offset=0, 
                            sliderTextInput(inputId = "power2.fp",label="Second", choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
                     ), 
-                    column(5, offset=0, 
-                           uiOutput("slider.coef2.fp")
-                    )
+                    column(1,actionButton("minus_val_coef2.fp", "", icon = icon("minus-square"), style='padding:4px; font-size:80%')), 
+                    column(6, uiOutput("slider.coef2.fp")),
+                    column(1, actionButton("add_val_coef2.fp", "", icon = icon("plus-square"), style='padding:4px; font-size:80%'))
                 ), 
                 fluidRow(
                     column(12, offset=0, 

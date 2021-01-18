@@ -44,15 +44,37 @@ function(input, output, session){
         
     },ignoreNULL = FALSE)
     
+    #+ and - buttons for FP coefs
+    val.coefs.fp <- reactiveValues(val.coef1 = 0, val.coef2 = 0)
+    observeEvent(input$add_val_coef1.fp, {
+        val.coefs.fp$val.coef1 <- input$coef1.fp+0.01
+    })
+    observeEvent(input$minus_val_coef1.fp, {
+        val.coefs.fp$val.coef1 <- input$coef1.fp-0.01
+    })
+    observeEvent(input$add_val_coef2.fp, {
+        val.coefs.fp$val.coef2 <- input$coef2.fp+0.01
+    })
+    observeEvent(input$minus_val_coef2.fp, {
+        val.coefs.fp$val.coef2 <- input$coef2.fp-0.01
+    })
+
+    observe({
+        updateSliderInput(session, "coef1.fp", value = val.coefs.fp$val.coef1)
+      })
+    observe({    
+        updateSliderInput(session, "coef2.fp", value = val.coefs.fp$val.coef2)
+    })    
+    #slider inputs - to increase coefficient range
     output$slider.coef1.fp <- renderUI({
         min = min.range.coef.fp()-1
         max = max.range.coef.fp()+1
-        sliderInput("coef1.fp",label="", min = min, max = max, value = 0, step = 0.01)
+        sliderInput("coef1.fp",label="", min = min, max = max, value = val.coefs.fp$val.coef1, step = 0.01)
     })
     output$slider.coef2.fp <- renderUI({
         min = min.range.coef.fp()-1
         max = max.range.coef.fp()+1
-        sliderInput("coef2.fp",label="",min = min, max = max, value = 0, step = 0.01)
+        sliderInput("coef2.fp",label="",min = min, max = max, value = val.coefs.fp$val.coef2, step = 0.01)
     })
     
     output$formula.fp <- renderUI({
@@ -146,7 +168,7 @@ function(input, output, session){
             p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
         }
         
-        p <- p +geom_line(aes(x=!!sym(var_list$x), y = intercept+fp)) + #intercept+fp*pT$scale-pT$shift
+        p <- p +geom_line(aes(x=!!sym(var_list$x), y = intercept+fp)) + 
             theme_minimal() +
             ylab(var_list$y)
         ggplotly(p)
@@ -158,7 +180,7 @@ function(input, output, session){
         x <- data[,var_list$x]
         pT <- fp.scale(x)
         DF <- FPdata()
-        fp <- input$intercept.fp+DF[, "fp"]*pT$scale-pT$shift
+        fp <- input$intercept.fp+DF[, "fp"]
         
         sstot <- sum((DF[,var_list$y]-mean(DF[,var_list$y]))^2) #total sum of squares
         ssres <- sum((DF[, var_list$y]-fp)^2)  #residual sum of squares
@@ -179,8 +201,6 @@ function(input, output, session){
         p <- ifelse(input$coef1.fp == 0& input$coef2.fp == 0, 0, ifelse(any(input$coef1.fp == 0, input$coef2.fp == 0),1,2))
         c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
     })
-
-    
     output$stats.fp <-  renderUI({
         stats <- calcadjR2()
         HTML(paste0("R <sup>2</sup>: ", round(stats[1], 3), "<br> adj. R <sup>2</sup>: ", round(stats[2], 3), 
@@ -190,4 +210,7 @@ function(input, output, session){
     #############################################
     #######        B-splines        #############
     #############################################
-}
+
+    
+    session$onSessionEnded(stopApp) #automatically stop when closing browser
+    }
