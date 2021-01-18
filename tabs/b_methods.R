@@ -1,5 +1,5 @@
 methods <- 
-    tabPanel("Methods", id="methods", 
+    tabPanel("Methods", id="methods", shinyjs::useShinyjs(),
              # Details to input parameter especially possible values etc in data.R
             fluidRow(column(2,
                 div(style = "font-size: 13px; padding: 10px 0px; margin:0%",

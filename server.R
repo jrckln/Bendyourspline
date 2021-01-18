@@ -34,15 +34,17 @@ function(input, output, session){
     #############################################
     #######           FP            #############
     #############################################
-
-    min.range.coef.fp <- eventReactive(input$increase_range.fp,{
-        input$increase_range.fp*(-1)
-        
-    },ignoreNULL = FALSE)
-    max.range.coef.fp <- eventReactive(input$increase_range.fp,{
-        input$increase_range.fp
-        
-    },ignoreNULL = FALSE)
+    
+    #increase range of coefs
+    range.coefs.fp <- reactiveValues(range.coef.left = -1, range.coef.right = 1)
+    observeEvent(input$increase_range.fp, {
+        range.coefs.fp$range.coef.left <- range.coefs.fp$range.coef.left-1
+        range.coefs.fp$range.coef.right <- range.coefs.fp$range.coef.right+1
+    })
+    observe({
+        updateSliderInput(session, "coef1.fp", max = range.coefs.fp$range.coef.right, min=range.coefs.fp$range.coef.left)
+        updateSliderInput(session, "coef2.fp", max = range.coefs.fp$range.coef.right, min=range.coefs.fp$range.coef.left)
+    })
     
     #+ and - buttons for FP coefs
     val.coefs.fp <- reactiveValues(val.coef1 = 0, val.coef2 = 0)
@@ -58,7 +60,13 @@ function(input, output, session){
     observeEvent(input$minus_val_coef2.fp, {
         val.coefs.fp$val.coef2 <- input$coef2.fp-0.01
     })
-
+    #for reset button 
+    observeEvent(input$reset_input.fp, {
+        val.coefs.fp$val.coef1 <- 0
+        val.coefs.fp$val.coef2 <- 0
+        range.coefs.fp$range.coef.left <- -1
+        range.coefs.fp$range.coef.right <- 1
+    })
     observe({
         updateSliderInput(session, "coef1.fp", value = val.coefs.fp$val.coef1)
       })
@@ -67,13 +75,13 @@ function(input, output, session){
     })    
     #slider inputs - to increase coefficient range
     output$slider.coef1.fp <- renderUI({
-        min = min.range.coef.fp()-1
-        max = max.range.coef.fp()+1
+        min = -1
+        max = 1
         sliderInput("coef1.fp",label="", min = min, max = max, value = val.coefs.fp$val.coef1, step = 0.01)
     })
     output$slider.coef2.fp <- renderUI({
-        min = min.range.coef.fp()-1
-        max = max.range.coef.fp()+1
+        min = -1
+        max = 1
         sliderInput("coef2.fp",label="",min = min, max = max, value = val.coefs.fp$val.coef2, step = 0.01)
     })
     
@@ -205,6 +213,11 @@ function(input, output, session){
         stats <- calcadjR2()
         HTML(paste0("R <sup>2</sup>: ", round(stats[1], 3), "<br> adj. R <sup>2</sup>: ", round(stats[2], 3), 
                     "<br> max. R <sup>2</sup> for this setting: ", round(stats[3], 3)))
+    })
+    
+    #reset button 
+    observeEvent(input$reset_input.fp, {
+        shinyjs::reset("inputs.fp") #id of tab to reset
     })
     
     #############################################

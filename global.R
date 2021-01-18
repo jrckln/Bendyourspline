@@ -5,6 +5,7 @@ library(ggplot2)
 library(splines)
 library(shinyWidgets)
 library(mfp)
+library(shinyjs)
 
 source("data/data.R")
 

@@ -1,5 +1,5 @@
 fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
-            sidebarPanel(class="input_class", 
+            sidebarPanel(class="input_class", id = "inputs.fp",
                 fluidRow(column(7, offset=0, h4("Input parameters")), 
                          column(5, offset=0, actionButton("increase_range.fp", "Increase coefficient range"))
                 ),
@@ -43,6 +43,9 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                     column(6, offset=0, 
                            materialSwitch(inputId = "add_mean.fp", label = "Add Mean", status = "primary", right = FALSE)
                     )
+                ), 
+                fluidRow(
+                  column(12, offset=0, actionButton("reset_input.fp", "Reset inputs"))
                 )
 ),mainPanel(
     fluidRow(
