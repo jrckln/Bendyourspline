@@ -144,11 +144,10 @@ function(input, output, session){
         
         fp <- as.numeric(input$coef1.fp)*fp1 + as.numeric(input$coef2.fp)*fp2
         if(length(fp)==0){
-            
             fp <- rep(0,nrow(data))
         }
         
-        DF <- cbind(data, transformed, fp)
+        DF <- cbind(data, transformed, fp, fp1, fp2)
         DF
     })
     
@@ -176,9 +175,16 @@ function(input, output, session){
             p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
         }
         
+        if(input$add_CI.fp){
+          SE.fitted <- se_fitted(DF, var_list$y, intercept)
+          p <- p+geom_ribbon(aes(x = !!sym(var_list$x),ymin=intercept+fp-1.96*SE.fitted,ymax=intercept+fp+1.96*SE.fitted),alpha=0.2)
+        }
+        
+        
+        
         p <- p +geom_line(aes(x=!!sym(var_list$x), y = intercept+fp)) + 
-            theme_minimal() +
-            ylab(var_list$y)
+                theme_minimal() +
+                ylab(var_list$y) 
         ggplotly(p)
     })
     

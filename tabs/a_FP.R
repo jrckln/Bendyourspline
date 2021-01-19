@@ -37,11 +37,14 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                     )
                 ), 
                 fluidRow(
-                    column(6, offset=0, 
+                    column(3, offset=0, 
                            materialSwitch(inputId = "add_y.fp", label = "Add response", status = "primary", right = FALSE)
                     ), 
+                    column(3, offset=0, 
+                           materialSwitch(inputId = "add_mean.fp", label = "Add mean", status = "primary", right = FALSE)
+                    ),
                     column(6, offset=0, 
-                           materialSwitch(inputId = "add_mean.fp", label = "Add Mean", status = "primary", right = FALSE)
+                           materialSwitch(inputId = "add_CI.fp", label = "Add confidence band", status = "primary", right = TRUE)
                     )
                 ), 
                 fluidRow(
