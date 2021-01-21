@@ -8,10 +8,12 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                             actionButton('insertBtn', 'Insert knot'), 
                             actionButton('removeBtn', 'Remove knot'), 
                                 )
+                ),
+                fluidRow(
+                    tags$div(id = 'placeholder_bsplines_min') #here comes the default number of input sliders one for position and one for coef
                 ), 
-                fluidRow(column(9, offset=0,
-                            tags$div(id = 'placeholder.bsplines')
-                                )
+                fluidRow(
+                    tags$div(id = 'placeholder_bsplines') #here comes additional input slider
                 )
             ),
             mainPanel(
