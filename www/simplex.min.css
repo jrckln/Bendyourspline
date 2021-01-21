@@ -29,7 +29,10 @@
     -webkit - text - size - adjust: 100 %
 }
 body {
-    margin: 0
+	color: "black";
+	padding-top: 60px;
+    margin: 0;
+    margin-bottom: 100px;
 }
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
     display: block
@@ -221,6 +224,8 @@ td, th {
     }
     .navbar {
         display: none
+		height: 60px;
+		min-height: 60px !important;
     }
     .btn > .caret,
     .dropup > .btn > .caret {
@@ -6151,4 +6156,10 @@ label {
 }
 .pager.disabled > a {
     border - color:  # dddddd
+}
+body > div.container-fluid {
+	overflow-y: scroll;
+}
+body > div.container-fluid > div.tab-content{
+	padding-bottom: 70px;
 }

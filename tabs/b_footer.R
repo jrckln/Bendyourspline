@@ -1,10 +1,13 @@
 footer <- tags$footer(style = "
               position: fixed;
               bottom:0;
-              width:100%;",
+              z-index: 3;
+              width:100%;
+              height: 90px;
+                      ",
   HTML('
                 <style>
-                    footer .main-footer{background: #E8E8E8;}
+                    footer .main-footer{background: #E8E8E8; height: 80px;}
                     footer ul{padding-left: 0;list-style: none;}
                     .footer-copyright {background: #d9230f;padding: 5px 0;}
                     #footercontainer {margin-left: 5%; margin-right: 5%;}
