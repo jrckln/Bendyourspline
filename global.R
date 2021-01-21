@@ -4,9 +4,10 @@ library(shiny)
 library(plotly)
 library(shinyBS)
 library(ggplot2)
+library(shinyWidgets)
+library(shinyjs)
 library(splines)
 
-source("function_transformation_FP.R")
 source("data/data.R")
 
 #colors for plotly
