@@ -1,5 +1,5 @@
 bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines",br(),
-            sidebarPanel(class="input_class", id = "inputs.fp",
+            sidebarPanel(class="input_class", id = "inputs.bs",
                 fluidRow(column(7, offset=0, h4("Input parameters"))
                 ), 
                 fluidRow(
@@ -11,7 +11,7 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                     )
                 ), 
                 fluidRow(
-                    column(6,
+                    column(6,offset=6,
                         sliderInput("intercept.bs", "Intercept", min=1, max=100, value=0, step=0.1)
                     )
                 ), 
@@ -31,7 +31,7 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                     )
                 ), 
                 fluidRow(
-                  column(12, offset=0, actionButton("reset_input.fp", "Reset inputs"))
+                  column(12, offset=0, actionButton("reset_input.bs", "Reset inputs"))
                 )
 ),mainPanel(
     plotlyOutput("plot.bs")

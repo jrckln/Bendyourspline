@@ -163,6 +163,11 @@ function(input, output, session){
         ggplotly(p)
     })
     
+    #reset button 
+    observeEvent(input$reset_input.bs, {
+        shinyjs::reset("inputs.bs") #id of tab to reset
+    })
+    
     
     session$onSessionEnded(stopApp) #automatically stop when closing browser
 }
