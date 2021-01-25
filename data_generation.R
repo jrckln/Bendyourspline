@@ -28,6 +28,12 @@ fp.scale <- function(x){
   )
 }
 
+if(!exists("input")){
+  seed <- 14
+} else {
+  seed <- input$seed
+}
+
 # FP max R2 calc: 
 for(dataset in names(data_list)){
     var_list <- data_list[[dataset]]
@@ -38,7 +44,7 @@ for(dataset in names(data_list)){
             if(is.na(sample_size)){
                 ind <- 1:nrow(data)
             } else {
-              set.seed(14)
+              set.seed(seed)
                 ind <- sample(1:nrow(data), sample_size)
             }
             data <- data[ind,]

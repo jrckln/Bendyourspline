@@ -8,6 +8,7 @@ library(shinyWidgets)
 library(shinyjs)
 library(splines)
 
+source("data_generation.R")
 source("data/data.R")
 
 #colors for plotly

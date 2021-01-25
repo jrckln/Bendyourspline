@@ -13,6 +13,14 @@ function(input, output, session){
                     ))
     })
     
+    observeEvent(input$seed, { #recalculate max R2 values if seed is changed:
+        if(input$seed!=14){
+                source("data_generation.R")
+        }
+        source("data/data.R")
+        showNotification(span(tagList(icon("check"), "Done. ")), id="done_notif", duration = 7)
+    })
+    
     var_list_reac <- reactive({
         var <- as.character(input$variable)
         var_list <- data_list[[var]]
@@ -22,7 +30,7 @@ function(input, output, session){
         if(input$sample.size == "all"){
             ind <- 1:nrow(var_list$data)
         } else {
-            set.seed(14)
+            set.seed(input$seed)
             n <- sample.sizes[input$sample.size]
             ind <- sample(1:nrow(var_list$data), n)
         }
