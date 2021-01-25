@@ -7,17 +7,18 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                         sliderInput("degree.bs", "Degree", min=1, max=4, value=1, step=1)
                     ),
                     column(6,
-                        
+                        numericInput("nknots.bs", "Number of internal knots", min=1, value = 2)
                     )
                 ), 
                 fluidRow(
                     column(6,
                         sliderInput("intercept.bs", "Intercept", min=1, max=100, value=0, step=0.1)
-                    ),
-                    column(6,
-                        
                     )
                 ), 
+                fluidRow(
+                    column(6, tags$div(id = 'placeholder_pos_bs')), 
+                    column(6, tags$div(id = 'placeholder_coef_bs'))
+                ),
                 fluidRow(
                     column(3, offset=0, 
                            materialSwitch(inputId = "add_y.bs", label = "Add response", status = "primary", right = FALSE)

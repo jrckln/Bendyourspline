@@ -39,7 +39,82 @@ function(input, output, session){
     #######        B-splines        #############
     #############################################
     
+    #dynamic insert of slider for positions of knots
+    inserted.pos.bs <- c()
     
+    observeEvent(input$nknots.bs, {
+        if(length(inserted.pos.bs)>0){
+            for(i in 1:length(inserted.pos.bs)){
+              removeUI(
+                selector = paste0('#', inserted.pos.bs[i])
+              )
+            }
+            inserted.pos.bs <- c()
+        }
+        default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = input$nknots.bs + 2)[-c(1, input$nknots + 2)]
+        var_list <- var_list_reac()
+        data <- var_list$data
+        x <- data[,var_list$x]
+        default.pos.knots.bs <- quantile(x, default.pos.knots.bs)
+        num <- as.numeric(input$nknots.bs)
+        id <- paste0('pos', 1:num)
+        for(i in 1:num){
+            insertUI(
+                selector = '#placeholder_pos_bs',
+                ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", i), 
+                                          value=default.pos.knots.bs[i], step=0.01, 
+                                          min=min(x), max=max(x)), id=id[i])
+            )
+            inserted.pos.bs <<- c(id, inserted.pos.bs)
+          }
+    })
+    
+    #dynamic insert of slider for coefficients for each spline basis function
+    inserted.coef.bs <- c()
+    observeEvent(c(input$nknots.bs, input$degree.bs), {
+        num <- input$degree.bs + input$nknots.bs #+1 for intercept but intercept is extra
+        if(length(inserted.coef.bs)>0){
+            for(i in 1:length(inserted.coef.bs)){
+              removeUI(
+                selector = paste0('#', inserted.coef.bs[i])
+              )
+            }
+            inserted.coef.bs <- c()
+        }
+        id <- paste0('coef', 1:num)
+        for(i in 1:num){
+            insertUI(
+                selector = '#placeholder_coef_bs',
+                ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i), 
+                                          value=1, step=0.01, 
+                                          min=-10, max=10), id=id[i])
+            )
+            inserted.coef.bs <<- c(id, inserted.coef.bs)
+          }
+    })
+    
+    getpos.bs <- reactive({
+        #get values of knot positions: 
+        ind <- match(paste0("pos", 1:input$nknots.bs, "_inner"), names(input))
+        ind <- ind[!(is.na(ind))]
+        pos <- c()
+        for(i in ind){
+            pos <- c(pos, input[[names(input)[i]]])
+        }
+        pos
+    })
+    
+    getcoef.bs <- reactive({
+        num <- input$degree.bs + input$nknots.bs
+        #get values of coefficients: 
+        ind <- match(paste0("coef", 1:num, "_inner"), names(input))
+        ind <- ind[!(is.na(ind))]
+        coef <- c()
+        for(i in ind){
+            coef <- c(coef, input[[names(input)[i]]])
+        }
+        coef
+    })
     
     output$plot.bs <- renderPlotly({
         var_list <- var_list_reac()
@@ -47,25 +122,26 @@ function(input, output, session){
         
         x <- data[,var_list$x]
         
-        df <- input$df.bs
         degree <- input$degree.bs
         
-        b <- bs(x, degree=degree, knots=quantile(x, c(1/3, 2/3)))
+        pos <- getpos.bs()
+        b <- bs(x, degree=degree, knots=pos)
 
-        #push up to data creation - no need for recalc every time
+        #TODO: push up to data creation - no need for recalc every time
         data <- data %>% 
             group_by(!!sym(var_list$x)) %>% 
             mutate(y_mean = mean(!!sym(var_list$y)))
         
-        intercept <- input$intercept.bs
-        spline <- apply(b, 1, function(x, coefs = NULL) {
+        coefs <- getcoef.bs()
+        spline <- apply(b, 1, function(x, coefs.in = coefs) {
             res <- 0
-            for(i in x){
-                res <- res + i
+            for(i in 1:length(x)){
+                res <- res + coefs.in[i]*x[i]
             }
             res
         })
-
+        
+        intercept <- input$intercept.bs
         spline <- intercept + spline
         p <- ggplot(data=data)
         if(input$add_y.bs){
@@ -77,7 +153,7 @@ function(input, output, session){
         if(input$add_knots_pos.bs){
             knots <- attr(b, "knots")
             for(i in knots){
-                p <- p + geom_vline(xintercept=i, color = "red")
+                p <- p + geom_vline(xintercept=i, color = "red", linetype="dashed")
             }
         }
         
