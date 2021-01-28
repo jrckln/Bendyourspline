@@ -43,54 +43,98 @@ function(input, output, session){
     inserted.pos.bs <- c()
     
     observeEvent(input$nknots.bs, {
-        if(length(inserted.pos.bs)>0){
-            for(i in 1:length(inserted.pos.bs)){
-              removeUI(
-                selector = paste0('#', inserted.pos.bs[i])
-              )
+        if(length(inserted.pos.bs)!=0){ #case of update
+            if(length(inserted.pos.bs)>as.numeric(input$nknots.bs)){
+                #remove difference: 
+                num <- length(inserted.pos.bs) - input$nknots.bs
+                for(i in 1:num){
+                  removeUI(
+                    selector = paste0('#', inserted.pos.bs[length(inserted.pos.bs)]) #remove the last ones
+                  )
+                    inserted.pos.bs <<- inserted.pos.bs[-length(inserted.pos.bs)]
+                }
+            }else if(length(inserted.pos.bs)<as.numeric(input$nknots.bs)){
+                default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = input$nknots.bs + 2)[-c(1, input$nknots + 2)]
+                var_list <- var_list_reac()
+                data <- var_list$data
+                x <- data[,var_list$x]
+                default.pos.knots.bs <- quantile(x, default.pos.knots.bs)
+                num <- (length(inserted.pos.bs)+1):input$nknots.bs
+                id <- paste0('pos', num)
+                for(i in 1:length(num)){
+                    insertUI(
+                        selector = '#placeholder_pos_bs',
+                        ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", 
+                                                                                          length(inserted.pos.bs)+i), 
+                                                  value=default.pos.knots.bs[i], step=0.01, 
+                                                  min=min(x), max=max(x)), id=id[i])
+                    )
+                    inserted.pos.bs <<- c(inserted.pos.bs, id[i])
+                }
             }
-            inserted.pos.bs <- c()
+        }else{ #case of init
+            default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = input$nknots.bs + 2)[-c(1, input$nknots + 2)]
+            var_list <- var_list_reac()
+            data <- var_list$data
+            x <- data[,var_list$x]
+            default.pos.knots.bs <- quantile(x, default.pos.knots.bs)
+            num <- 1:input$nknots.bs
+            id <- paste0('pos', num)
+            for(i in 1:length(num)){
+                insertUI(
+                    selector = '#placeholder_pos_bs',
+                    ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", i), 
+                                              value=default.pos.knots.bs[i], step=0.01, 
+                                              min=min(x), max=max(x)), id=id[i])
+                )
+                inserted.pos.bs <<- c(inserted.pos.bs, id[i])
+            }
         }
-        default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = input$nknots.bs + 2)[-c(1, input$nknots + 2)]
-        var_list <- var_list_reac()
-        data <- var_list$data
-        x <- data[,var_list$x]
-        default.pos.knots.bs <- quantile(x, default.pos.knots.bs)
-        num <- as.numeric(input$nknots.bs)
-        id <- paste0('pos', 1:num)
-        for(i in 1:num){
-            insertUI(
-                selector = '#placeholder_pos_bs',
-                ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", i), 
-                                          value=default.pos.knots.bs[i], step=0.01, 
-                                          min=min(x), max=max(x)), id=id[i])
-            )
-            inserted.pos.bs <<- c(id, inserted.pos.bs)
-          }
     })
     
     #dynamic insert of slider for coefficients for each spline basis function
     inserted.coef.bs <- c()
     observeEvent(c(input$nknots.bs, input$degree.bs), {
         num <- input$degree.bs + input$nknots.bs #+1 for intercept but intercept is extra
-        if(length(inserted.coef.bs)>0){
-            for(i in 1:length(inserted.coef.bs)){
-              removeUI(
-                selector = paste0('#', inserted.coef.bs[i])
-              )
+        if(length(inserted.coef.bs)!=0){ #case of update
+            #num is the number of desired inputs
+            if(length(inserted.coef.bs)>num){
+                if(length(inserted.coef.bs)>0){
+                    toomuch <- length(inserted.coef.bs)-num
+                    print(toomuch)
+                    for(i in 1:toomuch){
+                      removeUI(
+                        selector = paste0('#', inserted.coef.bs[length(inserted.coef.bs)])
+                      )
+                    inserted.coef.bs <<- inserted.coef.bs[-length(inserted.coef.bs)]
+                    }
+                }
+            }else if(length(inserted.coef.bs)<num){
+                toinsert <- (length(inserted.coef.bs)+1):num
+                id <- paste0('coef', toinsert)
+                for(i in 1:length(toinsert)){
+                    insertUI(
+                        selector = '#placeholder_coef_bs',
+                        ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", 
+                                                                                          length(inserted.coef.bs)+i), 
+                                                  value=1, step=0.01, min=-10, max=10), id=id[i])
+                    )
+                    inserted.coef.bs <<- c(inserted.coef.bs, id[i])
+                }
             }
-            inserted.coef.bs <- c()
+        } else { #case of init
+            id <- paste0('coef', 1:num)
+            for(i in 1:num){
+                insertUI(
+                    selector = '#placeholder_coef_bs',
+                    ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i), 
+                                              value=1, step=0.01, 
+                                              min=-10, max=10), id=id[i])
+                )
+                inserted.coef.bs <<- c(inserted.coef.bs, id[i])
+            }
         }
-        id <- paste0('coef', 1:num)
-        for(i in 1:num){
-            insertUI(
-                selector = '#placeholder_coef_bs',
-                ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i), 
-                                          value=1, step=0.01, 
-                                          min=-10, max=10), id=id[i])
-            )
-            inserted.coef.bs <<- c(id, inserted.coef.bs)
-          }
+        
     })
     
     getpos.bs <- reactive({
