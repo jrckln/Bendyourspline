@@ -12,6 +12,11 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                 ), 
                 fluidRow(
                     column(6,offset=6,
+                        materialSwitch(inputId = "adjust_intercept.bs", label = "Adjust intercept automatically:", 
+                                       status = "primary", right = FALSE),
+                        p("or: ")
+                        ),
+                    column(6,offset=6,
                         sliderInput("intercept.bs", "Intercept", min=1, max=100, value=0, step=0.1)
                     )
                 ), 

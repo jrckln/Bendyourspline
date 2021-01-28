@@ -101,7 +101,6 @@ function(input, output, session){
             if(length(inserted.coef.bs)>num){
                 if(length(inserted.coef.bs)>0){
                     toomuch <- length(inserted.coef.bs)-num
-                    print(toomuch)
                     for(i in 1:toomuch){
                       removeUI(
                         selector = paste0('#', inserted.coef.bs[length(inserted.coef.bs)])
@@ -160,6 +159,17 @@ function(input, output, session){
         coef
     })
     
+    getintercept.bs <- reactive({
+        if(input$adjust_intercept.bs){
+            var_list <- var_list_reac()
+            data <- var_list$data
+            y_mean <- mean(data[,var_list$y])
+            return(y_mean)
+        } else {
+            return(input$intercept.bs)
+        }
+    })
+    
     output$plot.bs <- renderPlotly({
         var_list <- var_list_reac()
         data <- var_list$data
@@ -185,7 +195,7 @@ function(input, output, session){
             res
         })
         
-        intercept <- input$intercept.bs
+        intercept <- getintercept.bs()
         spline <- intercept + spline
         p <- ggplot(data=data)
         if(input$add_y.bs){
