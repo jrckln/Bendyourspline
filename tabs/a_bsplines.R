@@ -1,4 +1,24 @@
 bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines",br(),
+                    tags$head(
+                        tags$script(
+                            #to opt out of shiny default optimiation (cares only of last value) but we want to trigger
+                            #everytime button is clicked but get the id: {priority: 'event'}
+                            HTML(
+                            "$(document).on('click', '.minus', function () {
+                                Shiny.setInputValue('last_btn_minus',this.id, {priority: 'event'});
+                             });
+                             $(document).on('click', '.plus', function () {
+                                Shiny.setInputValue('last_btn_plus',this.id, {priority: 'event'});
+                             });
+                            "
+                    )), 
+                        tags$style(HTML("
+                                        #placeholder_coef_bs .form-group.shiny-input-container{
+                                        display: inline-block;
+                                        }
+                                        "))
+                    ),
+                     #gets the id of the last button clicked of class "minus" - to determine which coefficient id should be changed
             sidebarPanel(class="input_class", id = "inputs.bs",
                 fluidRow(column(7, offset=0, h4("Input parameters"))
                 ), 

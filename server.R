@@ -41,6 +41,10 @@ function(input, output, session){
     
     #dynamic insert of slider for positions of knots
     inserted.pos.bs <- c()
+    #coefficient values - save for possibility to adjust with buttons
+    val.coefs.bs <- c(0,0,0) # take care of default vals here: 
+    # degree = 1 and 2 internal knots -> 2 coefficients
+    # does not need to be reactive since it should always be called with getcoef.bs()
     
     observeEvent(input$nknots.bs, {
         if(length(inserted.pos.bs)!=0){ #case of update
@@ -112,11 +116,18 @@ function(input, output, session){
                 toinsert <- (length(inserted.coef.bs)+1):num
                 id <- paste0('coef', toinsert)
                 for(i in 1:length(toinsert)){
-                    insertUI(
+                    insertUI( #place inserted UI in div for complete removal
                         selector = '#placeholder_coef_bs',
-                        ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", 
+                        ui = tags$div(
+                            actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"), 
+                                         style='padding:4px; font-size:80%; vertical-align: middle;background: #D6D6D6;', class="minus"),
+                            sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", 
                                                                                           length(inserted.coef.bs)+i), 
-                                                  value=1, step=0.01, min=-10, max=10), id=id[i])
+                                                  value=1, step=0.01, min=-10, max=10, width='80%'), 
+                            actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"), 
+                                         style='padding:4px; font-size:80%; vertical-align: middle; background: #D6D6D6;', class="plus"),
+                            id=id[i]
+                        )
                     )
                     inserted.coef.bs <<- c(inserted.coef.bs, id[i])
                 }
@@ -126,9 +137,17 @@ function(input, output, session){
             for(i in 1:num){
                 insertUI(
                     selector = '#placeholder_coef_bs',
-                    ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i), 
+                    ui = tags$div(
+                        actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"), 
+                                     style='padding:4px; font-size:80%; vertical-align: middle; background: #D6D6D6;', class="minus"), 
+                        # class to control only this button group
+                        # and get last id with JS (see tab bsplines)
+                        sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i), 
                                               value=1, step=0.01, 
-                                              min=-10, max=10), id=id[i])
+                                              min=-10, max=10, width='80%'),
+                        actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"), 
+                                         style='padding:4px; font-size:80%; vertical-align: middle; background: #D6D6D6;', class="plus"),
+                        id=id[i])
                 )
                 inserted.coef.bs <<- c(inserted.coef.bs, id[i])
             }
@@ -168,6 +187,45 @@ function(input, output, session){
         } else {
             return(input$intercept.bs)
         }
+    })
+    
+    getid_minus.bs <- reactive({
+        #returns quoted expression
+        num <- input$degree.bs + input$nknots.bs
+        ind <- match(paste0("coef", 1:num, "_inner_minus"), names(input))
+        ind <- ind[!(is.na(ind))]
+        ind
+    })
+    
+    getid_plus.bs <- reactive({
+        #returns quoted expression
+        num <- input$degree.bs + input$nknots.bs
+        ind <- match(paste0("coef", 1:num, "_inner_plus"), names(input))
+        ind <- ind[!(is.na(ind))]
+        ind
+    })
+    
+    #trigger when any minus button was clicked: modifies input value
+    observeEvent(input$last_btn_minus, {
+        coefs <- getcoef.bs()
+        val.coefs.bs <- coefs
+        #determine button of which coef id was clicked: id of button is coef<idnumber>_inner_minus
+        id.coef <- gsub("_minus", "", input$last_btn_minus)
+        ind <- as.numeric(gsub("_inner", "", gsub("coef","",id.coef)))
+        val <- getcoef.bs()
+        val <- val[ind] -0.01
+        updateSliderInput(session, inputId = id.coef, value = val)
+    })
+    
+    observeEvent(input$last_btn_plus, {
+        coefs <- getcoef.bs()
+        val.coefs.bs <- coefs
+        #determine button of which coef id was clicked: id of button is coef<idnumber>_inner_minus
+        id.coef <- gsub("_plus", "", input$last_btn_plus)
+        ind <- as.numeric(gsub("_inner", "", gsub("coef","",id.coef)))
+        val <- getcoef.bs()
+        val <- val[ind] + 0.01
+        updateSliderInput(session, inputId = id.coef, value = val)
     })
     
     output$plot.bs <- renderPlotly({
