@@ -41,6 +41,10 @@ function(input, output, session){
         range.coefs.fp$range.coef.left <- range.coefs.fp$range.coef.left-1
         range.coefs.fp$range.coef.right <- range.coefs.fp$range.coef.right+1
     })
+    observeEvent(input$decrease_range.fp, {
+        range.coefs.fp$range.coef.left <- range.coefs.fp$range.coef.left+1
+        range.coefs.fp$range.coef.right <- range.coefs.fp$range.coef.right-1
+    })
     observe({
         updateSliderInput(session, "coef1.fp", max = range.coefs.fp$range.coef.right, min=range.coefs.fp$range.coef.left)
         updateSliderInput(session, "coef2.fp", max = range.coefs.fp$range.coef.right, min=range.coefs.fp$range.coef.left)
@@ -98,7 +102,7 @@ function(input, output, session){
           coef1 <- coef1
         }
         
-        fp_fun <- paste(input$intercept.fp, coef1, "\\cdot", trans1)
+        fp_fun <- paste(round(getintercept.fp(),2), coef1, "\\cdot", trans1)
         
         pow2 <- as.numeric(input$power2.fp)
         trans2 <- paste0("x^{", pow2, "}")
@@ -128,6 +132,27 @@ function(input, output, session){
         withMathJax(paste0(
             "$$ x =  \\frac{ \\text{", var_list$x , "} + ", pT$shift, "}{", pT$scale ,"}$$"
         ))
+    })
+    
+    getintercept.fp <- reactive({
+        if(input$adjust_intercept.fp){
+            var_list <- var_list_reac()
+            data <- FPdata()
+            intercept <- opt.intercept(fitted=data$fp, data=data[,var_list$y], interval=c(min(data[,var_list$y]), max(data[,var_list$y])))$minimum
+            return(intercept)
+        } else {
+            return(input$intercept.fp)
+        }
+    })
+    
+    output$intercept.fp <- renderUI({
+        intercept.val <- getintercept.fp()
+        if(input$adjust_intercept.fp){
+            HTML(paste0("Intercept fitted using LS to: ", intercept.val))
+        }
+        else {
+             HTML(paste0("Intercept set to: ", intercept.val))
+        }
     })
     
     FPdata <- reactive({
@@ -170,7 +195,7 @@ function(input, output, session){
         x <- data[,var_list$x]
         pT <- fp.scale(x)
         
-        intercept <- input$intercept.fp
+        intercept <- getintercept.fp()
         
         DF <- FPdata()
         
@@ -206,7 +231,7 @@ function(input, output, session){
         x <- data[,var_list$x]
         pT <- fp.scale(x)
         DF <- FPdata()
-        fp <- input$intercept.fp+DF[, "fp"]
+        fp <- getintercept.fp()+DF[, "fp"]
         
         sstot <- sum((DF[,var_list$y]-mean(DF[,var_list$y]))^2) #total sum of squares
         ssres <- sum((DF[, var_list$y]-fp)^2)  #residual sum of squares
