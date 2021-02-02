@@ -182,10 +182,32 @@ function(input, output, session){
         if(input$adjust_intercept.bs){
             var_list <- var_list_reac()
             data <- var_list$data
-            y_mean <- mean(data[,var_list$y])
-            return(y_mean)
+            x <- data[,var_list$x]
+            degree <- input$degree.bs
+            pos <- getpos.bs()
+            b <- bs(x, degree=degree, knots=pos)
+            coefs <- getcoef.bs()
+            spline <- apply(b, 1, function(x, coefs.in = coefs) {
+                res <- 0
+                for(i in 1:length(x)){
+                    res <- res + coefs.in[i]*x[i]
+                }
+                res
+            })
+            intercept <- opt.intercept(fitted=spline, data=data[,var_list$y], interval=c(min(data[,var_list$y]), max(data[,var_list$y])))$minimum
+            return(intercept)
         } else {
             return(input$intercept.bs)
+        }
+    })
+    
+    output$intercept.bs <- renderUI({
+        intercept.val <- getintercept.bs()
+        if(input$adjust_intercept.bs){
+            HTML(paste0("Intercept fitted using LS to: ", intercept.val))
+        }
+        else {
+             HTML(paste0("Intercept set to: ", intercept.val))
         }
     })
     

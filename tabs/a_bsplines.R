@@ -59,6 +59,7 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                   column(12, offset=0, actionButton("reset_input.bs", "Reset inputs"))
                 )
 ),mainPanel(
-    plotlyOutput("plot.bs")
+    plotlyOutput("plot.bs"), 
+    uiOutput("intercept.bs")
   )
 ) 
