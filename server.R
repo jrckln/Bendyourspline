@@ -46,6 +46,26 @@ function(input, output, session){
     # degree = 1 and 2 internal knots -> 2 coefficients
     # does not need to be reactive since it should always be called with getcoef.bs()
     
+    range.coefs.bs <- reactiveValues(range.coef.left = -1, range.coef.right = 1)
+    observeEvent(input$increase_range.bs, {
+        range.coefs.bs$range.coef.left <- range.coefs.bs$range.coef.left-1
+        range.coefs.bs$range.coef.right <- range.coefs.bs$range.coef.right+1
+    })
+    observeEvent(input$decrease_range.bs, {
+        range.coefs.bs$range.coef.left <- range.coefs.bs$range.coef.left+1
+        range.coefs.bs$range.coef.right <- range.coefs.bs$range.coef.right-1
+    })
+    #update range of coefficient sliders
+    observe({
+        num <- input$degree.bs + input$nknots.bs
+        #get values of coefficients: 
+        ind <- paste0("coef", 1:num, "_inner")
+        for(i in ind){
+            updateSliderInput(session, i, max = range.coefs.bs$range.coef.right, min=range.coefs.bs$range.coef.left)
+        }
+    })
+    
+    
     observeEvent(input$nknots.bs, {
         if(length(inserted.pos.bs)!=0){ #case of update
             if(length(inserted.pos.bs)>as.numeric(input$nknots.bs)){
@@ -123,7 +143,7 @@ function(input, output, session){
                                          style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus"),
                             sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", 
                                                                                           length(inserted.coef.bs)+i), 
-                                                  value=1, step=0.01, min=-10, max=10, width='80%'), 
+                                                  value=1, step=0.01, min=-1, max=1, width='80%'), 
                             actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"), 
                                          style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus"),
                             id=id[i]
@@ -144,7 +164,7 @@ function(input, output, session){
                         # and get last id with JS (see tab bsplines)
                         sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i), 
                                               value=1, step=0.01, 
-                                              min=-10, max=10, width='80%'),
+                                              min=-1, max=1, width='80%'),
                         actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"), 
                                          style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus"),
                         id=id[i])

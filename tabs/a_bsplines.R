@@ -20,24 +20,26 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                     ),
                      #gets the id of the last button clicked of class "minus" - to determine which coefficient id should be changed
             sidebarPanel(class="input_class", id = "inputs.bs",
-                fluidRow(column(7, offset=0, h4("Input parameters"))
+                fluidRow(column(7, offset=0, h4("Input parameters")), 
+                         column(5, offset=0, 
+                                div(p("Coefficient range:", style="display: inline-block;"),
+                                  actionButton("decrease_range.bs", icon("minus"), style="display: inline-block;"), 
+                                  actionButton("increase_range.bs", icon("plus"), style="display: inline-block;")
+                                  )
+                                )
                 ), 
+                br(), br(),
                 fluidRow(
                     column(6,
-                        sliderInput("degree.bs", "Degree", min=1, max=4, value=1, step=1)
-                    ),
-                    column(6,
+                        sliderInput("degree.bs", "Degree", min=1, max=4, value=1, step=1), 
                         numericInput("nknots.bs", "Number of internal knots", min=1, value = 2)
-                    )
-                ), 
-                fluidRow(
-                    column(6,offset=6,
-                        materialSwitch(inputId = "adjust_intercept.bs", label = "Adjust intercept automatically:", 
-                                       status = "primary", right = FALSE),
-                        p("or: ")
-                        ),
-                    column(6,offset=6,
-                        sliderInput("intercept.bs", "Intercept", min=1, max=100, value=0, step=0.1)
+                    ),
+                    column(6, 
+                    div(style="padding-left: 3%;",
+                      materialSwitch(inputId = "adjust_intercept.bs", label = "Adjust intercept automatically:", 
+                                       status = "primary", right = FALSE)),
+                      p("or: ", style=""),
+                      div(style="",sliderInput("intercept.bs",label="Intercept",min = 0, max = 40, value = 0, step = 0.1))
                     )
                 ), 
                 fluidRow(
