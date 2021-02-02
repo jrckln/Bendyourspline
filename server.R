@@ -120,12 +120,12 @@ function(input, output, session){
                         selector = '#placeholder_coef_bs',
                         ui = tags$div(
                             actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"), 
-                                         style='padding:4px; font-size:80%; vertical-align: middle;background: #D6D6D6;', class="minus"),
+                                         style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus"),
                             sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", 
                                                                                           length(inserted.coef.bs)+i), 
                                                   value=1, step=0.01, min=-10, max=10, width='80%'), 
                             actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"), 
-                                         style='padding:4px; font-size:80%; vertical-align: middle; background: #D6D6D6;', class="plus"),
+                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus"),
                             id=id[i]
                         )
                     )
@@ -139,14 +139,14 @@ function(input, output, session){
                     selector = '#placeholder_coef_bs',
                     ui = tags$div(
                         actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"), 
-                                     style='padding:4px; font-size:80%; vertical-align: middle; background: #D6D6D6;', class="minus"), 
+                                     style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="minus"), 
                         # class to control only this button group
                         # and get last id with JS (see tab bsplines)
                         sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i), 
                                               value=1, step=0.01, 
                                               min=-10, max=10, width='80%'),
                         actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"), 
-                                         style='padding:4px; font-size:80%; vertical-align: middle; background: #D6D6D6;', class="plus"),
+                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus"),
                         id=id[i])
                 )
                 inserted.coef.bs <<- c(inserted.coef.bs, id[i])
@@ -297,11 +297,30 @@ function(input, output, session){
         ggplotly(p)
     })
     
+    output$basis_plot.bs<- renderPlotly({
+        var_list <- var_list_reac()
+        data <- var_list$data
+        x <- data[,var_list$x]
+        degree <- input$degree.bs
+        pos <- getpos.bs()
+        b <- bs(x, degree=degree, knots=pos)
+        all.knots <- sort(c(attr(b,"Boundary.knots") ,attr(b, "knots")))
+        bounds <- range(all.knots)
+        knot.values <- set_colnames(predict(b, all.knots),str_c("S", seq_len(ncol(predict(b, all.knots)))))
+        newx <- seq(bounds[1], bounds[2], length.out = 100+1)
+        interp.values <- set_colnames(predict(b, newx),str_c("S", seq_len(ncol(predict(b, newx)))))
+        knot.df <- melt(data.frame(x=all.knots, knot.values), id.vars="x", variable.name="Spline", value.name="y")
+        interp.df <- melt(data.frame(x=newx, interp.values),id.vars="x", variable.name="Spline", value.name="y")
+        p <- ggplot(interp.df) +
+            aes(x=x, y=y, color=Spline) +
+            geom_line() +
+            scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none")
+        ggplotly(p)
+    })
+    
     #reset button 
     observeEvent(input$reset_input.bs, {
         shinyjs::reset("inputs.bs") #id of tab to reset
     })
-    
-    
     session$onSessionEnded(stopApp) #automatically stop when closing browser
 }

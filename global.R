@@ -7,6 +7,9 @@ library(ggplot2)
 library(shinyWidgets)
 library(shinyjs)
 library(splines)
+library(magrittr)
+library(stringr)
+library(reshape2)
 
 source("data/data.R")
 

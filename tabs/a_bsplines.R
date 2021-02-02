@@ -60,6 +60,7 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                 )
 ),mainPanel(
     plotlyOutput("plot.bs"), 
-    uiOutput("intercept.bs")
+    uiOutput("intercept.bs"), 
+    plotlyOutput("basis_plot.bs", height = "200px")
   )
 ) 
