@@ -45,7 +45,7 @@ for(dataset in names(data_list)){
                 ind <- 1:nrow(data)
             } else {
               set.seed(seed)
-                ind <- sample(1:nrow(data), sample_size)
+              ind <- sample(1:nrow(data), sample_size)
             }
             data <- data[ind,]
             

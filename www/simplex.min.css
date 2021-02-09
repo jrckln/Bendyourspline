@@ -29,9 +29,14 @@
     -webkit - text - size - adjust: 100 %
 }
 body {
+<<<<<<< HEAD
 	color: "black";
     margin: 0;
     margin-bottom: 100px;
+=======
+    margin: 0;
+    padding-bottom:10%;
+>>>>>>> feat/FP
 }
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
     display: block
@@ -6156,6 +6161,7 @@ label {
 .pager.disabled > a {
     border - color:  # dddddd
 }
+
 body > div.container-fluid {
 	overflow-y: scroll;
 }
