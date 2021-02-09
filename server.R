@@ -224,10 +224,10 @@ function(input, output, session){
     output$intercept.bs <- renderUI({
         intercept.val <- getintercept.bs()
         if(input$adjust_intercept.bs){
-            HTML(paste0("Intercept fitted using LS to: ", intercept.val))
+            div(HTML(paste0("Intercept fitted using LS to: ", round(intercept.val, 3))))
         }
         else {
-             HTML(paste0("Intercept set to: ", intercept.val))
+             div(HTML(paste0("Intercept set to: ", round(intercept.val, 3))))
         }
     })
     
@@ -334,8 +334,58 @@ function(input, output, session){
         p <- ggplot(interp.df) +
             aes(x=x, y=y, color=Spline) +
             geom_line() +
-            scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none")
+            scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") + 
+            ggtitle("Spline basis functions")
         ggplotly(p)
+    })
+    
+    calcR2.bs <- reactive({
+        var_list <- var_list_reac()
+        data <- var_list$data
+        x <- data[,var_list$x]
+        degree <- input$degree.bs
+        pos <- getpos.bs()
+        b <- bs(x, degree=degree, knots=pos)
+        coefs <- getcoef.bs()
+        spline <- apply(b, 1, function(x, coefs.in = coefs) {
+            res <- 0
+            for(i in 1:length(x)){
+                res <- res + coefs.in[i]*x[i]
+            }
+            res
+        })
+        spline <- spline + getintercept.bs()
+        model <- lm(as.formula(paste0(var_list$y, " ~ bs(", var_list$x, ", df=", degree+length(pos),")")), data=data)
+        fitted <- model$fitted
+        p <- model$rank
+        sstot <- sum((data[,var_list$y]-mean(data[,var_list$y]))^2) #total sum of squares
+        ssres <- sum((data[, var_list$y]-spline)^2)  #residual sum of squares
+        ssres_fitted <- sum((data[, var_list$y]-fitted)^2)  #residual sum of squares fitted
+        c(1-ssres/sstot, 1-ssres_fitted/sstot, p)
+    })
+    
+    calcadjR2.bs <- reactive({
+        res <- calcR2.bs()
+        R2 <- res[1]
+        maxR2 <- res[2]
+        p <- res[3]
+        var_list <- var_list_reac()
+        data <- var_list$data
+        if(input$gender == "Both"){
+            sex_ind <- "both"
+        } else {
+            sex_ind <- gender[input$gender]
+        }
+        index <- paste0(input$sample.size,"_" ,sex_ind)
+        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
+    })
+    
+    output$stats.bs <-  renderUI({
+        stats <- calcadjR2.bs()
+        nknots <- input$nknots.bs
+        degree <- input$degree.bs
+        HTML(paste0("R <sup>2</sup>: ", round(stats[1], 3), "<br> adj. R <sup>2</sup>: ", round(stats[2], 3), 
+                    "<br> max. R <sup>2</sup> for degree of ", degree , " and ", nknots," internal knots: ", round(stats[3], 3)))
     })
     
     #reset button 

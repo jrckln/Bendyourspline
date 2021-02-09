@@ -62,7 +62,16 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                 )
 ),mainPanel(
     plotlyOutput("plot.bs"), 
-    uiOutput("intercept.bs"), 
+    br(),
+    fluidRow(
+        column(3, 
+               wellPanel(uiOutput("intercept.bs"), style="height:100px;")
+        ),
+        column(4, 
+               wellPanel(uiOutput("stats.bs"), style="height:100px;")
+        )
+    ),
+    br(),
     plotlyOutput("basis_plot.bs", height = "200px")
   )
 ) 
