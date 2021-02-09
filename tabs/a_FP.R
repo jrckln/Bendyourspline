@@ -75,7 +75,6 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                uiOutput("stats.fp")
         )
     ),
-    plotlyOutput("plot.FP"), 
-    uiOutput("intercept.bs")
+    plotlyOutput("plot.FP")
   )
 ) 

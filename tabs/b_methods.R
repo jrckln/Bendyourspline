@@ -36,7 +36,7 @@ methods <-
                 ),
             fluidRow(
                 column(4, 
-                       switchInput(inputId = "adv_settings",value = FALSE, label="Advanced settings", labelWidth = "120px")
+                       switchInput(inputId = "adv_settings", value = FALSE, label="Advanced settings", labelWidth = "120px")
                        ), 
                 column(8,
                        conditionalPanel("input.adv_settings", 

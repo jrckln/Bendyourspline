@@ -42,3 +42,4 @@ opt.intercept <- function(fitted, data, interval){
   intercept.min <- optimize(f, interval, tol = 0.0001, fitted = fitted, data=data)
   return (intercept.min)
 }
+
