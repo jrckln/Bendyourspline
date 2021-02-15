@@ -373,12 +373,12 @@ function(input, output, session){
                         selector = '#placeholder_coef_bs',
                         ui = tags$div(
                             actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"),
-                                         style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus"),
+                                         style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus_bs"),
                             sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ",
                                                                                           length(inserted.coef.bs)+i),
                                                   value=1, step=0.01, min=-1, max=1, width='80%'),
                             actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
-                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus"),
+                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_bs"),
                             id=id[i]
                         )
                     )
@@ -392,14 +392,14 @@ function(input, output, session){
                     selector = '#placeholder_coef_bs',
                     ui = tags$div(
                         actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"),
-                                     style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="minus"),
+                                     style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="minus_bs"),
                         # class to control only this button group
                         # and get last id with JS
                         sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i),
                                               value=1, step=0.01,
                                               min=-1, max=1, width='80%'),
                         actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
-                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus"),
+                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_bs"),
                         id=id[i])
                 )
                 inserted.coef.bs <<- c(inserted.coef.bs, id[i])
@@ -481,22 +481,22 @@ function(input, output, session){
     })
 
     #trigger when any minus button was clicked: modifies input value
-    observeEvent(input$last_btn_minus, {
+    observeEvent(input$last_btn_minus_bs, {
         coefs <- getcoef.bs()
         val.coefs.bs <- coefs
         #determine button of which coef id was clicked: id of button is coef<idnumber>_inner_minus
-        id.coef <- gsub("_minus", "", input$last_btn_minus)
+        id.coef <- gsub("_minus", "", input$last_btn_minus_bs)
         ind <- as.numeric(gsub("_inner", "", gsub("bs_coef","",id.coef)))
         val <- getcoef.bs()
         val <- val[ind] -0.01
         updateSliderInput(session, inputId = id.coef, value = val)
     })
 
-    observeEvent(input$last_btn_plus, {
+    observeEvent(input$last_btn_plus_bs, {
         coefs <- getcoef.bs()
         val.coefs.bs <- coefs
         #determine button of which coef id was clicked: id of button is coef<idnumber>_inner_minus
-        id.coef <- gsub("_plus", "", input$last_btn_plus)
+        id.coef <- gsub("_plus", "", input$last_btn_plus_bs)
         ind <- as.numeric(gsub("_inner", "", gsub("bs_coef","",id.coef)))
         val <- getcoef.bs()
         val <- val[ind] + 0.01
@@ -749,14 +749,14 @@ function(input, output, session){
                     selector = '#placeholder_coef_nsp',
                     ui = tags$div(
                         actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"),
-                                     style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="minus"),
+                                     style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="minus_nsp"),
                         # class to control only this button group
                         # and get last id with JS (see tab bsplines)
                         sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i),
                                               value=1, step=0.01,
                                               min=-1, max=1, width='80%'),
                         actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
-                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus"),
+                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_nsp"),
                         id=id[i])
                 )
                 inserted.coef.nsp <<- c(inserted.coef.nsp, id[i])

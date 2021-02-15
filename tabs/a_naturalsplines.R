@@ -4,10 +4,10 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                             #to opt out of shiny default optimiation (cares only of last value) but we want to trigger
                             #everytime button is clicked but get the id: {priority: 'event'}
                             HTML(
-                            "$(document).on('click', '.minus', function () {
+                            "$(document).on('click', '.minus_nsp', function () {
                                 Shiny.setInputValue('last_btn_minus_nsp',this.id, {priority: 'event'});
                              });
-                             $(document).on('click', '.plus', function () {
+                             $(document).on('click', '.plus_nsp', function () {
                                 Shiny.setInputValue('last_btn_plus_nsp',this.id, {priority: 'event'});
                              });
                             "

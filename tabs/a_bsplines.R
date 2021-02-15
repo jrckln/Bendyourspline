@@ -4,11 +4,11 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                             #to opt out of shiny default optimiation (cares only of last value) but we want to trigger
                             #everytime button is clicked but get the id: {priority: 'event'}
                             HTML(
-                            "$(document).on('click', '.minus', function () {
-                                Shiny.setInputValue('last_btn_minus',this.id, {priority: 'event'});
+                            "$(document).on('click', '.minus_bs', function () {
+                                Shiny.setInputValue('last_btn_minus_bs',this.id, {priority: 'event'});
                              });
-                             $(document).on('click', '.plus', function () {
-                                Shiny.setInputValue('last_btn_plus',this.id, {priority: 'event'});
+                             $(document).on('click', '.plus_bs', function () {
+                                Shiny.setInputValue('last_btn_plus_bs',this.id, {priority: 'event'});
                              });
                             "
                     )),
