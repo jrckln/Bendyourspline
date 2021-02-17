@@ -36,11 +36,12 @@ methods <-
                 ),
             fluidRow(
                 column(4, 
-                       switchInput(inputId = "adv_settings",value = FALSE, label="Advanced settings", labelWidth = "120px")
+                       switchInput(inputId = "adv_settings", value = FALSE, label="Advanced settings", labelWidth = "120px")
                        ), 
                 column(8,
                        conditionalPanel("input.adv_settings", 
-                                 numericInput("seed", "Set seed:", value=14)
+                                 popify(numericInput("seed", "Set seed:", value=14), "Seed", 
+                                        "Initializes random number generator for drawing random samples")
                                  )
                        )
             ),
@@ -49,7 +50,8 @@ methods <-
                     tabsetPanel(
                          fp, 
                          bsplines, 
-                         naturalsplines
+                         naturalsplines, 
+                         about_sub
                     )
                       )
             )

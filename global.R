@@ -7,13 +7,15 @@ library(ggplot2)
 library(shinyWidgets)
 library(shinyjs)
 library(splines)
+library(mfp)
+library(magrittr)
+library(stringr)
+library(reshape2)
 
-source("data_generation.R")
 source("data/data.R")
 
 #colors for plotly
 col <- c("#4E84C4", "#E7B800", "#FC4E07","#C4961A","#D16103",  "#F4EDCA","#FFDB6D", "#C3D7A4", "#52854C", "#293352", "#00AFBB")
-var <- "X"
 
 #load ressources:
 #name future files according to hierarchy: Navbarpage prefix b; Methods prefix a for order
