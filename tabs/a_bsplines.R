@@ -65,8 +65,8 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                     )
                 ),
                 fluidRow(
-                    column(6, tags$div(id = 'placeholder_pos_bs')),
-                    column(6, tags$div(id = 'placeholder_coef_bs'))
+                    column(6, wellPanel(tags$div(id = 'placeholder_pos_bs')), style="padding: 2px;"),
+                    column(6, wellPanel(tags$div(id = 'placeholder_coef_bs'), style="padding: 2px;"))
                 ),
                 fluidRow(
                     column(3, offset=0,

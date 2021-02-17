@@ -65,9 +65,9 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                 ), 
                 fluidRow(
                     column(6, 
-                            uiOutput("boundary_knots.nsp"),
-                           tags$div(id = 'placeholder_pos_nsp')), 
-                    column(6, tags$div(id = 'placeholder_coef_nsp'))
+                           wellPanel(uiOutput("boundary_knots.nsp"),
+                           tags$div(id = 'placeholder_pos_nsp')), style="padding: 2px;"), 
+                    column(6, wellPanel(tags$div(id = 'placeholder_coef_nsp'), style="padding: 2px;"))
                 ),
                 fluidRow(
                     column(3, offset=0, 
