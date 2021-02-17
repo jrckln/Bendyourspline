@@ -40,7 +40,8 @@ methods <-
                        ), 
                 column(8,
                        conditionalPanel("input.adv_settings", 
-                                 numericInput("seed", "Set seed:", value=14)
+                                 popify(numericInput("seed", "Set seed:", value=14), "Seed", 
+                                        "Initializes random number generator fro drawing random samples")
                                  )
                        )
             ),
