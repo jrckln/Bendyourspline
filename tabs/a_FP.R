@@ -52,15 +52,16 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                       div(style="display:inline-block; width: 65%;",sliderInput("intercept.fp",label="Intercept",min = 0, max = 40, value = 0, step = 0.1))
                 ), 
                 fluidRow(
-                    column(3, offset=0, 
+                    column(6, offset=0, 
                            materialSwitch(inputId = "add_y.fp", label = "Add response", status = "primary", right = FALSE)
                     ), 
-                    column(3, offset=0, 
-                           materialSwitch(inputId = "add_mean.fp", label = "Add mean", status = "primary", right = FALSE)
-                    ),
                     column(6, offset=0, 
-                           materialSwitch(inputId = "add_CI.fp", label = "Add confidence band", status = "primary", right = FALSE, width="70%")
+                           materialSwitch(inputId = "add_mean.fp", label = "Add mean", status = "primary", right = FALSE)
                     )
+                    # ),
+                    # column(6, offset=0, 
+                    #        materialSwitch(inputId = "add_CI.fp", label = "Add confidence band", status = "primary", right = FALSE, width="70%")
+                    # )
                 ), 
                 fluidRow(
                   column(12, offset=0, actionButton("reset_input.fp", "Reset inputs"))

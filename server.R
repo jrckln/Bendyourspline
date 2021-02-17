@@ -219,10 +219,10 @@ function(input, output, session){
             p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
         }
         
-        if(input$add_CI.fp){
-          SE.fitted <- se_fitted(DF, var_list$y, intercept)
-          p <- p+geom_ribbon(aes(x = !!sym(var_list$x),ymin=intercept+fp-1.96*SE.fitted,ymax=intercept+fp+1.96*SE.fitted),alpha=0.2)
-        }
+        # if(input$add_CI.fp){
+        #   SE.fitted <- se_fitted(DF, var_list$y, intercept)
+        #   p <- p+geom_ribbon(aes(x = !!sym(var_list$x),ymin=intercept+fp-1.96*SE.fitted,ymax=intercept+fp+1.96*SE.fitted),alpha=0.2)
+        # }
         p <- p +geom_line(aes(x=!!sym(var_list$x), y = intercept+fp)) + 
                 theme_minimal() +
                 ylab(var_list$y) 
