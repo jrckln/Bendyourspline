@@ -266,6 +266,25 @@ function(input, output, session){
     observeEvent(input$reset_input.fp, {
        shinyjs::reset("inputs.fp") #id of tab to reset
     })
+    observe({
+      if(input$adjust_intercept.fp){
+        shinyjs::disable("intercept.fp")
+      }
+      if(!input$adjust_intercept.fp){
+        shinyjs::enable("intercept.fp")
+      }
+    })
+    
+    observe({
+      if(!(all(input$add_mean.fp, input$add_y.fp))){
+        shinyjs::disable("adjust_intercept.fp")
+        shinyjs::disable("intercept.fp")
+      }
+      if(any(input$add_mean.fp, input$add_y.fp)){
+        shinyjs::enable("adjust_intercept.fp")
+        shinyjs::enable("intercept.fp")
+      }
+    })
     
     #############################################
     #######        B-splines        #############
@@ -626,6 +645,24 @@ function(input, output, session){
     #reset button
     observeEvent(input$reset_input.bs, {
        shinyjs::reset("inputs.bs") #id of tab to reset
+    })
+    observe({
+      if(input$adjust_intercept.bs){
+        shinyjs::disable("intercept.bs")
+      }
+      if(!input$adjust_intercept.bs){
+        shinyjs::enable("intercept.bs")
+      }
+    })
+    observe({
+      if(!(all(input$add_mean.bs, input$add_y.bs))){
+        shinyjs::disable("adjust_intercept.bs")
+        shinyjs::disable("intercept.bs")
+      }
+      if(any(input$add_mean.bs, input$add_y.bs)){
+        shinyjs::enable("adjust_intercept.bs")
+        shinyjs::enable("intercept.bs")
+      }
     })
     
     #############################################
@@ -1025,6 +1062,24 @@ function(input, output, session){
     #reset button
     observeEvent(input$reset_input.nsp, {
         shinyjs::reset("inputs.nsp") #id of tab to reset
+    })
+    observe({
+      if(input$adjust_intercept.nsp){
+        shinyjs::disable("intercept.nsp")
+      }
+      if(!input$adjust_intercept.nsp){
+        shinyjs::enable("intercept.nsp")
+      }
+    })
+    observe({
+      if(!(all(input$add_mean.nsp, input$add_y.nsp))){
+        shinyjs::disable("adjust_intercept.nsp")
+        shinyjs::disable("intercept.nsp")
+      }
+      if(any(input$add_mean.nsp, input$add_y.nsp)){
+        shinyjs::enable("adjust_intercept.nsp")
+        shinyjs::enable("intercept.nsp")
+      }
     })
     
     session$onSessionEnded(stopApp) #automatically stop when closing browser
