@@ -378,7 +378,7 @@ function(input, output, session){
                                          style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus_bs"),
                             sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ",
                                                                                           length(inserted.coef.bs)+i),
-                                                  value=1, step=0.01, min=-1, max=1, width='70%'),
+                                                  value=0, step=0.01, min=-1, max=1, width='70%'),
                             actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
                                          style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_bs"),
                             id=id[i]
@@ -398,7 +398,7 @@ function(input, output, session){
                         # class to control only this button group
                         # and get last id with JS
                         sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i),
-                                              value=1, step=0.01,
+                                              value=0, step=0.01,
                                               min=-1, max=1, width='70%'),
                         actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
                                          style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_bs"),
@@ -759,7 +759,7 @@ function(input, output, session){
                                          style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus_nsp"),
                             sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ",
                                                                                           length(inserted.coef.nsp)+i),
-                                                  value=1, step=0.01, min=-1, max=1, width='80%'),
+                                                  value=0, step=0.01, min=-1, max=1, width='80%'),
                             actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
                                          style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_nsp"),
                             id=id[i]
@@ -779,7 +779,7 @@ function(input, output, session){
                         # class to control only this button group
                         # and get last id with JS (see tab bsplines)
                         sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i),
-                                              value=1, step=0.01,
+                                              value=0, step=0.01,
                                               min=-1, max=1, width='80%'),
                         actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
                                          style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_nsp"),
