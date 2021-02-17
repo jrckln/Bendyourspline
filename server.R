@@ -298,7 +298,6 @@ function(input, output, session){
         }
     })
     
-    
     observeEvent(input$nknots.bs, {
         if(length(inserted.pos.bs)!=0){ #case of update
             if(length(inserted.pos.bs)>as.numeric(input$nknots.bs)){
@@ -330,7 +329,9 @@ function(input, output, session){
                 }
             }
         }else{ #case of init
-            default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = input$nknots.bs + 2)[-c(1, input$nknots.bs + 2)]
+            default.pos.knots.bs <- seq.int(from = 0, 
+                                            to = 1, 
+                                            length.out = input$nknots.bs +2)[-c(1, input$nknots.bs + 2)]
             var_list <- var_list_reac()
             data <- var_list$data
             x <- data[,var_list$x]
@@ -654,6 +655,26 @@ function(input, output, session){
             updateSliderInput(session, i, max = range.coefs.nsp$range.coef.right, min=range.coefs.nsp$range.coef.left)
         }
     })
+    
+    output$boundary_knots.nsp <- renderUI({
+      var_list <- var_list_reac()
+      data <- var_list$data
+      x <- data[,var_list$x]
+      default.pos.knots.nsp <- seq.int(from = 0, 
+                                             to = 1,
+                                             length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
+      pos <- quantile(x, default.pos.knots.nsp)
+      div(
+      sliderInput("boundary1.nsp", "Position of Boundary knot 1", min=min(x), max=pos[1], value=min(x), step=0.1),
+      sliderInput("boundary2.nsp", "Position of Boundary knot 2", min=pos[length(pos)], max=max(x), value=max(x), step=0.1)
+      )
+    })
+    #update max and min val of boundary knots slider according to second and second to last knot position
+    observe({
+      pos <- getpos.nsp()
+      updateSliderInput(session, "boundary1.nsp", max=pos[1])
+      updateSliderInput(session, "boundary2.nsp", min = pos[length(pos)])
+    })
 
 
     observeEvent(input$nknots.nsp, {
@@ -668,10 +689,12 @@ function(input, output, session){
                     inserted.pos.nsp <<- inserted.pos.nsp[-length(inserted.pos.nsp)]
                 }
             }else if(length(inserted.pos.nsp)<as.numeric(input$nknots.nsp)){
-                default.pos.knots.nsp <- seq.int(from = 0, to = 1, length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
                 var_list <- var_list_reac()
                 data <- var_list$data
                 x <- data[,var_list$x]
+                default.pos.knots.nsp <- seq.int(from = (input$boundary1.nsp-min(x))/(max(x)-min(x)),
+                                                 to = (input$boundary2.nsp-min(x))/(max(x)-min(x)),
+                                                 length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
                 default.pos.knots.nsp <- quantile(x, default.pos.knots.nsp)
                 num <- (length(inserted.pos.nsp)+1):input$nknots.nsp
                 id <- paste0('nsp_pos', num)
@@ -680,14 +703,16 @@ function(input, output, session){
                         selector = '#placeholder_pos_nsp',
                         ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",
                                                                                           length(inserted.pos.nsp)+i),
-                                                  value=default.pos.knots.nsp[i], step=0.01,
+                                                  value=default.pos.knots.nsp[num-1+i], step=0.01,
                                                   min=min(x), max=max(x)), id=id[i])
                     )
                     inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
                 }
             }
         }else{ #case of init
-            default.pos.knots.nsp <- seq.int(from = 0, to = 1, length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
+            default.pos.knots.nsp <- seq.int(from = 0, 
+                                             to = 1,
+                                             length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
             var_list <- var_list_reac()
             data <- var_list$data
             x <- data[,var_list$x]
@@ -794,7 +819,7 @@ function(input, output, session){
             data <- var_list$data
             x <- data[,var_list$x]
             pos <- getpos.nsp()
-            b <- ns(x,knots=pos)
+            b <- ns(x,knots=pos, Boundary.knots = c(input$boundary1.nsp, input$boundary2.nsp))
             coefs <- getcoef.nsp()
             spline <- apply(b, 1, function(x, coefs.in = coefs) {
                 res <- 0
@@ -866,7 +891,12 @@ function(input, output, session){
         x <- data[,var_list$x]
 
         pos <- getpos.nsp()
-        b <- ns(x, knots=pos)
+        if(any(is.null(input$boundary1.nsp), is.null(input$boundary2.nsp))){
+          boundaries <- c(min(x), max(x))
+        } else {
+          boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
+        }
+        b <- ns(x, knots=pos, Boundary.knots = boundaries)
 
         #TODO: push up to data creation - no need for recalc every time
         data <- data %>%
@@ -893,9 +923,12 @@ function(input, output, session){
         }
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
+            boundaries <- attr(b, "Boundary.knots")
             for(i in knots){
                 p <- p + geom_vline(xintercept=i, color = "red", linetype="dashed")
             }
+            p <- p + geom_vline(xintercept=boundaries[1], color = "red4", linetype="dashed")+
+              geom_vline(xintercept=boundaries[2], color = "red4", linetype="dashed")
         }
 
         p <- p +geom_line(aes(x=!!sym(var_list$x), y = spline)) +
@@ -909,7 +942,12 @@ function(input, output, session){
         data <- var_list$data
         x <- data[,var_list$x]
         pos <- getpos.nsp()
-        b <- ns(x, knots=pos)
+        if(any(is.null(input$boundary1.nsp), is.null(input$boundary2.nsp))){
+          boundaries <- c(min(x), max(x))
+        } else {
+          boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
+        }
+        b <- ns(x, knots=pos, Boundary.knots = boundaries)
         all.knots <- sort(c(attr(b,"Boundary.knots") ,attr(b, "knots")))
         bounds <- range(all.knots)
         knot.values <- set_colnames(predict(b, all.knots),str_c("S", seq_len(ncol(predict(b, all.knots)))))
@@ -922,6 +960,15 @@ function(input, output, session){
             geom_line() +
             scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") +
             ggtitle("Spline basis functions")
+        if(input$add_knots_pos.nsp){
+            knots <- attr(b, "knots")
+            boundaries <- attr(b, "Boundary.knots")
+            for(i in knots){
+                p <- p + geom_vline(xintercept=i, color = "red", linetype="dashed")
+            }
+            p <- p + geom_vline(xintercept=boundaries[1], color = "red4", linetype="dashed")+
+              geom_vline(xintercept=boundaries[2], color = "red4", linetype="dashed")
+        }
         ggplotly(p)
     })
 
@@ -940,7 +987,9 @@ function(input, output, session){
             res
         })
         spline <- spline + getintercept.nsp()
-        model <- lm(as.formula(paste0(var_list$y, " ~ ns(", var_list$x, ", df=", 1+length(pos),")")), data=data)
+        model <- lm(as.formula(paste0(var_list$y, " ~ ns(", var_list$x, ", df=", 1+length(pos),
+                                      ", Boundary.knots=c(", ifelse(is.null(input$boundary1.nsp), min(x), input$boundary1.nsp),
+                                      ",",ifelse(is.null(input$boundary2.nsp), max(x), input$boundary2.nsp), "))")), data=data)
         fitted <- model$fitted
         p <- model$rank
         sstot <- sum((data[,var_list$y]-mean(data[,var_list$y]))^2) #total sum of squares
@@ -969,7 +1018,7 @@ function(input, output, session){
         stats <- calcadjR2.nsp()
         nknots <- input$nknots.nsp
         HTML(paste0("R <sup>2</sup>: ", round(stats[1], 3), "<br> adj. R <sup>2</sup>: ", round(stats[2], 3),
-                    "<br> max. R <sup>2</sup> for ", nknots," internal knots: ", round(stats[3], 3)))
+                    "<br> max. R <sup>2</sup> for ", nknots," internal knots and Boundary knots set to ", input$boundary1.nsp," and ", input$boundary2.nsp ," : ", round(stats[3], 3)))
     })
 
     #reset button
