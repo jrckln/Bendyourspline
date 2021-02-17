@@ -16,7 +16,29 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                                         #placeholder_coef_bs .form-group.shiny-input-container{
                                         display: inline-block;
                                         }
-                                        "))
+                                        ")), 
+                    tags$style(HTML("[for=bs_coef1_inner]+span>.irs>.irs-single, [for=bs_coef1_inner]+span>.irs-bar-edge, [for=bs_coef1_inner]+span>.irs-bar {
+                                                  background: #4E84C4;}")),
+                    tags$style(HTML("[for=bs_coef2_inner]+span>.irs>.irs-single, [for=bs_coef2_inner]+span>.irs-bar-edge, [for=bs_coef2_inner]+span>.irs-bar {
+                                                  background: #E7B800;}")),
+                    tags$style(HTML("[for=bs_coef3_inner]+span>.irs>.irs-single, [for=bs_coef3_inner]+span>.irs-bar-edge, [for=bs_coef3_inner]+span>.irs-bar {
+                                                  background: #FC4E07;}")),
+                    tags$style(HTML("[for=bs_coef4_inner]+span>.irs>.irs-single, [for=bs_coef4_inner]+span>.irs-bar-edge, [for=bs_coef4_inner]+span>.irs-bar {
+                                                  background: #C4961A;}")),
+                    tags$style(HTML("[for=bs_coef5_inner]+span>.irs>.irs-single, [for=bs_coef5_inner]+span>.irs-bar-edge, [for=bs_coef5_inner]+span>.irs-bar {
+                                                  background: #D16103;}")),
+                    tags$style(HTML("[for=bs_coef6_inner]+span>.irs>.irs-single, [for=bs_coef6_inner]+span>.irs-bar-edge, [for=bs_coef6_inner]+span>.irs-bar {
+                                                  background: #F4EDCA;}")),
+                    tags$style(HTML("[for=bs_coef7_inner]+span>.irs>.irs-single, [for=bs_coef7_inner]+span>.irs-bar-edge, [for=bs_coef7_inner]+span>.irs-bar {
+                                                  background: #FFDB6D;}")),
+                    tags$style(HTML("[for=bs_coef8_inner]+span>.irs>.irs-single, [for=bs_coef8_inner]+span>.irs-bar-edge, [for=bs_coef8_inner]+span>.irs-bar {
+                                                  background: #C3D7A4;}")),
+                    tags$style(HTML("[for=bs_coef9_inner]+span>.irs>.irs-single, [for=bs_coef9_inner]+span>.irs-bar-edge, [for=bs_coef9_inner]+span>.irs-bar {
+                                                  background: #52854C;}")), 
+                    tags$style(HTML("[for=bs_coef10_inner]+span>.irs>.irs-single, [for=bs_coef10_inner]+span>.irs-bar-edge, [for=bs_coef10_inner]+span>.irs-bar {
+                                                  background: #293352;}")), 
+                    tags$style(HTML("[for=bs_coef11_inner]+span>.irs>.irs-single, [for=bs_coef11_inner]+span>.irs-bar-edge, [for=bs_coef11_inner]+span>.irs-bar {
+                                                  background: #00AFBB;}"))
                     ),
                      #gets the id of the last button clicked of class "minus" - to determine which coefficient id should be changed
              sidebarPanel(class="input_class", id = "inputs.bs",

@@ -314,6 +314,7 @@ function(input, output, session){
                 var_list <- var_list_reac()
                 data <- var_list$data
                 x <- data[,var_list$x]
+                
                 default.pos.knots.bs <- quantile(x, default.pos.knots.bs)
                 num <- (length(inserted.pos.bs)+1):input$nknots.bs
                 id <- paste0('bs_pos', num)
@@ -322,7 +323,7 @@ function(input, output, session){
                         selector = '#placeholder_pos_bs',
                         ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",
                                                                                           length(inserted.pos.bs)+i),
-                                                  value=default.pos.knots.bs[i], step=0.01,
+                                                  value=default.pos.knots.bs[num-1+i], step=0.01,
                                                   min=min(x), max=max(x)), id=id[i])
                     )
                     inserted.pos.bs <<- c(inserted.pos.bs, id[i])
