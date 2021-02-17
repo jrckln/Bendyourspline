@@ -50,7 +50,8 @@ methods <-
                     tabsetPanel(
                          fp, 
                          bsplines, 
-                         naturalsplines
+                         naturalsplines, 
+                         about_sub
                     )
                       )
             )
