@@ -340,7 +340,6 @@ function(input, output, session){
                 var_list <- var_list_reac()
                 data <- var_list$data
                 x <- data[,var_list$x]
-                
                 default.pos.knots.bs <- quantile(x, default.pos.knots.bs)
                 num <- (length(inserted.pos.bs)+1):input$nknots.bs
                 id <- paste0('bs_pos', num)
@@ -348,7 +347,7 @@ function(input, output, session){
                     insertUI(
                         selector = '#placeholder_pos_bs',
                         ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",
-                                                                                          length(inserted.pos.bs)+i),
+                                                                                          num[i]),
                                                   value=default.pos.knots.bs[num[i]], step=0.01,
                                                   min=min(x), max=max(x)), id=id[i])
                     )
@@ -404,7 +403,7 @@ function(input, output, session){
                             actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"),
                                          style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus_bs"),
                             sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ",
-                                                                                          length(inserted.coef.bs)+i),
+                                                                                          toinsert[i]),
                                                   value=0, step=0.01, min=-1, max=1, width='70%'),
                             actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
                                          style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_bs"),
@@ -757,7 +756,7 @@ function(input, output, session){
                     insertUI(
                         selector = '#placeholder_pos_nsp',
                         ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",
-                                                                                          length(inserted.pos.nsp)+i),
+                                                                                          num[i]),
                                                   value=default.pos.knots.nsp[num[i]], step=0.01,
                                                   min=min(x), max=max(x)), id=id[i])
                     )
@@ -813,7 +812,7 @@ function(input, output, session){
                             actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"),
                                          style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus_nsp"),
                             sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ",
-                                                                                          length(inserted.coef.nsp)+i),
+                                                                                          toinsert[i]),
                                                   value=0, step=0.01, min=-1, max=1, width='80%'),
                             actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
                                          style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_nsp"),
