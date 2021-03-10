@@ -100,6 +100,8 @@ function(input, output, session){
     })
     
     output$formula.fp <- renderUI({
+      req(input$coef1.fp)
+      req(input$coef2.fp)
         pow1 <- as.numeric(input$power1.fp)
         
         trans1 <- paste0("x^{", pow1, "}")
