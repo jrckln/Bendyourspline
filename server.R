@@ -100,7 +100,7 @@ function(input, output, session){
         pow1 <- as.numeric(input$power1.fp)
         
         trans1 <- paste0("x^{", pow1, "}")
-        if(pow1 == 0) trans1 <- "log(x)"
+        if(pow1 == 0) trans1 <- "\\log(x)"
         if(pow1 == 1) trans1 <- "x"
         coef1 <- as.numeric(input$coef1.fp)
         if(coef1 >= 0) {
@@ -113,7 +113,7 @@ function(input, output, session){
         
         pow2 <- as.numeric(input$power2.fp)
         trans2 <- paste0("x^{", pow2, "}")
-        if(pow2 == 0) trans2 <- "log(x)"
+        if(pow2 == 0) trans2 <- "\\log(x)"
         if(pow2 == 1) trans2 <- "x"
         if(pow1 == pow2) trans2 <- paste(trans2, "\\cdot \\log(x)")
         coef2 <- as.numeric(input$coef2.fp)
