@@ -312,6 +312,7 @@ function(input, output, session){
     
     #update range of coefficient sliders
     observe({
+      req(input$nknots.bs)
         num <- input$degree.bs + input$nknots.bs
         #get values of coefficients:
         ind <- paste0("bs_coef", 1:num, "_inner")
@@ -321,6 +322,7 @@ function(input, output, session){
     })
     
     observeEvent(input$nknots.bs, {
+      req(input$nknots.bs)
         if(length(inserted.pos.bs)!=0){ #case of update
             if(length(inserted.pos.bs)>as.numeric(input$nknots.bs)){
                 #remove difference:
@@ -376,6 +378,7 @@ function(input, output, session){
     #dynamic insert of slider for coefficients for each spline basis function
     inserted.coef.bs <- c()
     observeEvent(c(input$nknots.bs, input$degree.bs), {
+      req(input$nknots.bs)
         num <- input$degree.bs + input$nknots.bs #+1 for intercept but intercept is extra
         if(length(inserted.coef.bs)!=0){ #case of update
             #num is the number of desired inputs
@@ -433,6 +436,7 @@ function(input, output, session){
     })
     
     getpos.bs <- reactive({
+        req(input$nknots.bs)
         #get values of knot positions:
         ind <- match(paste0("bs_pos", 1:input$nknots.bs, "_inner"), names(input))
         ind <- ind[!(is.na(ind))]
@@ -444,6 +448,7 @@ function(input, output, session){
     })
 
     getcoef.bs <- reactive({
+      req(input$nknots.bs)
         num <- input$degree.bs + input$nknots.bs
         #get values of coefficients:
         ind <- match(paste0("bs_coef", 1:num, "_inner"), names(input))
@@ -489,6 +494,7 @@ function(input, output, session){
     })
 
     getid_minus.bs <- reactive({
+      req(input$nknots.bs)
         #returns quoted expression
         num <- input$degree.bs + input$nknots.bs
         ind <- match(paste0("bs_coef", 1:num, "_inner_minus"), names(input))
@@ -497,6 +503,7 @@ function(input, output, session){
     })
 
     getid_plus.bs <- reactive({
+      req(input$nknots.bs)
         #returns quoted expression
         num <- input$degree.bs + input$nknots.bs
         ind <- match(paste0("bs_coef", 1:num, "_inner_plus"), names(input))
@@ -528,6 +535,7 @@ function(input, output, session){
     })
 
     output$plot.bs <- renderPlotly({
+      req(input$nknots.bs)
         var_list <- var_list_reac()
         data <- var_list$data
 
@@ -575,6 +583,7 @@ function(input, output, session){
     })
 
     output$basis_plot.bs<- renderPlotly({
+      req(input$nknots.bs)
         var_list <- var_list_reac()
         data <- var_list$data
         x <- data[,var_list$x]
@@ -689,6 +698,7 @@ function(input, output, session){
     })
     #update range of coefficient sliders
     observe({
+      req(input$nknots.nsp)
         num <- 1 + input$nknots.nsp
         #get values of coefficients:
         ind <- paste0("nsp_coef", 1:num, "_inner")
@@ -698,6 +708,7 @@ function(input, output, session){
     })
     
     output$boundary_knots.nsp <- renderUI({
+      req(input$nknots.nsp)
       var_list <- var_list_reac()
       data <- var_list$data
       x <- data[,var_list$x]
@@ -719,6 +730,7 @@ function(input, output, session){
 
 
     observeEvent(input$nknots.nsp, {
+      req(input$nknots.nsp)
         if(length(inserted.pos.nsp)!=0){ #case of update
             if(length(inserted.pos.nsp)>as.numeric(input$nknots.nsp)){
                 #remove difference:
@@ -775,6 +787,7 @@ function(input, output, session){
     #dynamic insert of slider for coefficients for each spline basis function
     inserted.coef.nsp <- c()
     observeEvent(c(input$nknots.nsp), {
+      req(input$nknots.nsp)
         num <- 1 + input$nknots.nsp #+1 for intercept but intercept is extra
         if(length(inserted.coef.nsp)!=0){ #case of update
             #num is the number of desired inputs
@@ -832,6 +845,7 @@ function(input, output, session){
     })
 
     getpos.nsp <- reactive({
+      req(input$nknots.nsp)
         #get values of knot positions:
         ind <- match(paste0("nsp_pos", 1:input$nknots.nsp, "_inner"), names(input))
         ind <- ind[!(is.na(ind))]
@@ -843,6 +857,7 @@ function(input, output, session){
     })
 
     getcoef.nsp <- reactive({
+      req(input$nknots.nsp)
         num <- 1 + input$nknots.nsp
         #get values of coefficients:
         ind <- match(paste0("nsp_coef", 1:num, "_inner"), names(input))
@@ -926,6 +941,7 @@ function(input, output, session){
     })
 
     output$plot.nsp <- renderPlotly({
+      req(input$nknots.nsp)
         var_list <- var_list_reac()
         data <- var_list$data
 
@@ -979,6 +995,7 @@ function(input, output, session){
     })
 
     output$basis_plot.nsp<- renderPlotly({
+      req(input$nknots.nsp)
         var_list <- var_list_reac()
         data <- var_list$data
         x <- data[,var_list$x]
