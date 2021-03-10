@@ -404,7 +404,7 @@ function(input, output, session){
                                          style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus_bs"),
                             sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ",
                                                                                           toinsert[i]),
-                                                  value=0, step=0.01, min=-1, max=1, width='70%'),
+                                                  value=0, step=0.01, min=range.coefs.bs$range.coef.left, max=range.coefs.bs$range.coef.right, width='70%'),
                             actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
                                          style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_bs"),
                             id=id[i]
@@ -813,7 +813,7 @@ function(input, output, session){
                                          style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus_nsp"),
                             sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ",
                                                                                           toinsert[i]),
-                                                  value=0, step=0.01, min=-1, max=1, width='80%'),
+                                                  value=0, step=0.01, min=range.coefs.nsp$range.coef.left, max=range.coefs.nsp$range.coef.right, width='80%'),
                             actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
                                          style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_nsp"),
                             id=id[i]
