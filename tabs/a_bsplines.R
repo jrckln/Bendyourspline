@@ -54,7 +54,7 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                 fluidRow(
                     column(6,
                         sliderInput("degree.bs", "Degree", min=1, max=4, value=1, step=1),
-                        numericInput("nknots.bs", "Number of internal knots", min=1, value = 2, width="100px")
+                        numericInput("nknots.bs", "Number of internal knots", min=1, max = 10, value = 2, width="100px")
                     ),
                     column(6,
                     div(style="padding-left: 3%;",
