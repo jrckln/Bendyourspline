@@ -347,7 +347,7 @@ function(input, output, session){
                         selector = '#placeholder_pos_bs',
                         ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",
                                                                                           length(inserted.pos.bs)+i),
-                                                  value=default.pos.knots.bs[num-1+i], step=0.01,
+                                                  value=default.pos.knots.bs[num[i]], step=0.01,
                                                   min=min(x), max=max(x)), id=id[i])
                     )
                     inserted.pos.bs <<- c(inserted.pos.bs, id[i])
@@ -756,7 +756,7 @@ function(input, output, session){
                         selector = '#placeholder_pos_nsp',
                         ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",
                                                                                           length(inserted.pos.nsp)+i),
-                                                  value=default.pos.knots.nsp[num-1+i], step=0.01,
+                                                  value=default.pos.knots.nsp[num[i]], step=0.01,
                                                   min=min(x), max=max(x)), id=id[i])
                     )
                     inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
