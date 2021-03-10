@@ -56,9 +56,14 @@ function(input, output, session){
         updateSliderInput(session, "coef1.fp", max = range.coefs.fp$range.coef.right.fp, min=range.coefs.fp$range.coef.left.fp)
         updateSliderInput(session, "coef2.fp", max = range.coefs.fp$range.coef.right.fp, min=range.coefs.fp$range.coef.left.fp)
     })
+    val.coefs.fp <- reactiveValues(val.coef1 = 0, val.coef2 = 0)
+    observeEvent(c(input$coef1.fp, input$coef2.fp),{
+        val.coefs.fp$val.coef1 <- input$coef1.fp
+        val.coefs.fp$val.coef2 <- input$coef2.fp
+    })
     
     #+ and - buttons for FP coefs
-    val.coefs.fp <- reactiveValues(val.coef1 = 0, val.coef2 = 0)
+    
     observeEvent(input$add_val_coef1.fp, {
         val.coefs.fp$val.coef1 <- input$coef1.fp+0.01
     })
@@ -86,14 +91,12 @@ function(input, output, session){
     })    
     #slider inputs - to increase coefficient range
     output$slider.coef1.fp <- renderUI({
-        min = -1
-        max = 1
-        sliderInput("coef1.fp",label="", min = min, max = max, value = val.coefs.fp$val.coef1, step = 0.01)
+        sliderInput("coef1.fp",label="", min = range.coefs.fp$range.coef.left.fp, 
+                    max = range.coefs.fp$range.coef.right.fp, value = val.coefs.fp$val.coef1, step = 0.01)
     })
     output$slider.coef2.fp <- renderUI({
-        min = -1
-        max = 1
-        sliderInput("coef2.fp",label="",min = min, max = max, value = val.coefs.fp$val.coef2, step = 0.01)
+        sliderInput("coef2.fp",label="",min = range.coefs.fp$range.coef.left.fp,
+                    max = range.coefs.fp$range.coef.right.fp, value = val.coefs.fp$val.coef2, step = 0.01)
     })
     
     output$formula.fp <- renderUI({
