@@ -1001,6 +1001,7 @@ function(input, output, session){
         var_list <- var_list_reac()
         data <- var_list$data
         x <- data[,var_list$x]
+        bounds <- c(min(x), max(x))
         pos <- getpos.nsp()
         if(any(is.null(input$boundary1.nsp), is.null(input$boundary2.nsp))){
           boundaries <- c(min(x), max(x))
@@ -1008,7 +1009,7 @@ function(input, output, session){
           boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
         }
         b <- ns(x, knots=pos, Boundary.knots = boundaries)
-        all.knots <- sort(c(attr(b,"Boundary.knots") ,attr(b, "knots")))
+        all.knots <- sort(c(bounds ,attr(b, "knots")))
         bounds <- range(all.knots)
         knot.values <- set_colnames(predict(b, all.knots),str_c("S", seq_len(ncol(predict(b, all.knots)))))
         newx <- seq(bounds[1], bounds[2], length.out = 100+1)
