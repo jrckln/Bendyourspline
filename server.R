@@ -714,20 +714,20 @@ function(input, output, session){
       var_list <- var_list_reac()
       data <- var_list$data
       x <- data[,var_list$x]
-      default.pos.knots.nsp <- seq.int(from = 0, 
-                                             to = 1,
-                                             length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
+      default.pos.knots.nsp <- seq.int(from = 0,
+                                       to = 1,
+                                       length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
       pos <- quantile(x, default.pos.knots.nsp)
       div(
-      sliderInput("boundary1.nsp", "Position of Boundary knot 1", min=min(x), max=pos[1], value=min(x), step=0.1),
-      sliderInput("boundary2.nsp", "Position of Boundary knot 2", min=pos[length(pos)], max=max(x), value=max(x), step=0.1)
+      sliderInput("boundary1.nsp", "Position of Boundary knot 1", min=min(x), max=pos[1]-0.1, value=min(x), step=0.1),
+      sliderInput("boundary2.nsp", "Position of Boundary knot 2", min=pos[length(pos)]+0.1, max=max(x), value=max(x), step=0.1)
       )
     })
     #update max and min val of boundary knots slider according to second and second to last knot position
     observe({
       pos <- getpos.nsp()
-      updateSliderInput(session, "boundary1.nsp", max=pos[1])
-      updateSliderInput(session, "boundary2.nsp", min = pos[length(pos)])
+      updateSliderInput(session, "boundary1.nsp", max=pos[1]-0.1)
+      updateSliderInput(session, "boundary2.nsp", min = pos[length(pos)]+0.1)
     })
 
 
