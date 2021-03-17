@@ -1,4 +1,4 @@
-rm(list = ls(), envir = globalenv()) ## to prevent cross over from old runs
+#rm(list = ls(), envir = globalenv()) ## to prevent cross over from old runs
 
 library(shiny)
 library(plotly)
@@ -11,6 +11,8 @@ library(mfp)
 library(magrittr)
 library(stringr)
 library(reshape2)
+library(mfp)
+
 
 source("data/data.R")
 
