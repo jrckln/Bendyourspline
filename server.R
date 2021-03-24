@@ -210,18 +210,13 @@ function(input, output, session){
         intercept <- getintercept.fp()
         
         DF <- FPdata()
-        
-        DF <- DF %>% 
-            group_by(!!sym(var_list$x)) %>% 
-            mutate(y_mean = mean(!!sym(var_list$y)))
-        
         p <- ggplot(data=DF)
         
         if(input$add_y.fp){
             p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
         }
-        if(input$add_mean.fp){
-            p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
+        if(input$add_loess.fp){
+            p <- p + geom_smooth(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), method = "loess", formula = "y~x")
         }
         if(input$add_optfit.fp){
           optcoef <- getoptfit.fp()
@@ -289,16 +284,16 @@ function(input, output, session){
        updateSliderInput(session, inputId = "intercept.fp", value =coefs[1])
     })
     
-    observe({
-      if(!(all(input$add_mean.fp, input$add_y.fp))){
-        shinyjs::disable("adjust_intercept.fp")
-        shinyjs::disable("intercept.fp")
-      }
-      if(any(input$add_mean.fp, input$add_y.fp)){
-        shinyjs::enable("adjust_intercept.fp")
-        shinyjs::enable("intercept.fp")
-      }
-    })
+    # observe({
+    #   if(!(all(input$add_mean.fp, input$add_y.fp))){
+    #     shinyjs::disable("adjust_intercept.fp")
+    #     shinyjs::disable("intercept.fp")
+    #   }
+    #   if(any(input$add_mean.fp, input$add_y.fp)){
+    #     shinyjs::enable("adjust_intercept.fp")
+    #     shinyjs::enable("intercept.fp")
+    #   }
+    # })
     
     #reset button
     observeEvent(input$reset_input.fp, {
@@ -593,8 +588,8 @@ function(input, output, session){
         if(input$add_y.bs){
             p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
         }
-        if(input$add_mean.bs){
-            p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
+        if(input$add_loess.bs){
+            p <- p + geom_smooth(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), method = "loess", formula = "y~x")
         }
         if(input$add_knots_pos.bs){
             knots <- attr(b, "knots")
@@ -698,16 +693,16 @@ function(input, output, session){
         shinyjs::enable("intercept.bs")
       }
     })
-    observe({
-      if(!(all(input$add_mean.bs, input$add_y.bs))){
-        shinyjs::disable("adjust_intercept.bs")
-        shinyjs::disable("intercept.bs")
-      }
-      if(any(input$add_mean.bs, input$add_y.bs)){
-        shinyjs::enable("adjust_intercept.bs")
-        shinyjs::enable("intercept.bs")
-      }
-    })
+    # observe({
+    #   if(!(all(input$add_mean.bs, input$add_y.bs))){
+    #     shinyjs::disable("adjust_intercept.bs")
+    #     shinyjs::disable("intercept.bs")
+    #   }
+    #   if(any(input$add_mean.bs, input$add_y.bs)){
+    #     shinyjs::enable("adjust_intercept.bs")
+    #     shinyjs::enable("intercept.bs")
+    #   }
+    # })
     
     #############################################
     #######      Natural-splines    #############
@@ -1024,8 +1019,8 @@ function(input, output, session){
         if(input$add_y.nsp){
             p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
         }
-        if(input$add_mean.nsp){
-            p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
+        if(input$add_loess.nsp){
+            p <- p + geom_smooth(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), method = "loess", formula = "y~x")
         }
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
@@ -1146,16 +1141,16 @@ function(input, output, session){
         shinyjs::enable("intercept.nsp")
       }
     })
-    observe({
-      if(!(all(input$add_mean.nsp, input$add_y.nsp))){
-        shinyjs::disable("adjust_intercept.nsp")
-        shinyjs::disable("intercept.nsp")
-      }
-      if(any(input$add_mean.nsp, input$add_y.nsp)){
-        shinyjs::enable("adjust_intercept.nsp")
-        shinyjs::enable("intercept.nsp")
-      }
-    })
+    # observe({
+    #   if(!(all(input$add_mean.nsp, input$add_y.nsp))){
+    #     shinyjs::disable("adjust_intercept.nsp")
+    #     shinyjs::disable("intercept.nsp")
+    #   }
+    #   if(any(input$add_mean.nsp, input$add_y.nsp)){
+    #     shinyjs::enable("adjust_intercept.nsp")
+    #     shinyjs::enable("intercept.nsp")
+    #   }
+    # })
     
     session$onSessionEnded(stopApp) #automatically stop when closing browser
 }

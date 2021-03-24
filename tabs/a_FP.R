@@ -56,7 +56,7 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                            materialSwitch(inputId = "add_y.fp", label = "Response", status = "primary", right = FALSE, value=TRUE)
                     ), 
                     column(6, offset=0, 
-                           materialSwitch(inputId = "add_mean.fp", label = "Mean", status = "primary", right = FALSE, value=TRUE)
+                           materialSwitch(inputId = "add_loess.fp", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
                     ),
                     column(6, offset=0,
                            materialSwitch(inputId = "add_optfit.fp", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)

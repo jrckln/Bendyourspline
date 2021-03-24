@@ -73,7 +73,7 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                            materialSwitch(inputId = "add_y.bs", label = "Response", status = "primary", right = FALSE, value=TRUE)
                     ),
                     column(3, offset=0,
-                           materialSwitch(inputId = "add_mean.bs", label = "Mean", status = "primary", right = FALSE, value=TRUE)
+                           materialSwitch(inputId = "add_loess.bs", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
                     ),
                     column(3, offset=0,
                            materialSwitch(inputId = "add_knots_pos.bs", label = "Knot position", status = "primary", right = FALSE, value=TRUE)

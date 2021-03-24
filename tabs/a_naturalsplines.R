@@ -74,7 +74,7 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                            materialSwitch(inputId = "add_y.nsp", label = "Response", status = "primary", right = FALSE, value=TRUE)
                     ), 
                     column(3, offset=0, 
-                           materialSwitch(inputId = "add_mean.nsp", label = "Mean", status = "primary", right = FALSE, value=TRUE)
+                           materialSwitch(inputId = "add_loess.nsp", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
                     ),
                     column(3, offset=0, 
                            materialSwitch(inputId = "add_knots_pos.nsp", label = "Knot position", status = "primary", right = FALSE, value=TRUE)
