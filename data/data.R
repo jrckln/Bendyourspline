@@ -32,6 +32,8 @@ se_fitted <- function(DF, y, intercept){
   return(sqrt(res))
 }
 
+quantInv <- function(distr, value) ecdf(distr)(value)
+
 load(file="data/data_list.RData")
 
 sample.sizes <- c("100" = 100, "1000" = 1000, "all" = NA)

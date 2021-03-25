@@ -483,7 +483,7 @@ function(input, output, session){
             return(input$intercept.bs)
         }
     })
-
+    
     output$intercept.bs <- renderUI({
         intercept.val <- getintercept.bs()
         if(input$adjust_intercept.bs){
@@ -572,8 +572,11 @@ function(input, output, session){
         }
         if(input$add_knots_pos.bs){
             knots <- attr(b, "knots")
-            for(i in knots){
-                p <- p + geom_vline(xintercept=i, color = "red", linetype="dashed")
+            quant <- quantInv(x, knots)
+            y_coord <- max(x)
+            for(i in 1:length(knots)){
+                p <- p + geom_vline(xintercept=knots[i], color = "red", linetype="dashed")+
+                  annotate(geom = "text", x = knots[i], y = y_coord, label = paste("Q ",quant[i]), hjust = "left")
             }
         }
 
@@ -982,11 +985,16 @@ function(input, output, session){
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
             boundaries <- attr(b, "Boundary.knots")
-            for(i in knots){
-                p <- p + geom_vline(xintercept=i, color = "red", linetype="dashed")
+            quant <- quantInv(x, knots)
+            y_coord <- max(x)
+            for(i in 1:length(knots)){
+                p <- p + geom_vline(xintercept=knots[i], color = "red", linetype="dashed")+
+                  annotate(geom = "text", x = knots[i], y = y_coord, label = paste("Q ",quant[i]), hjust = "left")
             }
             p <- p + geom_vline(xintercept=boundaries[1], color = "red4", linetype="dashed")+
-              geom_vline(xintercept=boundaries[2], color = "red4", linetype="dashed")
+              geom_vline(xintercept=boundaries[2], color = "red4", linetype="dashed")+
+              annotate(geom = "text", x = boundaries[1], y = y_coord, label = paste("Q ",quantInv(x, boundaries[1])), hjust = "left")+
+              annotate(geom = "text", x = boundaries[2], y = y_coord, label = paste("Q ",quantInv(x, boundaries[2])), hjust = "left")
         }
 
         p <- p +geom_line(aes(x=!!sym(var_list$x), y = spline)) +
