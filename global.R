@@ -11,6 +11,8 @@ library(mfp)
 library(magrittr)
 library(stringr)
 library(reshape2)
+library(tidyverse)
+library(shinyhelper)
 
 source("data/data.R")
 

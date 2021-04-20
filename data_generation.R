@@ -7,7 +7,7 @@ load(file="data/nhanes_BP.Rdata")
 data_list <- list("Bmi~Age" = list("data" = nhanes_BP[,c("ID", "age", "bmi", "gender")], 
                                    "x"="age", "y"="bmi", "x_unit" = "years")
                   )
-sample.sizes <- c("100" = 100, "1000" = 1000, "all" = NA)
+sample.sizes <- c("1%" = 0.01, "10%" = 0.1, "50%" = 0.5, "100%" = 1)
 gender <- list("Female"="female", "Male"="male", "Both"=c("female", "male"))
 
 fp.scale <- function(x){  
@@ -35,43 +35,4 @@ if(!exists("input")){
   seed <- input$seed
 }
 
-# FP max R2 calc: 
-for(dataset in names(data_list)){
-    var_list <- data_list[[dataset]]
-    data_list[[dataset]]$fittedR2 <- list()
-    for(sample_size in sample.sizes){
-        for(sex in gender){
-            data <- var_list$data[var_list$data[,"gender"] %in% sex,]
-            if(nrow(data)>0){
-              if(is.na(sample_size)){
-                  ind <- 1:nrow(data)
-              } else {
-                set.seed(seed)
-                ind <- sample(1:nrow(data), sample_size)
-              }
-              data <- data[ind,]
-              x <- data[,var_list$x]
-              pT <- fp.scale(x)
-              transformed <- (x + pT$shift)/pT$scale
-              
-              fit <- mfp(as.formula(paste0(var_list$y, "~ fp(transformed, df=4, scale=F)")), data = data)
-              rss <- sum((fit$residuals)^2)
-              sstot <- sum((data[,var_list$y]-mean(data[,var_list$y]))^2)
-              fittedR2 <- 1-rss/sstot
-              if(length(sex)>1){
-                  sex_ind <- "both"
-              } else {
-                  sex_ind <- sex
-              }
-              if(is.na(sample_size)){
-                  sample_size_ind <- "all"
-              } else {
-                  sample_size_ind <- sample_size
-              }
-              index <- paste0(sample_size_ind,"_" ,sex_ind)
-              data_list[[dataset]]$fittedR2[[index]] <- fittedR2
-            }
-        }
-    }
-}
 save(data_list, file = "data/data_list.RData")

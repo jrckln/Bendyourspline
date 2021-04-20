@@ -1,4 +1,0 @@
-TODO: 
-x   in tab methods: input variable to select refers to name of list of data (data_list): show different names
-x   in file data.R -> sample.sizes "all" is restricted to data_list$bmi_age
-x   reset button on tab "fp" not working correctly - one has to press multiple times in order to reset everything? 

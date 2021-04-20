@@ -36,7 +36,7 @@ quantInv <- function(distr, value) ecdf(distr)(value)
 
 load(file="data/data_list.RData")
 
-sample.sizes <- c("100" = 100, "1000" = 1000, "all" = NA)
+sample.sizes <- c("1%" = 0.01, "10%" = 0.1, "50%" = 0.5, "100%" = 1)
 gender <- list("Female"="female", "Male"="male", "Both"=c("female", "male"))
 
 opt.intercept <- function(fitted, data, interval){

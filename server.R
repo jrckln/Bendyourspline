@@ -1,5 +1,7 @@
 function(input, output, session){
   
+    observe_helpers(help_dir = "help_mds")
+  
     #############################################
     #######         Data            #############
     #############################################
@@ -7,10 +9,11 @@ function(input, output, session){
     output$information.vars <- renderUI({
         var <- as.character(input$variable)
         var_list <- data_list[[var]]
-        HTML(paste0('Chosen variable pair: ', input$variable, "<br>", 
-                    var_list$x, " in ", var_list$x_unit, "<br>", 
-                    "filtered for sex: ", input$gender
-                    ))
+        # HTML(paste0('Chosen variable pair: ', input$variable, "<br>", 
+        #             var_list$x, " in ", var_list$x_unit, "<br>", 
+        #             "filtered for sex: ", input$gender
+        #             ))
+        HTML("")
     })
     
     observeEvent(input$seed, { #recalculate max R2 values if seed is changed:
@@ -27,13 +30,9 @@ function(input, output, session){
         
         var_list$data <- var_list$data[var_list$data[,"gender"] %in% gender[[input$gender]],]
 
-        if(input$sample.size == "all"){
-            ind <- 1:nrow(var_list$data)
-        } else {
-            set.seed(input$seed)
-            n <- sample.sizes[input$sample.size]
-            ind <- sample(1:nrow(var_list$data), n)
-        }
+        set.seed(input$seed)
+        n <- floor(sample.sizes[input$sample.size]*nrow(var_list$data))
+        ind <- sample(1:nrow(var_list$data), n)
         var_list$data <- var_list$data[ind,]
         var_list
     })
@@ -49,8 +48,10 @@ function(input, output, session){
         range.coefs.fp$range.coef.right.fp <- range.coefs.fp$range.coef.right.fp+1
     })
     observeEvent(input$decrease_range.fp, {
+      if(range.coefs.fp$range.coef.left.fp != 0){
         range.coefs.fp$range.coef.left.fp <- range.coefs.fp$range.coef.left.fp+1
         range.coefs.fp$range.coef.right.fp <- range.coefs.fp$range.coef.right.fp-1
+      }
     })
     observe({
         updateSliderInput(session, "coef1.fp", max = range.coefs.fp$range.coef.right.fp, min=range.coefs.fp$range.coef.left.fp)
@@ -157,16 +158,6 @@ function(input, output, session){
         }
     })
     
-    output$intercept.fp <- renderUI({
-        intercept.val <- getintercept.fp()
-        if(input$adjust_intercept.fp){
-            HTML(paste0("Intercept fitted using LS to: ", intercept.val))
-        }
-        else {
-             HTML(paste0("Intercept set to: ", intercept.val))
-        }
-    })
-    
     FPdata <- reactive({
         var_list <- var_list_reac()
         data <- var_list$data
@@ -241,14 +232,21 @@ function(input, output, session){
         pT <- fp.scale(x)
         DF <- FPdata()
         fp <- getintercept.fp()+DF[, "fp"]
+
+        fit <- mfp(as.formula(paste0(var_list$y, "~ fp(transformed, df=4, scale=F)")), data = DF)
+        rss <- sum((fit$residuals)^2)
+        sstot <- sum((data[,var_list$y]-mean(data[,var_list$y]))^2)
+        fittedR2 <- 1-rss/sstot
         
         sstot <- sum((DF[,var_list$y]-mean(DF[,var_list$y]))^2) #total sum of squares
         ssres <- sum((DF[, var_list$y]-fp)^2)  #residual sum of squares
-        1-ssres/sstot
+        c(1-ssres/sstot,fittedR2)
     })
     
     calcadjR2.fp <- reactive({
-        R2 <- calcR2.fp()
+        res <- calcR2.fp() 
+        R2 <- res[1]
+        maxR2 <- res[2]
         var_list <- var_list_reac()
         data <- var_list$data
         if(input$gender == "Both"){
@@ -256,15 +254,29 @@ function(input, output, session){
         } else {
             sex_ind <- gender[input$gender]
         }
-        index <- paste0(input$sample.size,"_" ,sex_ind)
-        maxR2 <- var_list$fittedR2[[index]]
+        
         p <- ifelse(input$coef1.fp == 0& input$coef2.fp == 0, 0, ifelse(any(input$coef1.fp == 0, input$coef2.fp == 0),1,2))
         c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
     })
     output$stats.fp <-  renderUI({
         stats <- calcadjR2.fp()
-        HTML(paste0("R <sup>2</sup>: ", round(stats[1], 3), "<br> adj. R <sup>2</sup>: ", round(stats[2], 3), 
-                    "<br> max. R <sup>2</sup> for this setting: ", round(stats[3], 3)))
+        intercept.val <- getintercept.fp()
+        HTML(paste0("
+            <div class='gridstats'>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[1], 3) ," </h2> <br> <p> R <sup>2</sup> </p> </center> 
+              </div>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[2], 3) ," </h2> <br> <p> ADJUSTED R <sup>2</sup> </p> </center> 
+              </div>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[3], 3) ," </h2> <br> <p> MAXMIMAL R <sup>2</sup> </p> </center> 
+              </div>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(intercept.val,3) ," </h2> <br> <p> INTERCEPT </p> </center> 
+              </div>
+            </div>
+             "))
     })
     
     #reset button
@@ -308,8 +320,10 @@ function(input, output, session){
         range.coefs.bs$range.coef.right <- range.coefs.bs$range.coef.right+1
     })
     observeEvent(input$decrease_range.bs, {
+      if(range.coefs.bs$range.coef.left != -1){
         range.coefs.bs$range.coef.left <- range.coefs.bs$range.coef.left+1
         range.coefs.bs$range.coef.right <- range.coefs.bs$range.coef.right-1
+      }
     })
     
     #update range of coefficient sliders
@@ -483,16 +497,6 @@ function(input, output, session){
             return(input$intercept.bs)
         }
     })
-    
-    output$intercept.bs <- renderUI({
-        intercept.val <- getintercept.bs()
-        if(input$adjust_intercept.bs){
-            HTML(paste0("Intercept fitted using LS to: ", round(intercept.val, 3)))
-        }
-        else {
-            HTML(paste0("Intercept set to: ", round(intercept.val, 3)))
-        }
-    })
 
     getid_minus.bs <- reactive({
       req(input$nknots.bs)
@@ -572,7 +576,7 @@ function(input, output, session){
         }
         if(input$add_knots_pos.bs){
             knots <- attr(b, "knots")
-            quant <- quantInv(x, knots)
+            quant <- round(quantInv(x, knots),2)
             y_coord <- max(x)
             for(i in 1:length(knots)){
                 p <- p + geom_vline(xintercept=knots[i], color = "red", linetype="dashed")+
@@ -657,6 +661,27 @@ function(input, output, session){
         HTML(paste0("R <sup>2</sup>: ", round(stats[1], 3), "<br> adj. R <sup>2</sup>: ", round(stats[2], 3),
                     "<br> max. R <sup>2</sup> for degree of ", degree , " and ", nknots," internal knots: ", round(stats[3], 3)))
     })
+    
+    output$stats.bs <-  renderUI({
+        stats <- calcadjR2.bs()
+        intercept.val <- getintercept.bs()
+        HTML(paste0("
+            <div class='gridstats'>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[1], 3) ," </h2> <br> <p> R <sup>2</sup> </p> </center> 
+              </div>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[2], 3) ," </h2> <br> <p> ADJUSTED R <sup>2</sup> </p> </center> 
+              </div>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[3], 3) ," </h2> <br> <p> MAXMIMAL R <sup>2</sup> </p> </center> 
+              </div>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(intercept.val, 3) ," </h2> <br> <p> INTERCEPT  </p> </center> 
+              </div>
+            </div>
+             "))
+    })
 
     #reset button
     observeEvent(input$reset_input.bs, {
@@ -697,8 +722,10 @@ function(input, output, session){
         range.coefs.nsp$range.coef.right <- range.coefs.nsp$range.coef.right+1
     })
     observeEvent(input$decrease_range.nsp, {
+      if(range.coefs.nsp$range.coef.left != -1){
         range.coefs.nsp$range.coef.left <- range.coefs.nsp$range.coef.left+1
         range.coefs.nsp$range.coef.right <- range.coefs.nsp$range.coef.right-1
+      }
     })
     #update range of coefficient sliders
     observe({
@@ -895,16 +922,6 @@ function(input, output, session){
         }
     })
 
-    output$intercept.nsp <- renderUI({
-        intercept.val <- getintercept.nsp()
-        if(input$adjust_intercept.nsp){
-            div(HTML(paste0("Intercept fitted using LS to: ", round(intercept.val, 3))))
-        }
-        else {
-             div(HTML(paste0("Intercept set to: ", round(intercept.val, 3))))
-        }
-    })
-
     getid_minus.nsp <- reactive({
         #returns quoted expression
         num <- 1 + input$nknots.nsp
@@ -985,7 +1002,7 @@ function(input, output, session){
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
             boundaries <- attr(b, "Boundary.knots")
-            quant <- quantInv(x, knots)
+            quant <- round(quantInv(x, knots),2)
             y_coord <- max(x)
             for(i in 1:length(knots)){
                 p <- p + geom_vline(xintercept=knots[i], color = "red", linetype="dashed")+
@@ -1081,12 +1098,26 @@ function(input, output, session){
         index <- paste0(input$sample.size,"_" ,sex_ind)
         c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
     })
-
+    
     output$stats.nsp <-  renderUI({
         stats <- calcadjR2.nsp()
-        nknots <- input$nknots.nsp
-        HTML(paste0("R <sup>2</sup>: ", round(stats[1], 3), "<br> adj. R <sup>2</sup>: ", round(stats[2], 3),
-                    "<br> max. R <sup>2</sup> for ", nknots," internal knots and Boundary knots set to ", input$boundary1.nsp," and ", input$boundary2.nsp ," : ", round(stats[3], 3)))
+        intercept.val <- getintercept.nsp()
+        HTML(paste0("
+            <div class='gridstats'>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[1], 3) ," </h2> <br> <p> R <sup>2</sup> </p> </center> 
+              </div>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[2], 3) ," </h2> <br> <p> ADJUSTED R <sup>2</sup> </p> </center> 
+              </div>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[3], 3) ," </h2> <br> <p> MAXMIMAL R <sup>2</sup> </p> </center> 
+              </div>
+              <div class='boxstats'>
+                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(intercept.val, 3) ," </h2> <br> <p> INTERCEPT  </p> </center> 
+              </div>
+            </div>
+             "))
     })
 
     #reset button

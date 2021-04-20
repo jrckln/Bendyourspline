@@ -55,18 +55,18 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                     column(6,
                         sliderInput("degree.bs", "Degree", min=1, max=4, value=1, step=1),
                         numericInput("nknots.bs", "Number of internal knots", min=1, max = 10, value = 2, width="100px")
-                    ),
-                    column(6,
-                    div(style="padding-left: 3%;",
-                      materialSwitch(inputId = "adjust_intercept.bs", label = "Adjust intercept automatically:",
-                                       status = "primary", right = FALSE)),
-                      p("or: ", style=""),
-                      div(style="",sliderInput("intercept.bs",label="Intercept",min = 0, max = 40, value = 0, step = 0.1))
                     )
                 ),
                 fluidRow(
                     column(6, wellPanel(tags$div(id = 'placeholder_pos_bs')), style="padding: 2px;"),
                     column(6, wellPanel(tags$div(id = 'placeholder_coef_bs'), style="padding: 2px;"))
+                ),
+                fluidRow(
+                  div(style="display:inline-block; width: 20%; vertical-align: -150%;padding-left: 3%;",
+                      materialSwitch(inputId = "adjust_intercept.bs", label = "Adjust intercept automatically:", 
+                                       status = "primary", right = FALSE)),
+                      p("or: ", style="display:inline-block; width: 4%;"),
+                      div(style="display:inline-block; width: 65%;",sliderInput("intercept.bs",label="Intercept",min = 0, max = 40, value = 0, step = 0.1))
                 ),
                 fluidRow(
                     column(3, offset=0,
@@ -83,17 +83,16 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                   column(12, offset=0, actionButton("reset_input.bs", "Reset inputs"))
                 )
 ),mainPanel(
-    plotlyOutput("plot.bs"),
-    br(),
-     fluidRow(
-        column(3,
-               wellPanel(uiOutput("intercept.bs"), style="height:100px;")
-        ),
-        column(4,
-               wellPanel(uiOutput("stats.bs"), style="height:100px;")
-        )
-    ),
-    # br(),
-    plotlyOutput("basis_plot.bs", height = "200px")
+  fluidRow(
+    column(8,
+      wellPanel(plotlyOutput("plot.bs"))
+    ), 
+    column(4,
+          popify(wellPanel(uiOutput("stats.bs")), "Note", "Maximal R2 value is based on the set number of knots and set degree." )
+    )
+  ),
+  fluidRow(
+    wellPanel(plotlyOutput("basis_plot.bs", height = "200px"))
+  )
   )
 ) 

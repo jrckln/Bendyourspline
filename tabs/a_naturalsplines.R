@@ -54,13 +54,6 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                 fluidRow(
                     column(6,
                         numericInput("nknots.nsp", "Number of internal knots", min = 1, max = 10, value = 2, width="100px")
-                    ),
-                    column(6, 
-                    div(style="padding-left: 3%;",
-                      materialSwitch(inputId = "adjust_intercept.nsp", label = "Adjust intercept automatically:", 
-                                       status = "primary", right = FALSE)),
-                      p("or: ", style=""),
-                      div(style="",sliderInput("intercept.nsp",label="Intercept",min = 0, max = 40, value = 0, step = 0.1))
                     )
                 ), 
                 fluidRow(
@@ -68,6 +61,13 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                            wellPanel(uiOutput("boundary_knots.nsp"),
                            tags$div(id = 'placeholder_pos_nsp')), style="padding: 2px;"), 
                     column(6, wellPanel(tags$div(id = 'placeholder_coef_nsp'), style="padding: 2px;"))
+                ),
+                fluidRow(
+                  div(style="display:inline-block; width: 20%; vertical-align: -150%;padding-left: 3%;",
+                      materialSwitch(inputId = "adjust_intercept.nsp", label = "Adjust intercept automatically:", 
+                                       status = "primary", right = FALSE)),
+                      p("or: ", style="display:inline-block; width: 4%;"),
+                      div(style="display:inline-block; width: 65%;",sliderInput("intercept.nsp",label="Intercept",min = 0, max = 40, value = 0, step = 0.1))
                 ),
                 fluidRow(
                     column(3, offset=0, 
@@ -84,17 +84,14 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                   column(12, offset=0, actionButton("reset_input.nsp", "Reset inputs"))
                 )
 ),mainPanel(
-    plotlyOutput("plot.nsp"), 
-    br(),
-    fluidRow(
-        column(3, 
-               wellPanel(uiOutput("intercept.nsp"), style="height:100px;")
-        ),
-        column(4, 
-               wellPanel(uiOutput("stats.nsp"), style="height:100px;")
-        )
-    ),
-    br(),
-    plotlyOutput("basis_plot.nsp", height = "200px")
+  fluidRow(
+    column(8,
+      wellPanel(plotlyOutput("plot.nsp"))
+    ), 
+    column(4,
+          popify(wellPanel(uiOutput("stats.nsp")), "Note", "Maximal R2 value is based on the set number of knots." )
+    )
+  ),
+    fluidRow(wellPanel(plotlyOutput("basis_plot.nsp", height = "200px")))
   )
 ) 

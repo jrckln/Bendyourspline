@@ -67,15 +67,13 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                   column(12, offset=0, actionButton("reset_input.fp", "Reset inputs"))
                 )
 ),mainPanel(
-    fluidRow(
-        column(2, offset = 0, h5("Transformation: "),
-               wellPanel(uiOutput("transformation.fp"))),
-        column(4, offset = 0, h5("FP-formula: "),
-               wellPanel(uiOutput("formula.fp"))), 
-        column(4, offset = 2, 
-               uiOutput("stats.fp")
-        )
-    ),
-    plotlyOutput("plot.FP")
+  column(8,
+    wellPanel(plotlyOutput("plot.FP"))
+  ), 
+  column(4,
+        wellPanel( h5("Transformation: "),uiOutput("transformation.fp")), 
+        wellPanel(uiOutput("stats.fp")),
+        wellPanel(h5("Formula: "),uiOutput("formula.fp"))
   )
-) 
+)
+)
