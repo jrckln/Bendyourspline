@@ -19,9 +19,9 @@ function(input, output, session){
     observeEvent(input$seed, { #recalculate max R2 values if seed is changed:
         if(input$seed!=14){
                 source("data_generation.R")
+                source("data/data.R")
+                showNotification(span(tagList(icon("check"), "Done. ")), id="done_notif", duration = 7)
         }
-        source("data/data.R")
-        showNotification(span(tagList(icon("check"), "Done. ")), id="done_notif", duration = 7)
     })
     
     var_list_reac <- reactive({
@@ -41,46 +41,15 @@ function(input, output, session){
     #######           FP            #############
     #############################################
     
-    #increase range of coefs
+    #increase/decrease range of coefs
     range_fp <- coef_range("fp")
     observeEvent(range_fp(), {
-      updateSliderInput(session, "coef1.fp", min = (-1)*range_fp(), max = range_fp())
-      updateSliderInput(session, "coef2.fp", min = (-1)*range_fp(), max = range_fp())
+      updateSliderInput(session, "val.coef1.fp-coef", min = (-1)*range_fp(), max = range_fp())
+      updateSliderInput(session, "val.coef2.fp-coef", min = (-1)*range_fp(), max = range_fp())
     })
     
-    val.coefs.fp <- reactiveValues(val.coef1 = 0, val.coef2 = 0)
-    observeEvent(c(input$coef1.fp, input$coef2.fp),{
-        val.coefs.fp$val.coef1 <- input$coef1.fp
-        val.coefs.fp$val.coef2 <- input$coef2.fp
-    })
-    
-    #+ and - buttons for FP coefs
-    
-    observeEvent(input$add_val_coef1.fp, {
-        val.coefs.fp$val.coef1 <- input$coef1.fp+0.01
-    })
-    observeEvent(input$minus_val_coef1.fp, {
-        val.coefs.fp$val.coef1 <- input$coef1.fp-0.01
-    })
-    observeEvent(input$add_val_coef2.fp, {
-        val.coefs.fp$val.coef2 <- input$coef2.fp+0.01
-    })
-    observeEvent(input$minus_val_coef2.fp, {
-        val.coefs.fp$val.coef2 <- input$coef2.fp-0.01
-    })
-    #for reset button 
-    observeEvent(input$reset_input.fp, {
-        val.coefs.fp$val.coef1 <- 0
-        val.coefs.fp$val.coef2 <- 0
-        #range.coefs.fp$range.coef.left.fp <- -1
-        #range.coefs.fp$range.coef.right.fp <- 1
-    })
-    observe({
-        updateSliderInput(session, "coef1.fp", value = val.coefs.fp$val.coef1)
-      })
-    observe({    
-        updateSliderInput(session, "coef2.fp", value = val.coefs.fp$val.coef2)
-    })    
+    coef1.fp <- sliderpl("val.coef1.fp")
+    coef2.fp <- sliderpl("val.coef2.fp")
     
     output$formula.fp <- renderUI({
       req(input$coef1.fp)
@@ -90,7 +59,7 @@ function(input, output, session){
         trans1 <- paste0("x^{", pow1, "}")
         if(pow1 == 0) trans1 <- "\\log(x)"
         if(pow1 == 1) trans1 <- "x"
-        coef1 <- as.numeric(input$coef1.fp)
+        coef1 <- as.numeric(coef1.fp())
         if(coef1 >= 0) {
           coef1 <- paste0(" + ", coef1)
         } else {
@@ -104,7 +73,7 @@ function(input, output, session){
         if(pow2 == 0) trans2 <- "\\log(x)"
         if(pow2 == 1) trans2 <- "x"
         if(pow1 == pow2) trans2 <- paste(trans2, "\\cdot \\log(x)")
-        coef2 <- as.numeric(input$coef2.fp)
+        coef2 <- as.numeric(coef2.fp())
         if(coef2 >= 0) {
           coef2 <- paste0(" + ", coef2)
         } else {
@@ -164,7 +133,7 @@ function(input, output, session){
         if(pow1 == pow2) fp2 <- log(transformed) * fp2
         
         
-        fp <- as.numeric(input$coef1.fp)*fp1 + as.numeric(input$coef2.fp)*fp2
+        fp <- as.numeric(coef1.fp())*fp1 + as.numeric(coef2.fp())*fp2
         if(length(fp)==0){
             fp <- rep(0,nrow(data))
         }
@@ -237,7 +206,7 @@ function(input, output, session){
             sex_ind <- gender[input$gender]
         }
         
-        p <- ifelse(input$coef1.fp == 0& input$coef2.fp == 0, 0, ifelse(any(input$coef1.fp == 0, input$coef2.fp == 0),1,2))
+        p <- ifelse(coef1.fp() == 0& coef2.fp() == 0, 0, ifelse(any(coef1.fp() == 0, coef2.fp() == 0),1,2))
         c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
     })
     output$stats.fp <-  renderUI({
@@ -263,25 +232,25 @@ function(input, output, session){
     
     #reset button
     observeEvent(input$reset_input.fp, {
-       shinyjs::reset("inputs.fp") #id of tab to reset
+       reset("inputs.fp") #id of tab to reset
     })
     observe({
       if(input$adjust_intercept.fp){
-        shinyjs::disable("intercept.fp")
+        disable("intercept.fp")
       }
       if(!input$adjust_intercept.fp){
-        shinyjs::enable("intercept.fp")
+        enable("intercept.fp")
       }
     })
     
     observe({
       if(!(all(input$add_mean.fp, input$add_y.fp))){
-        shinyjs::disable("adjust_intercept.fp")
-        shinyjs::disable("intercept.fp")
+        disable("adjust_intercept.fp")
+        disable("intercept.fp")
       }
       if(any(input$add_mean.fp, input$add_y.fp)){
-        shinyjs::enable("adjust_intercept.fp")
-        shinyjs::enable("intercept.fp")
+        enable("adjust_intercept.fp")
+        enable("intercept.fp")
       }
     })
     
@@ -289,13 +258,7 @@ function(input, output, session){
     #######        B-splines        #############
     #############################################
     
-    #dynamic insert of slider for positions of knots
     inserted.pos.bs <- c()
-    #coefficient values - save for possibility to adjust with buttons
-    val.coefs.bs <- c(0,0,0) # take care of default vals here: 
-    # degree = 1 and 2 internal knots -> 2 coefficients
-    # does not need to be reactive since it should always be called with getcoef.bs()
-    
     range_bs <- coef_range("bs")
     
     #update range of coefficient sliders
@@ -303,9 +266,9 @@ function(input, output, session){
       req(input$nknots.bs)
       num <- input$degree.bs + input$nknots.bs
       #get values of coefficients:
-      ind <- paste0("bs_coef", 1:num, "_inner")
+      ind <- paste0("bs_coef", 1:num, "-coef")
       for(i in ind){
-        updateSliderInput(session, i, (-1)*range_bs(), max = range_bs())
+        updateSliderInput(session, i, min=(-1)*range_bs(), max = range_bs())
       }
     })
     
@@ -335,7 +298,7 @@ function(input, output, session){
                         ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",
                                                                                           num[i]),
                                                   value=default.pos.knots.bs[num[i]], step=0.01,
-                                                  min=min(x), max=max(x)), id=id[i])
+                                                  min=min(x), max=max(x), ticks = FALSE), id=id[i])
                     )
                     inserted.pos.bs <<- c(inserted.pos.bs, id[i])
                 }
@@ -355,7 +318,7 @@ function(input, output, session){
                     selector = '#placeholder_pos_bs',
                     ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", i),
                                               value=default.pos.knots.bs[i], step=0.01,
-                                              min=min(x), max=max(x)), id=id[i])
+                                              min=min(x), max=max(x), ticks = FALSE), id=id[i])
                 )
                 inserted.pos.bs <<- c(inserted.pos.bs, id[i])
             }
@@ -364,59 +327,42 @@ function(input, output, session){
 
     #dynamic insert of slider for coefficients for each spline basis function
     inserted.coef.bs <- c()
+    coef_vals_bs <- reactiveValues()
+    
     observeEvent(c(input$nknots.bs, input$degree.bs), {
       req(input$nknots.bs)
-        num <- input$degree.bs + input$nknots.bs #+1 for intercept but intercept is extra
+        num <- input$degree.bs + input$nknots.bs 
         if(length(inserted.coef.bs)!=0){ #case of update
-            #num is the number of desired inputs
             if(length(inserted.coef.bs)>num){
-                if(length(inserted.coef.bs)>0){
                     toomuch <- length(inserted.coef.bs)-num
                     for(i in 1:toomuch){
                       removeUI(
                         selector = paste0('#', inserted.coef.bs[length(inserted.coef.bs)])
                       )
-                    inserted.coef.bs <<- inserted.coef.bs[-length(inserted.coef.bs)]
+                      coef_vals_bs[[inserted.coef.bs[[length(inserted.coef.bs)]]]] <- NULL
+                      inserted.coef.bs <<- inserted.coef.bs[-length(inserted.coef.bs)]
                     }
-                }
             }else if(length(inserted.coef.bs)<num){
                 toinsert <- (length(inserted.coef.bs)+1):num
                 id <- paste0('bs_coef', toinsert)
                 for(i in 1:length(toinsert)){
-                    insertUI( #place inserted UI in div for complete removal
-                        selector = '#placeholder_coef_bs',
-                        ui = tags$div(
-                            actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"),
-                                         style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus_bs"),
-                            sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ",
-                                                                                          toinsert[i]),
-                                                  value=0, step=0.01, min=range.coefs.bs$range.coef.left, max=range.coefs.bs$range.coef.right, width='70%'),
-                            actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
-                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_bs"),
-                            id=id[i]
-                        )
-                    )
-                    inserted.coef.bs <<- c(inserted.coef.bs, id[i])
+                  insertUI(
+                    selector = '#placeholder_coef_bs',
+                    ui = sliderplUI(id[i])
+                  )
+                  coef_vals_bs[[id[i]]] <- sliderpl(id[i])
+                  inserted.coef.bs <<- c(inserted.coef.bs, id[i])
                 }
             }
         } else { #case of init
             id <- paste0('bs_coef', 1:num)
             for(i in 1:num){
-                insertUI(
+              insertUI(
                     selector = '#placeholder_coef_bs',
-                    ui = tags$div(
-                        actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"),
-                                     style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="minus_bs"),
-                        # class to control only this button group
-                        # and get last id with JS
-                        sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i),
-                                              value=0, step=0.01,
-                                              min=-1, max=1, width='70%'),
-                        actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
-                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_bs"),
-                        id=id[i])
-                )
-                inserted.coef.bs <<- c(inserted.coef.bs, id[i])
+                    ui = sliderplUI(id[i])
+              )
+              coef_vals_bs[[id[i]]] <- sliderpl(id[i])
+              inserted.coef.bs <<- c(inserted.coef.bs, id[i])
             }
         }
 
@@ -436,15 +382,14 @@ function(input, output, session){
 
     getcoef.bs <- reactive({
       req(input$nknots.bs)
-        num <- input$degree.bs + input$nknots.bs
-        #get values of coefficients:
-        ind <- match(paste0("bs_coef", 1:num, "_inner"), names(input))
-        ind <- ind[!(is.na(ind))]
-        coef <- c()
-        for(i in ind){
-            coef <- c(coef, input[[names(input)[i]]])
-        }
-        coef
+      num <- input$degree.bs + input$nknots.bs
+      #get values of coefficients:
+      ind <- paste0("bs_coef", 1:num)
+      coef <- c()
+      for(i in ind){
+          coef <- c(coef, as.numeric(coef_vals_bs[[i]]()))
+      }
+      coef
     })
 
     getintercept.bs <- reactive({
@@ -469,48 +414,7 @@ function(input, output, session){
             return(input$intercept.bs)
         }
     })
-
-    getid_minus.bs <- reactive({
-      req(input$nknots.bs)
-        #returns quoted expression
-        num <- input$degree.bs + input$nknots.bs
-        ind <- match(paste0("bs_coef", 1:num, "_inner_minus"), names(input))
-        ind <- ind[!(is.na(ind))]
-        ind
-    })
-
-    getid_plus.bs <- reactive({
-      req(input$nknots.bs)
-        #returns quoted expression
-        num <- input$degree.bs + input$nknots.bs
-        ind <- match(paste0("bs_coef", 1:num, "_inner_plus"), names(input))
-        ind <- ind[!(is.na(ind))]
-        ind
-    })
-
-    #trigger when any minus button was clicked: modifies input value
-    observeEvent(input$last_btn_minus_bs, {
-        coefs <- getcoef.bs()
-        val.coefs.bs <- coefs
-        #determine button of which coef id was clicked: id of button is coef<idnumber>_inner_minus
-        id.coef <- gsub("_minus", "", input$last_btn_minus_bs)
-        ind <- as.numeric(gsub("_inner", "", gsub("bs_coef","",id.coef)))
-        val <- getcoef.bs()
-        val <- val[ind] -0.01
-        updateSliderInput(session, inputId = id.coef, value = val)
-    })
-
-    observeEvent(input$last_btn_plus_bs, {
-        coefs <- getcoef.bs()
-        val.coefs.bs <- coefs
-        #determine button of which coef id was clicked: id of button is coef<idnumber>_inner_minus
-        id.coef <- gsub("_plus", "", input$last_btn_plus_bs)
-        ind <- as.numeric(gsub("_inner", "", gsub("bs_coef","",id.coef)))
-        val <- getcoef.bs()
-        val <- val[ind] + 0.01
-        updateSliderInput(session, inputId = id.coef, value = val)
-    })
-
+    
     output$plot.bs <- renderPlotly({
       req(input$nknots.bs)
         var_list <- var_list_reac()
@@ -657,24 +561,24 @@ function(input, output, session){
 
     #reset button
     observeEvent(input$reset_input.bs, {
-       shinyjs::reset("inputs.bs") #id of tab to reset
+       reset("inputs.bs") #id of tab to reset
     })
     observe({
       if(input$adjust_intercept.bs){
-        shinyjs::disable("intercept.bs")
+        disable("intercept.bs")
       }
       if(!input$adjust_intercept.bs){
-        shinyjs::enable("intercept.bs")
+        enable("intercept.bs")
       }
     })
     observe({
       if(!(all(input$add_mean.bs, input$add_y.bs))){
-        shinyjs::disable("adjust_intercept.bs")
-        shinyjs::disable("intercept.bs")
+        disable("adjust_intercept.bs")
+        disable("intercept.bs")
       }
       if(any(input$add_mean.bs, input$add_y.bs)){
-        shinyjs::enable("adjust_intercept.bs")
-        shinyjs::enable("intercept.bs")
+        enable("adjust_intercept.bs")
+        enable("intercept.bs")
       }
     })
     
@@ -684,10 +588,6 @@ function(input, output, session){
     
     #dynamic insert of slider for positions of knots
     inserted.pos.nsp <- c()
-    #coefficient values - save for possibility to adjust with buttons
-    val.coefs.nsp <- c(0,0,0) # take care of default vals here
-    # does not need to be reactive since it should always be called with getcoef.nsp()
-
     range_nsp <- coef_range("nsp")
     
     #update range of coefficient sliders
@@ -695,9 +595,9 @@ function(input, output, session){
       req(input$nknots.nsp)
       num <- 1 + input$nknots.nsp
       #get values of coefficients:
-      ind <- paste0("nsp_coef", 1:num, "_inner")
+      ind <- paste0("nsp_coef", 1:num, "-coef")
       for(i in ind){
-        updateSliderInput(session, i, (-1)*range_nsp(), max = range_nsp())
+        updateSliderInput(session, i, min = (-1)*range_nsp(), max = range_nsp())
       }
     })
     
@@ -711,8 +611,8 @@ function(input, output, session){
                                        length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
       pos <- quantile(x, default.pos.knots.nsp)
       div(
-      sliderInput("boundary1.nsp", "Position of Boundary knot 1", min=min(x), max=pos[1]-0.1, value=min(x), step=0.1),
-      sliderInput("boundary2.nsp", "Position of Boundary knot 2", min=pos[length(pos)]+0.1, max=max(x), value=max(x), step=0.1)
+      sliderInput("boundary1.nsp", "Position of Boundary knot 1", min=min(x), max=pos[1]-0.1, value=min(x), step=0.1, ticks = FALSE),
+      sliderInput("boundary2.nsp", "Position of Boundary knot 2", min=pos[length(pos)]+0.1, max=max(x), value=max(x), step=0.1, ticks = FALSE)
       )
     })
     #update max and min val of boundary knots slider according to second and second to last knot position
@@ -751,7 +651,7 @@ function(input, output, session){
                         ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",
                                                                                           num[i]),
                                                   value=default.pos.knots.nsp[num[i]], step=0.01,
-                                                  min=min(x), max=max(x)), id=id[i])
+                                                  min=min(x), max=max(x), ticks = FALSE), id=id[i])
                     )
                     inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
                 }
@@ -771,7 +671,7 @@ function(input, output, session){
                     selector = '#placeholder_pos_nsp',
                     ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", i),
                                               value=default.pos.knots.nsp[i], step=0.01,
-                                              min=min(x), max=max(x)), id=id[i])
+                                              min=min(x), max=max(x), ticks = FALSE), id=id[i])
                 )
                 inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
             }
@@ -780,39 +680,33 @@ function(input, output, session){
 
     #dynamic insert of slider for coefficients for each spline basis function
     inserted.coef.nsp <- c()
+    coef_vals_nsp <- reactiveValues()
+
+    
     observeEvent(c(input$nknots.nsp), {
       req(input$nknots.nsp)
         num <- 1 + input$nknots.nsp #+1 for intercept but intercept is extra
         if(length(inserted.coef.nsp)!=0){ #case of update
             #num is the number of desired inputs
             if(length(inserted.coef.nsp)>num){
-                if(length(inserted.coef.nsp)>0){
                     toomuch <- length(inserted.coef.nsp)-num
                     for(i in 1:toomuch){
                       removeUI(
                         selector = paste0('#', inserted.coef.nsp[length(inserted.coef.nsp)])
                       )
-                    inserted.coef.nsp <<- inserted.coef.nsp[-length(inserted.coef.nsp)]
+                      coef_vals_nsp[[inserted.coef.nsp[[length(inserted.coef.nsp)]]]] <- NULL
+                      inserted.coef.nsp <<- inserted.coef.nsp[-length(inserted.coef.nsp)]
                     }
-                }
             }else if(length(inserted.coef.nsp)<num){
                 toinsert <- (length(inserted.coef.nsp)+1):num
                 id <- paste0('nsp_coef', toinsert)
                 for(i in 1:length(toinsert)){
-                    insertUI( #place inserted UI in div for complete removal
-                        selector = '#placeholder_coef_nsp',
-                        ui = tags$div(
-                            actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"),
-                                         style='padding:4px; font-size:80%; vertical-align: -150%;background: #D6D6D6;', class="minus_nsp"),
-                            sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ",
-                                                                                          toinsert[i]),
-                                                  value=0, step=0.01, min=range.coefs.nsp$range.coef.left, max=range.coefs.nsp$range.coef.right, width='80%'),
-                            actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
-                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_nsp"),
-                            id=id[i]
-                        )
-                    )
-                    inserted.coef.nsp <<- c(inserted.coef.nsp, id[i])
+                    insertUI(
+                    selector = '#placeholder_coef_nsp',
+                    ui = sliderplUI(id[i])
+                  )
+                  coef_vals_nsp[[id[i]]] <- sliderpl(id[i])
+                  inserted.coef.nsp <<- c(inserted.coef.nsp, id[i])
                 }
             }
         } else { #case of init
@@ -820,19 +714,10 @@ function(input, output, session){
             for(i in 1:num){
                 insertUI(
                     selector = '#placeholder_coef_nsp',
-                    ui = tags$div(
-                        actionButton(paste0(id[i], "_inner_minus"), "", icon = icon("minus-square"),
-                                     style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="minus_nsp"),
-                        # class to control only this button group
-                        # and get last id with JS (see tab bsplines)
-                        sliderInput(paste0(id[i], "_inner"), label = paste0("Coefficient ", i),
-                                              value=0, step=0.01,
-                                              min=-1, max=1, width='80%'),
-                        actionButton(paste0(id[i], "_inner_plus"), "", icon = icon("plus-square"),
-                                         style='padding:4px; font-size:80%; vertical-align: -150%; background: #D6D6D6;', class="plus_nsp"),
-                        id=id[i])
-                )
-                inserted.coef.nsp <<- c(inserted.coef.nsp, id[i])
+                    ui = sliderplUI(id[i])
+                  )
+                  coef_vals_nsp[[id[i]]] <- sliderpl(id[i])
+                  inserted.coef.nsp <<- c(inserted.coef.nsp, id[i])
             }
         }
 
@@ -852,15 +737,14 @@ function(input, output, session){
 
     getcoef.nsp <- reactive({
       req(input$nknots.nsp)
-        num <- 1 + input$nknots.nsp
-        #get values of coefficients:
-        ind <- match(paste0("nsp_coef", 1:num, "_inner"), names(input))
-        ind <- ind[!(is.na(ind))]
-        coef <- c()
-        for(i in ind){
-            coef <- c(coef, input[[names(input)[i]]])
-        }
-        coef
+      num <- 1 + input$nknots.nsp
+      #get values of coefficients:
+      ind <- paste0("nsp_coef", 1:num)
+      coef <- c()
+      for(i in ind){
+          coef <- c(coef, as.numeric(coef_vals_nsp[[i]]()))
+      }
+      coef
     })
 
     getintercept.nsp <- reactive({
@@ -883,45 +767,6 @@ function(input, output, session){
         } else {
             return(input$intercept.nsp)
         }
-    })
-
-    getid_minus.nsp <- reactive({
-        #returns quoted expression
-        num <- 1 + input$nknots.nsp
-        ind <- match(paste0("nsp_coef", 1:num, "_inner_minus"), names(input))
-        ind <- ind[!(is.na(ind))]
-        ind
-    })
-
-    getid_plus.nsp <- reactive({
-        #returns quoted expression
-        num <- 1 + input$nknots.nsp
-        ind <- match(paste0("nsp_coef", 1:num, "_inner_plus"), names(input))
-        ind <- ind[!(is.na(ind))]
-        ind
-    })
-
-    #trigger when any minus button was clicked: modifies input value
-    observeEvent(input$last_btn_minus_nsp, {
-        coefs <- getcoef.nsp()
-        val.coefs.nsp <- coefs
-        #determine button of which coef id was clicked: id of button is coef<idnumber>_inner_minus
-        id.coef <- gsub("_minus", "", input$last_btn_minus_nsp)
-        ind <- as.numeric(gsub("_inner", "", gsub("nsp_coef","",id.coef)))
-        val <- getcoef.nsp()
-        val <- val[ind] -0.01
-        updateSliderInput(session, inputId = id.coef, value = val)
-    })
-
-    observeEvent(input$last_btn_plus_nsp, {
-        coefs <- getcoef.nsp()
-        val.coefs.nsp <- coefs
-        #determine button of which coef id was clicked: id of button is coef<idnumber>_inner_minus
-        id.coef <- gsub("_plus", "", input$last_btn_plus_nsp)
-        ind <- as.numeric(gsub("_inner", "", gsub("nsp_coef","",id.coef)))
-        val <- getcoef.nsp()
-        val <- val[ind] + 0.01
-        updateSliderInput(session, inputId = id.coef, value = val)
     })
 
     output$plot.nsp <- renderPlotly({
@@ -1085,24 +930,24 @@ function(input, output, session){
 
     #reset button
     observeEvent(input$reset_input.nsp, {
-        shinyjs::reset("inputs.nsp") #id of tab to reset
+        reset("inputs.nsp") #id of tab to reset
     })
     observe({
       if(input$adjust_intercept.nsp){
-        shinyjs::disable("intercept.nsp")
+        disable("intercept.nsp")
       }
       if(!input$adjust_intercept.nsp){
-        shinyjs::enable("intercept.nsp")
+        enable("intercept.nsp")
       }
     })
     observe({
       if(!(all(input$add_mean.nsp, input$add_y.nsp))){
-        shinyjs::disable("adjust_intercept.nsp")
-        shinyjs::disable("intercept.nsp")
+        disable("adjust_intercept.nsp")
+        disable("intercept.nsp")
       }
       if(any(input$add_mean.nsp, input$add_y.nsp)){
-        shinyjs::enable("adjust_intercept.nsp")
-        shinyjs::enable("intercept.nsp")
+        enable("adjust_intercept.nsp")
+        enable("intercept.nsp")
       }
     })
     

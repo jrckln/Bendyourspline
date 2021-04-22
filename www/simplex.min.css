@@ -6216,5 +6216,9 @@ i > boxstats {
 	color: #606060;
 }
 
+#placeholder_coef_bs .form-group.shiny-input-container{
+                                        display: inline-block;
+                                        }
+
 
 

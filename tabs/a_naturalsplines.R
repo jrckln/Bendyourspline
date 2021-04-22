@@ -1,46 +1,7 @@
 naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value = "nsplines",br(),
                     tags$head(
-                        tags$script(
-                            #to opt out of shiny default optimiation (cares only of last value) but we want to trigger
-                            #everytime button is clicked but get the id: {priority: 'event'}
-                            HTML(
-                            "$(document).on('click', '.minus_nsp', function () {
-                                Shiny.setInputValue('last_btn_minus_nsp',this.id, {priority: 'event'});
-                             });
-                             $(document).on('click', '.plus_nsp', function () {
-                                Shiny.setInputValue('last_btn_plus_nsp',this.id, {priority: 'event'});
-                             });
-                            "
-                    )), 
-                        tags$style(HTML("
-                                        #placeholder_coef_nsp .form-group.shiny-input-container{
-                                        display: inline-block;
-                                        }
-                                        ")), 
-                    tags$style(HTML("[for=nsp_coef1_inner]+span>.irs>.irs-single, [for=nsp_coef1_inner]+span>.irs-bar-edge, [for=nsp_coef1_inner]+span>.irs-bar {
-                                                  background: #4E84C4;}")),
-                    tags$style(HTML("[for=nsp_coef2_inner]+span>.irs>.irs-single, [for=nsp_coef2_inner]+span>.irs-bar-edge, [for=nsp_coef2_inner]+span>.irs-bar {
-                                                  background: #E7B800;}")),
-                    tags$style(HTML("[for=nsp_coef3_inner]+span>.irs>.irs-single, [for=nsp_coef3_inner]+span>.irs-bar-edge, [for=nsp_coef3_inner]+span>.irs-bar {
-                                                  background: #FC4E07;}")),
-                    tags$style(HTML("[for=nsp_coef4_inner]+span>.irs>.irs-single, [for=nsp_coef4_inner]+span>.irs-bar-edge, [for=nsp_coef4_inner]+span>.irs-bar {
-                                                  background: #C4961A;}")),
-                    tags$style(HTML("[for=nsp_coef5_inner]+span>.irs>.irs-single, [for=nsp_coef5_inner]+span>.irs-bar-edge, [for=nsp_coef5_inner]+span>.irs-bar {
-                                                  background: #D16103;}")),
-                    tags$style(HTML("[for=nsp_coef6_inner]+span>.irs>.irs-single, [for=nsp_coef6_inner]+span>.irs-bar-edge, [for=nsp_coef6_inner]+span>.irs-bar {
-                                                  background: #F4EDCA;}")),
-                    tags$style(HTML("[for=nsp_coef7_inner]+span>.irs>.irs-single, [for=nsp_coef7_inner]+span>.irs-bar-edge, [for=nsp_coef7_inner]+span>.irs-bar {
-                                                  background: #FFDB6D;}")),
-                    tags$style(HTML("[for=nsp_coef8_inner]+span>.irs>.irs-single, [for=nsp_coef8_inner]+span>.irs-bar-edge, [for=nsp_coef8_inner]+span>.irs-bar {
-                                                  background: #C3D7A4;}")),
-                    tags$style(HTML("[for=nsp_coef9_inner]+span>.irs>.irs-single, [for=nsp_coef9_inner]+span>.irs-bar-edge, [for=nsp_coef9_inner]+span>.irs-bar {
-                                                  background: #52854C;}")), 
-                    tags$style(HTML("[for=nsp_coef10_inner]+span>.irs>.irs-single, [for=nsp_coef10_inner]+span>.irs-bar-edge, [for=nsp_coef10_inner]+span>.irs-bar {
-                                                  background: #293352;}")), 
-                    tags$style(HTML("[for=nsp_coef11_inner]+span>.irs>.irs-single, [for=nsp_coef11_inner]+span>.irs-bar-edge, [for=nsp_coef11_inner]+span>.irs-bar {
-                                                  background: #00AFBB;}"))
+                      tags$style(HTML(paste(paste0("[for=nsp_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}")), collapse = " "))
                     ),
-                     #gets the id of the last button clicked of class "minus" - to determine which coefficient id should be changed
             sidebarPanel(class="input_class", id = "inputs.nsp",
                 fluidRow(column(7, offset=0, h4("Input parameters")), 
                          column(5, offset=0, 
