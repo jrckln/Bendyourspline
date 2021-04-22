@@ -19,18 +19,16 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                 ),
                 fluidRow(
                     column(4, offset=0, 
-                           sliderTextInput(inputId = "power1.fp", label="First",choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
+                           wellPanel(
+                            sliderTextInput(inputId = "power1.fp", label="First",choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1), 
+                            sliderTextInput(inputId = "power2.fp",label="Second", choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
+                            )
                     ), 
                     column(8, offset=0,
-                             sliderplUI("val.coef1.fp")
-                           )
-                ),
-                fluidRow(
-                    column(4, offset=0, 
-                           sliderTextInput(inputId = "power2.fp",label="Second", choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
-                    ), 
-                    column(8, offset=0,
+                           wellPanel(
+                             sliderplUI("val.coef1.fp"), 
                              sliderplUI("val.coef2.fp")
+                           )
                            )
                 ), 
                 fluidRow(

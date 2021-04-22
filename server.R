@@ -27,7 +27,6 @@ function(input, output, session){
     var_list_reac <- reactive({
         var <- as.character(input$variable)
         var_list <- data_list[[var]]
-        
         var_list$data <- var_list$data[var_list$data[,"gender"] %in% gender[[input$gender]],]
 
         set.seed(input$seed)
