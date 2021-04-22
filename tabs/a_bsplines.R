@@ -44,10 +44,7 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
              sidebarPanel(class="input_class", id = "inputs.bs",
                 fluidRow(column(7, offset=0, h4("Input parameters")),
                          column(5, offset=0,
-                                div(p("Coefficient range:", style="display: inline-block;"),
-                                  actionButton("decrease_range.bs", icon("minus"), style="display: inline-block;"),
-                                  actionButton("increase_range.bs", icon("plus"), style="display: inline-block;")
-                                  )
+                                coef_rangeUI("bs")
                                 )
                 ),
                 br(), br(),

@@ -15,6 +15,9 @@ library(tidyverse)
 library(shinyhelper)
 
 source("data/data.R")
+#load modules:
+tab_files <- list.files(path = "modules", full.names = T, recursive = T)
+suppressMessages(lapply(tab_files, source))
 
 #colors for plotly
 col <- c("#4E84C4", "#E7B800", "#FC4E07","#C4961A","#D16103",  "#F4EDCA","#FFDB6D", "#C3D7A4", "#52854C", "#293352", "#00AFBB")

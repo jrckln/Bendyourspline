@@ -42,21 +42,12 @@ function(input, output, session){
     #############################################
     
     #increase range of coefs
-    range.coefs.fp <- reactiveValues(range.coef.left.fp = -1, range.coef.right.fp = 1)
-    observeEvent(input$increase_range.fp, {
-        range.coefs.fp$range.coef.left.fp <- range.coefs.fp$range.coef.left.fp-1
-        range.coefs.fp$range.coef.right.fp <- range.coefs.fp$range.coef.right.fp+1
+    range_fp <- coef_range("fp")
+    observeEvent(range_fp(), {
+      updateSliderInput(session, "coef1.fp", min = (-1)*range_fp(), max = range_fp())
+      updateSliderInput(session, "coef2.fp", min = (-1)*range_fp(), max = range_fp())
     })
-    observeEvent(input$decrease_range.fp, {
-      if(range.coefs.fp$range.coef.left.fp != 0){
-        range.coefs.fp$range.coef.left.fp <- range.coefs.fp$range.coef.left.fp+1
-        range.coefs.fp$range.coef.right.fp <- range.coefs.fp$range.coef.right.fp-1
-      }
-    })
-    observe({
-        updateSliderInput(session, "coef1.fp", max = range.coefs.fp$range.coef.right.fp, min=range.coefs.fp$range.coef.left.fp)
-        updateSliderInput(session, "coef2.fp", max = range.coefs.fp$range.coef.right.fp, min=range.coefs.fp$range.coef.left.fp)
-    })
+    
     val.coefs.fp <- reactiveValues(val.coef1 = 0, val.coef2 = 0)
     observeEvent(c(input$coef1.fp, input$coef2.fp),{
         val.coefs.fp$val.coef1 <- input$coef1.fp
@@ -81,8 +72,8 @@ function(input, output, session){
     observeEvent(input$reset_input.fp, {
         val.coefs.fp$val.coef1 <- 0
         val.coefs.fp$val.coef2 <- 0
-        range.coefs.fp$range.coef.left.fp <- -1
-        range.coefs.fp$range.coef.right.fp <- 1
+        #range.coefs.fp$range.coef.left.fp <- -1
+        #range.coefs.fp$range.coef.right.fp <- 1
     })
     observe({
         updateSliderInput(session, "coef1.fp", value = val.coefs.fp$val.coef1)
@@ -90,15 +81,6 @@ function(input, output, session){
     observe({    
         updateSliderInput(session, "coef2.fp", value = val.coefs.fp$val.coef2)
     })    
-    #slider inputs - to increase coefficient range
-    output$slider.coef1.fp <- renderUI({
-        sliderInput("coef1.fp",label="", min = range.coefs.fp$range.coef.left.fp, 
-                    max = range.coefs.fp$range.coef.right.fp, value = val.coefs.fp$val.coef1, step = 0.01)
-    })
-    output$slider.coef2.fp <- renderUI({
-        sliderInput("coef2.fp",label="",min = range.coefs.fp$range.coef.left.fp,
-                    max = range.coefs.fp$range.coef.right.fp, value = val.coefs.fp$val.coef2, step = 0.01)
-    })
     
     output$formula.fp <- renderUI({
       req(input$coef1.fp)
@@ -314,27 +296,17 @@ function(input, output, session){
     # degree = 1 and 2 internal knots -> 2 coefficients
     # does not need to be reactive since it should always be called with getcoef.bs()
     
-    range.coefs.bs <- reactiveValues(range.coef.left = -1, range.coef.right = 1)
-    observeEvent(input$increase_range.bs, {
-        range.coefs.bs$range.coef.left <- range.coefs.bs$range.coef.left-1
-        range.coefs.bs$range.coef.right <- range.coefs.bs$range.coef.right+1
-    })
-    observeEvent(input$decrease_range.bs, {
-      if(range.coefs.bs$range.coef.left != -1){
-        range.coefs.bs$range.coef.left <- range.coefs.bs$range.coef.left+1
-        range.coefs.bs$range.coef.right <- range.coefs.bs$range.coef.right-1
-      }
-    })
+    range_bs <- coef_range("bs")
     
     #update range of coefficient sliders
-    observe({
+    observeEvent(range_bs(), {
       req(input$nknots.bs)
-        num <- input$degree.bs + input$nknots.bs
-        #get values of coefficients:
-        ind <- paste0("bs_coef", 1:num, "_inner")
-        for(i in ind){
-            updateSliderInput(session, i, max = range.coefs.bs$range.coef.right, min=range.coefs.bs$range.coef.left)
-        }
+      num <- input$degree.bs + input$nknots.bs
+      #get values of coefficients:
+      ind <- paste0("bs_coef", 1:num, "_inner")
+      for(i in ind){
+        updateSliderInput(session, i, (-1)*range_bs(), max = range_bs())
+      }
     })
     
     observeEvent(input$nknots.bs, {
@@ -716,26 +688,17 @@ function(input, output, session){
     val.coefs.nsp <- c(0,0,0) # take care of default vals here
     # does not need to be reactive since it should always be called with getcoef.nsp()
 
-    range.coefs.nsp <- reactiveValues(range.coef.left = -1, range.coef.right = 1)
-    observeEvent(input$increase_range.nsp, {
-        range.coefs.nsp$range.coef.left <- range.coefs.nsp$range.coef.left-1
-        range.coefs.nsp$range.coef.right <- range.coefs.nsp$range.coef.right+1
-    })
-    observeEvent(input$decrease_range.nsp, {
-      if(range.coefs.nsp$range.coef.left != -1){
-        range.coefs.nsp$range.coef.left <- range.coefs.nsp$range.coef.left+1
-        range.coefs.nsp$range.coef.right <- range.coefs.nsp$range.coef.right-1
-      }
-    })
+    range_nsp <- coef_range("nsp")
+    
     #update range of coefficient sliders
-    observe({
+    observeEvent(range_nsp(), {
       req(input$nknots.nsp)
-        num <- 1 + input$nknots.nsp
-        #get values of coefficients:
-        ind <- paste0("nsp_coef", 1:num, "_inner")
-        for(i in ind){
-            updateSliderInput(session, i, max = range.coefs.nsp$range.coef.right, min=range.coefs.nsp$range.coef.left)
-        }
+      num <- 1 + input$nknots.nsp
+      #get values of coefficients:
+      ind <- paste0("nsp_coef", 1:num, "_inner")
+      for(i in ind){
+        updateSliderInput(session, i, (-1)*range_nsp(), max = range_nsp())
+      }
     })
     
     output$boundary_knots.nsp <- renderUI({

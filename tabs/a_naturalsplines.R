@@ -44,10 +44,7 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
             sidebarPanel(class="input_class", id = "inputs.nsp",
                 fluidRow(column(7, offset=0, h4("Input parameters")), 
                          column(5, offset=0, 
-                                div(p("Coefficient range:", style="display: inline-block;"),
-                                  actionButton("decrease_range.nsp", icon("minus"), style="display: inline-block;"), 
-                                  actionButton("increase_range.nsp", icon("plus"), style="display: inline-block;")
-                                  )
+                                coef_rangeUI("nsp")
                                 )
                 ), 
                 br(), br(),

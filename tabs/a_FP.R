@@ -2,10 +2,7 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
             sidebarPanel(class="input_class", id = "inputs.fp",
                 fluidRow(column(7, offset=0, h4("Input parameters")), 
                          column(5, offset=0, 
-                                div(p("Coefficient range:"),
-                                  actionButton("decrease_range.fp", icon("minus")), 
-                                  actionButton("increase_range.fp", icon("plus"))
-                                  )
+                                coef_rangeUI("fp")
                                 )
                 ),
                 fluidRow(
@@ -27,7 +24,7 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                     column(8, offset=0,
                              actionButton("minus_val_coef1.fp", "", icon = icon("minus-square"), style='padding:4px; font-size:80%; 
                                           vertical-align: -150%;background: #D6D6D6;display:inline-block;'), 
-                             uiOutput("slider.coef1.fp", style="width: 80%; display: inline-block;"), 
+                             sliderInput("coef1.fp",label="",min =-1, max = 1, value = 0, step = 0.01),
                              actionButton("add_val_coef1.fp", "", icon = icon("plus-square"), style='padding:4px; font-size:80%; 
                                            vertical-align: -150%;background: #D6D6D6;display:inline-block;')
                            )
@@ -39,7 +36,7 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                     column(8, offset=0,
                              actionButton("minus_val_coef2.fp", "", icon = icon("minus-square"), style='padding:4px; font-size:80%; 
                                           vertical-align: -150%;background: #D6D6D6;display:inline-block;'), 
-                             uiOutput("slider.coef2.fp", style="width: 80%; display: inline-block;"), 
+                             sliderInput("coef2.fp",label="",min =-1, max = 1, value = 0, step = 0.01),
                              actionButton("add_val_coef2.fp", "", icon = icon("plus-square"), style='padding:4px; font-size:80%; 
                                            vertical-align: -150%;background: #D6D6D6;display:inline-block;')
                            )
