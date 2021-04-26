@@ -7,12 +7,12 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                 ),
                 fluidRow(
                     column(4, 
-                        div(style = "font-size: 13px; padding: 10px 0px; margin:0%",
+                        div(style = "padding: 10px 0px; margin:0%",
                             HTML("Power:")
                         )
                     ),
                     column(8, offset=0, 
-                        div(style = "font-size: 13px; padding: 10px 0px; margin:0%",
+                        div(style = "padding: 10px 0px; margin:0%",
                             HTML("Coefficient:")
                         )
                     )

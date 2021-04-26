@@ -2,6 +2,10 @@ function(input, output, session){
   
     observe_helpers(help_dir = "help_mds")
   
+    observeEvent(input$link_methods, {
+      updateNavbarPage(session, "navbar_main", "methods")
+    })
+  
     #############################################
     #######         Data            #############
     #############################################

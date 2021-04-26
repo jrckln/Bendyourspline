@@ -1,24 +1,5 @@
 methods <- 
     tabPanel("Methods", id="methods", shinyjs::useShinyjs(),
-            tags$head(
-                  tags$style(
-                    HTML("
-                        .shiny-notification { 
-                        top: 0; 
-                        bottom: unset; 
-                        left: 0; 
-                        right: 0; 
-                        margin-left: auto; 
-                        margin-right: auto; 
-                        width: 100%; 
-                        max-width: 450px;
-                        background: #4bd67b;
-                        color: #fff;
-                         }
-                         "
-                        )
-                    )
-         ),
         bsCollapse(id = "collapseData", open = "Data Options",
                    bsCollapsePanel("Data Options", 
                                 fluidRow(

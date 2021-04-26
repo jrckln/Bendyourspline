@@ -1,8 +1,8 @@
-bootstrapPage(withMathJax(),includeCSS("www/simplex.min.css"),
-    navbarPage("Bend your (sp)line!",
+bootstrapPage(withMathJax(),includeCSS("www/style.css"),
+              tags$head(HTML("<script type='text/javascript' src='nav.js'></script>")),
+    navbarPage("Bend your (sp)line!", id = "navbar_main", position = "fixed-top",
                           home, 
                           methods,
                           about
-                      ), 
-    footer
+                      )
 )# end bootstrappage
