@@ -55,7 +55,7 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
   ), 
   column(4,
         wellPanel( h5("Transformation: "),uiOutput("transformation.fp")), 
-        wellPanel(uiOutput("stats.fp")),
+        wellPanel(statsUI("stats_fp")),
         wellPanel(h5("Formula: "),uiOutput("formula.fp"))
   )
 )

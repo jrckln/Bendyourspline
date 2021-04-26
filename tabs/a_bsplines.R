@@ -46,7 +46,7 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
       wellPanel(plotlyOutput("plot.bs"))
     ), 
     column(4,
-          popify(wellPanel(uiOutput("stats.bs")), "Note", "Maximal R2 value is based on the set number of knots and set degree." )
+          popify(wellPanel(statsUI("stats_bs")), "Note", "Maximal R2 value is based on the set number of knots and set degree." )
     )
   ),
   fluidRow(

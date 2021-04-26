@@ -47,7 +47,7 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
       wellPanel(plotlyOutput("plot.nsp"))
     ), 
     column(4,
-          popify(wellPanel(uiOutput("stats.nsp")), "Note", "Maximal R2 value is based on the set number of knots." )
+          popify(wellPanel(statsUI("stats_nsp")), "Note", "Maximal R2 value is based on the set number of knots." )
     )
   ),
     fluidRow(wellPanel(plotlyOutput("basis_plot.nsp", height = "200px")))

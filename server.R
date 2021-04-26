@@ -212,25 +212,11 @@ function(input, output, session){
         p <- ifelse(coef1.fp() == 0& coef2.fp() == 0, 0, ifelse(any(coef1.fp() == 0, coef2.fp() == 0),1,2))
         c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
     })
-    output$stats.fp <-  renderUI({
-        stats <- calcadjR2.fp()
-        intercept.val <- getintercept.fp()
-        HTML(paste0("
-            <div class='gridstats'>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[1], 3) ," </h2> <br> <p> R <sup>2</sup> </p> </center> 
-              </div>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[2], 3) ," </h2> <br> <p> ADJUSTED R <sup>2</sup> </p> </center> 
-              </div>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[3], 3) ," </h2> <br> <p> MAXMIMAL R <sup>2</sup> </p> </center> 
-              </div>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(intercept.val,3) ," </h2> <br> <p> INTERCEPT </p> </center> 
-              </div>
-            </div>
-             "))
+    
+    observe({
+      stats_val <- calcadjR2.fp()
+      intercept_val <- getintercept.fp()
+      stats("stats_fp", stats_val, intercept_val)
     })
     
     #reset button
@@ -418,6 +404,7 @@ function(input, output, session){
         }
     })
     
+    
     output$plot.bs <- renderPlotly({
       req(input$nknots.bs)
         var_list <- var_list_reac()
@@ -467,6 +454,12 @@ function(input, output, session){
                 theme_minimal() +
                 ylab(var_list$y)
         ggplotly(p)
+    })
+    
+    observe({
+      stats_val <- calcadjR2.bs()
+      intercept_val <- getintercept.bs()
+      stats("stats_bs", stats_val, intercept_val)
     })
 
     output$basis_plot.bs<- renderPlotly({
@@ -532,36 +525,6 @@ function(input, output, session){
         index <- paste0(input$sample.size,"_" ,sex_ind)
         c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
     })
-
-    output$stats.bs <-  renderUI({
-        stats <- calcadjR2.bs()
-        nknots <- input$nknots.bs
-        degree <- input$degree.bs
-        HTML(paste0("R <sup>2</sup>: ", round(stats[1], 3), "<br> adj. R <sup>2</sup>: ", round(stats[2], 3),
-                    "<br> max. R <sup>2</sup> for degree of ", degree , " and ", nknots," internal knots: ", round(stats[3], 3)))
-    })
-    
-    output$stats.bs <-  renderUI({
-        stats <- calcadjR2.bs()
-        intercept.val <- getintercept.bs()
-        HTML(paste0("
-            <div class='gridstats'>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[1], 3) ," </h2> <br> <p> R <sup>2</sup> </p> </center> 
-              </div>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[2], 3) ," </h2> <br> <p> ADJUSTED R <sup>2</sup> </p> </center> 
-              </div>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[3], 3) ," </h2> <br> <p> MAXMIMAL R <sup>2</sup> </p> </center> 
-              </div>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(intercept.val, 3) ," </h2> <br> <p> INTERCEPT  </p> </center> 
-              </div>
-            </div>
-             "))
-    })
-
     #reset button
     observeEvent(input$reset_input.bs, {
        reset("inputs.bs") #id of tab to reset
@@ -771,6 +734,12 @@ function(input, output, session){
             return(input$intercept.nsp)
         }
     })
+    
+    observe({
+      stats_val <- calcadjR2.nsp()
+      intercept_val <- getintercept.nsp()
+      stats("stats_nsp", stats_val, intercept_val)
+    })
 
     output$plot.nsp <- renderPlotly({
       req(input$nknots.nsp)
@@ -908,27 +877,6 @@ function(input, output, session){
         }
         index <- paste0(input$sample.size,"_" ,sex_ind)
         c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
-    })
-    
-    output$stats.nsp <-  renderUI({
-        stats <- calcadjR2.nsp()
-        intercept.val <- getintercept.nsp()
-        HTML(paste0("
-            <div class='gridstats'>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[1], 3) ," </h2> <br> <p> R <sup>2</sup> </p> </center> 
-              </div>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[2], 3) ," </h2> <br> <p> ADJUSTED R <sup>2</sup> </p> </center> 
-              </div>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(stats[3], 3) ," </h2> <br> <p> MAXMIMAL R <sup>2</sup> </p> </center> 
-              </div>
-              <div class='boxstats'>
-                <center> <i class='fas fa-dog fa-3x'></i> <h2>", round(intercept.val, 3) ," </h2> <br> <p> INTERCEPT  </p> </center> 
-              </div>
-            </div>
-             "))
     })
 
     #reset button
