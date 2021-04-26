@@ -43,12 +43,12 @@ function(input, output, session){
     #increase/decrease range of coefs
     range_fp <- coef_range("fp")
     observeEvent(range_fp(), {
-      updateSliderInput(session, "val.coef1.fp-coef", min = (-1)*range_fp(), max = range_fp())
-      updateSliderInput(session, "val.coef2.fp-coef", min = (-1)*range_fp(), max = range_fp())
+      updateSliderInput(session, "val_coef1_fp-coef", min = (-1)*range_fp(), max = range_fp())
+      updateSliderInput(session, "val_coef2_fp-coef", min = (-1)*range_fp(), max = range_fp())
     })
     
-    coef1.fp <- sliderpl("val.coef1.fp")
-    coef2.fp <- sliderpl("val.coef2.fp")
+    coef1.fp <- sliderpl("val_coef1_fp")
+    coef2.fp <- sliderpl("val_coef2_fp")
     
     output$formula.fp <- renderUI({
       req(input$coef1.fp)

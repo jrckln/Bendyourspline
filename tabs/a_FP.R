@@ -26,8 +26,8 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                     ), 
                     column(8, offset=0,
                            wellPanel(
-                             sliderplUI("val.coef1.fp"), 
-                             sliderplUI("val.coef2.fp")
+                             sliderplUI("val_coef1_fp"), 
+                             sliderplUI("val_coef2_fp")
                            )
                            )
                 ), 

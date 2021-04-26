@@ -6218,6 +6218,20 @@ i > boxstats {
 
 #placeholder_coef_bs .form-group.shiny-input-container{
                                         display: inline-block;
+										padding: 0px;
+                                        }
+#placeholder_coef_nsp .form-group.shiny-input-container{
+                                        display: inline-block;
+										padding: 0px;
+                                        }
+										
+#val_coef1_fp .form-group.shiny-input-container{
+                                        display: inline-block;
+										padding: 0px;
+                                        }
+#val_coef2_fp .form-group.shiny-input-container{
+                                        display: inline-block;
+										padding: 0px;
                                         }
 
 
