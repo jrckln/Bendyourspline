@@ -1,4 +1,4 @@
-fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),withMathJax(),
+fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
             sidebarPanel(class="input_class", id = "inputs.fp",
                 fluidRow(column(7, offset=0, h4("Input parameters")), 
                          column(5, offset=0, 
