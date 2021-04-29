@@ -141,51 +141,52 @@ function(input, output, session){
         if(length(fp)==0){
             fp <- rep(0,nrow(data))
         }
-        
+        data <- data[, c(var_list$x, var_list$y)]
+        names(data) <- c("x","y")
         DF <- cbind(data, transformed, fp, fp1, fp2)
+        attr(DF, "names_vars") <- c(var_list$x, var_list$y)
         DF
     })
     
-    output$plot.FP <- renderPlotly({
-        var_list <- var_list_reac()
-        data <- var_list$data
-        
-        x <- data[,var_list$x]
-        pT <- fp.scale(x)
-        
+    output$plot.fp <- renderPlotly({
         intercept <- getintercept.fp()
         
         DF <- FPdata()
         p <- ggplot(data=DF)
         
         if(input$add_y.fp){
-            p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
+            p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
         if(input$add_loess.fp){
-            p <- p + geom_smooth(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), method = "loess", formula = "y~x")
+            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x")
         }
         
-        p <- p +geom_line(aes(x=!!sym(var_list$x), y = intercept+fp)) + 
+        p <- p +geom_line(aes(x=x, y = intercept+fp)) + 
                 theme_minimal() +
-                ylab(var_list$y) 
+                ylab(attr(DF, "names_vars")[2]) + 
+                xlab(attr(DF, "names_vars")[1])
+        ggplotly(p)
+    })
+    
+    output$basis_plot.fp <- renderPlotly({
+        DF <- FPdata()
+        p <- ggplot(data=DF) + 
+            geom_line(aes(x=x, y=fp1)) +
+            geom_line(aes(x=x, y=fp2))+ 
+            theme_minimal()+
+          ylab("")
         ggplotly(p)
     })
     
     calcR2.fp <- reactive({
-        var_list <- var_list_reac()
-        data <- var_list$data
-        x <- data[,var_list$x]
-        pT <- fp.scale(x)
         DF <- FPdata()
         fp <- getintercept.fp()+DF[, "fp"]
 
-        fit <- mfp(as.formula(paste0(var_list$y, "~ fp(transformed, df=4, scale=F)")), data = DF)
+        fit <- mfp(x~ fp(transformed, df=4, scale=F), data = DF)
         rss <- sum((fit$residuals)^2)
-        sstot <- sum((data[,var_list$y]-mean(data[,var_list$y]))^2)
+        sstot <- sum((DF[,"y"]-mean(DF[,"y"]))^2)
         fittedR2 <- 1-rss/sstot
-        
-        sstot <- sum((DF[,var_list$y]-mean(DF[,var_list$y]))^2) #total sum of squares
-        ssres <- sum((DF[, var_list$y]-fp)^2)  #residual sum of squares
+        ssres <- sum((DF[, "y"]-fp)^2)  #residual sum of squares
         c(1-ssres/sstot,fittedR2)
     })
     
@@ -195,11 +196,6 @@ function(input, output, session){
         maxR2 <- res[2]
         var_list <- var_list_reac()
         data <- var_list$data
-        if(input$gender == "Both"){
-            sex_ind <- "both"
-        } else {
-            sex_ind <- gender[input$gender]
-        }
         
         p <- ifelse(coef1.fp() == 0& coef2.fp() == 0, 0, ifelse(any(coef1.fp() == 0, coef2.fp() == 0),1,2))
         c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
@@ -425,11 +421,6 @@ function(input, output, session){
 
         pos <- getpos.bs()
         b <- bs(x, degree=degree, knots=pos)
-
-        #TODO: push up to data creation - no need for recalc every time
-        data <- data %>%
-            group_by(!!sym(var_list$x)) %>%
-            mutate(y_mean = mean(!!sym(var_list$y)))
 
         coefs <- getcoef.bs()
         spline <- apply(b, 1, function(x, coefs.in = coefs) {
@@ -770,11 +761,6 @@ function(input, output, session){
           boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
         }
         b <- ns(x, knots=pos, Boundary.knots = boundaries)
-
-        #TODO: push up to data creation - no need for recalc every time
-        data <- data %>%
-            group_by(!!sym(var_list$x)) %>%
-            mutate(y_mean = mean(!!sym(var_list$y)))
 
         coefs <- getcoef.nsp()
         spline <- apply(b, 1, function(x, coefs.in = coefs) {

@@ -1,4 +1,4 @@
-fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
+fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),withMathJax(),
             sidebarPanel(class="input_class", id = "inputs.fp",
                 fluidRow(column(7, offset=0, h4("Input parameters")), 
                          column(5, offset=0, 
@@ -51,7 +51,8 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                 )
 ),mainPanel(
   column(8,
-    wellPanel(plotlyOutput("plot.FP"))
+    wellPanel(plotlyOutput("plot.fp")), 
+    wellPanel(plotlyOutput("basis_plot.fp", height = "200px"))
   ), 
   column(4,
         wellPanel( h5("Transformation: "),uiOutput("transformation.fp")), 
