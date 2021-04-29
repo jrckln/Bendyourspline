@@ -1,10 +1,10 @@
 # Module UI
-sliderplUI <- function(id) {
+sliderplUI <- function(id, range_slider = 1) {
   ns <- NS(id)
   div(
       actionButton(ns("minus"), "", icon = icon("minus"), style='padding:1%; font-size:80%;
                    vertical-align: -150%;background: #FFFFFF; width: 8%;display: inline-block;'),
-      sliderInput(ns("coef"),label="",min =-1, max = 1, value = 0, step = 0.01, width= "80%", ticks = FALSE),
+      sliderInput(ns("coef"),label="",min = (-1)*range_slider, max = range_slider, value = 0, step = 0.01, width= "80%", ticks = FALSE),
       actionButton(ns("plus"), "", icon = icon("plus"), style='padding:1%; font-size:80%; 
                    vertical-align: -150%;background: #FFFFFF; width: 8%;display: inline-block;'), id = id)
 }

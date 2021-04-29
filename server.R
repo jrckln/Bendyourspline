@@ -329,7 +329,7 @@ function(input, output, session){
                 for(i in 1:length(toinsert)){
                   insertUI(
                     selector = '#placeholder_coef_bs',
-                    ui = sliderplUI(id[i])
+                    ui = sliderplUI(id[i], range_slider = range_bs())
                   )
                   coef_vals_bs[[id[i]]] <- sliderpl(id[i])
                   inserted.coef.bs <<- c(inserted.coef.bs, id[i])
@@ -674,7 +674,7 @@ function(input, output, session){
                 for(i in 1:length(toinsert)){
                     insertUI(
                     selector = '#placeholder_coef_nsp',
-                    ui = sliderplUI(id[i])
+                    ui = sliderplUI(id[i], range_slider = range_nsp())
                   )
                   coef_vals_nsp[[id[i]]] <- sliderpl(id[i])
                   inserted.coef.nsp <<- c(inserted.coef.nsp, id[i])
