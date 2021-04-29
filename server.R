@@ -489,6 +489,7 @@ function(input, output, session){
     })
 
     calcR2.bs <- reactive({
+        req(input$nknots.bs)
         var_list <- var_list_reac()
         data <- var_list$data
         x <- data[,var_list$x]
@@ -842,6 +843,7 @@ function(input, output, session){
     })
 
     calcR2.nsp <- reactive({
+      req(input$nknots.nsp)
       req(input$boundary1.nsp)
       req(input$boundary2.nsp)
         var_list <- var_list_reac()
