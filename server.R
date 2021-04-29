@@ -755,23 +755,6 @@ function(input, output, session){
       intercept_val <- getintercept.nsp()
       stats("stats_nsp", stats_val, intercept_val)
     })
-    
-    getoptfit.nsp <- reactive({
-      var_list <- var_list_reac()
-      x <- var_list$data[,var_list$x]
-      degree <- input$degree.nsp
-      pos <- getpos.nsp()
-      if(any(is.null(input$boundary1.nsp), is.null(input$boundary2.nsp))){
-          boundaries <- c(min(x), max(x))
-        } else {
-          boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
-      }
-      b <- ns(x, knots=pos, Boundary.knots = boundaries)
-      DF <- cbind(var_list$data, b)
-      colnames(DF) <- c(colnames(var_list$data), paste0("spline", 1:ncol(b)))
-      optfit <- lm(as.formula(paste0(var_list$y, "~", paste0(paste0("spline", 1:ncol(b)), collapse="+"))), data=DF)
-      optfit$coefficients
-    })
 
     output$plot.nsp <- renderPlotly({
       req(input$nknots.nsp)
@@ -875,11 +858,14 @@ function(input, output, session){
     })
 
     calcR2.nsp <- reactive({
+      req(input$boundary1.nsp)
+      req(input$boundary2.nsp)
         var_list <- var_list_reac()
+        print(head(var_list))
         data <- var_list$data
         x <- data[,var_list$x]
         pos <- getpos.nsp()
-        b <- ns(x, knots=pos)
+        b <- ns(x, knots=pos, Boundary.knots = c(input$boundary1.nspinput$boundary2.nsp))
         coefs <- getcoef.nsp()
         spline <- apply(b, 1, function(x, coefs.in = coefs) {
             res <- 0
@@ -888,6 +874,9 @@ function(input, output, session){
             }
             res
         })
+        print(pos)
+        print(input$boundary1.nsp)
+        print(input$boundary2.nsp)
         spline <- spline + getintercept.nsp()
         model <- lm(as.formula(paste0(var_list$y, " ~ ns(", var_list$x, ", df=", 1+length(pos),
                                       ", Boundary.knots=c(", ifelse(is.null(input$boundary1.nsp), min(x), input$boundary1.nsp),

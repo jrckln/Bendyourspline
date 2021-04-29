@@ -22,7 +22,7 @@ methods <-
                                                     column(4,popify(numericInput("seed", "Set seed:", value=14), "Seed", 
                                                             "Initializes random number generator for drawing random samples")), 
                                                     column(4, 
-                                                        selectInput("sample.size", "Choose a sample size:",names(sample.sizes))),
+                                                        selectInput("sample.size", "Choose a sample size:",names(sample.sizes)), selected = "50%"),
                                                     column(4, 
                                                             radioGroupButtons(inputId = "gender", label = "Sex:", choices = names(gender),status = "primary")
                                                         ), 
