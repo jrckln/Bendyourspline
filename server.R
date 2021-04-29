@@ -53,6 +53,7 @@ function(input, output, session){
     
     coef1.fp <- sliderpl("val_coef1_fp")
     coef2.fp <- sliderpl("val_coef2_fp")
+
     
     output$formula.fp <- renderUI({
       req(input$coef1.fp)
@@ -145,6 +146,13 @@ function(input, output, session){
         DF
     })
     
+    getoptfit.fp <- reactive({
+      DF <- FPdata()
+      var_list <- var_list_reac()
+      optfit <- lm(as.formula(paste0(var_list$y, "~ fp1 + fp2")), data=DF)
+      optfit$coefficients
+    })
+    
     output$plot.FP <- renderPlotly({
         var_list <- var_list_reac()
         data <- var_list$data
@@ -155,24 +163,20 @@ function(input, output, session){
         intercept <- getintercept.fp()
         
         DF <- FPdata()
-        
-        DF <- DF %>% 
-            group_by(!!sym(var_list$x)) %>% 
-            mutate(y_mean = mean(!!sym(var_list$y)))
-        
         p <- ggplot(data=DF)
         
         if(input$add_y.fp){
             p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
         }
-        if(input$add_mean.fp){
-            p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
+        if(input$add_loess.fp){
+            p <- p + geom_smooth(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), method = "loess", formula = "y~x")
+        }
+        if(input$add_optfit.fp){
+          optcoef <- getoptfit.fp()
+          #optline <- optcoef[1]+ optcoef[2]*DF$fp1 + optcoef[3]*DF$fp2
+           p <- p + geom_line(aes(x=!!sym(var_list$x), y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2), color = "orange")
         }
         
-        # if(input$add_CI.fp){
-        #   SE.fitted <- se_fitted(DF, var_list$y, intercept)
-        #   p <- p+geom_ribbon(aes(x = !!sym(var_list$x),ymin=intercept+fp-1.96*SE.fitted,ymax=intercept+fp+1.96*SE.fitted),alpha=0.2)
-        # }
         p <- p +geom_line(aes(x=!!sym(var_list$x), y = intercept+fp)) + 
                 theme_minimal() +
                 ylab(var_list$y) 
@@ -223,6 +227,7 @@ function(input, output, session){
     observeEvent(input$reset_input.fp, {
        reset("inputs.fp") #id of tab to reset
     })
+
     observe({
       if(input$adjust_intercept.fp){
         disable("intercept.fp")
@@ -241,6 +246,23 @@ function(input, output, session){
         enable("adjust_intercept.fp")
         enable("intercept.fp")
       }
+    })
+    observeEvent(input$setoptimalfit.fp,{
+       coefs <- getoptfit.fp()
+       coefs <- unname(round(coefs,2))
+       range.coefs.fp$range.coef.left.fp <- (-1)*ceiling(max(abs(coefs[2:3])))
+       range.coefs.fp$range.coef.right.fp <- ceiling(max(abs(coefs[2:3])))
+       updateSliderInput(session, inputId = "coef1.fp", value=coefs[2])
+       updateSliderInput(session, inputId = "coef2.fp", value = coefs[3])
+       shinyjs::enable("intercept.fp")
+       updateMaterialSwitch(session, inputId =  "adjust_intercept.fp", value=FALSE)
+       updateSliderInput(session, inputId = "intercept.fp", value =coefs[1])
+    })
+    
+    
+    #reset button
+    observeEvent(input$reset_input.fp, {
+       shinyjs::reset("inputs.fp")
     })
     
     #############################################
@@ -404,6 +426,17 @@ function(input, output, session){
         }
     })
     
+    getoptfit.bs <- reactive({
+      var_list <- var_list_reac()
+      x <- var_list$data[,var_list$x]
+      degree <- input$degree.bs
+      pos <- getpos.bs()
+      b <- bs(x, degree=degree, knots=pos)
+      DF <- cbind(var_list$data, b)
+      colnames(DF) <- c(colnames(var_list$data), paste0("spline", 1:ncol(b)))
+      optfit <- lm(as.formula(paste0(var_list$y, "~", paste0(paste0("spline", 1:ncol(b)), collapse="+"))), data=DF)
+      optfit$coefficients
+    })
     
     output$plot.bs <- renderPlotly({
       req(input$nknots.bs)
@@ -437,8 +470,8 @@ function(input, output, session){
         if(input$add_y.bs){
             p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
         }
-        if(input$add_mean.bs){
-            p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
+        if(input$add_loess.bs){
+            p <- p + geom_smooth(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), method = "loess", formula = "y~x")
         }
         if(input$add_knots_pos.bs){
             knots <- attr(b, "knots")
@@ -448,6 +481,11 @@ function(input, output, session){
                 p <- p + geom_vline(xintercept=knots[i], color = "red", linetype="dashed")+
                   annotate(geom = "text", x = knots[i], y = y_coord, label = paste("Q ",quant[i]), hjust = "left")
             }
+        }
+        if(input$add_optfit.bs){
+          optcoef <- getoptfit.bs()
+          optline <- as.numeric(cbind(1,b) %*% optcoef)
+           p <- p + geom_line(aes(x=!!sym(var_list$x), y = optline), color = "orange")
         }
 
         p <- p +geom_line(aes(x=!!sym(var_list$x), y = spline)) +
@@ -547,6 +585,7 @@ function(input, output, session){
         enable("intercept.bs")
       }
     })
+
     
     #############################################
     #######      Natural-splines    #############
@@ -740,6 +779,23 @@ function(input, output, session){
       intercept_val <- getintercept.nsp()
       stats("stats_nsp", stats_val, intercept_val)
     })
+    
+    getoptfit.nsp <- reactive({
+      var_list <- var_list_reac()
+      x <- var_list$data[,var_list$x]
+      degree <- input$degree.nsp
+      pos <- getpos.nsp()
+      if(any(is.null(input$boundary1.nsp), is.null(input$boundary2.nsp))){
+          boundaries <- c(min(x), max(x))
+        } else {
+          boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
+      }
+      b <- ns(x, knots=pos, Boundary.knots = boundaries)
+      DF <- cbind(var_list$data, b)
+      colnames(DF) <- c(colnames(var_list$data), paste0("spline", 1:ncol(b)))
+      optfit <- lm(as.formula(paste0(var_list$y, "~", paste0(paste0("spline", 1:ncol(b)), collapse="+"))), data=DF)
+      optfit$coefficients
+    })
 
     output$plot.nsp <- renderPlotly({
       req(input$nknots.nsp)
@@ -776,8 +832,8 @@ function(input, output, session){
         if(input$add_y.nsp){
             p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
         }
-        if(input$add_mean.nsp){
-            p <- p + geom_line(aes(x=!!sym(var_list$x), y = y_mean), color = "blue")
+        if(input$add_loess.nsp){
+            p <- p + geom_smooth(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), method = "loess", formula = "y~x")
         }
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
@@ -792,6 +848,11 @@ function(input, output, session){
               geom_vline(xintercept=boundaries[2], color = "red4", linetype="dashed")+
               annotate(geom = "text", x = boundaries[1], y = y_coord, label = paste("Q ",quantInv(x, boundaries[1])), hjust = "left")+
               annotate(geom = "text", x = boundaries[2], y = y_coord, label = paste("Q ",quantInv(x, boundaries[2])), hjust = "left")
+        }
+        if(input$add_optfit.nsp){
+          optcoef <- getoptfit.nsp()
+          optline <- as.numeric(cbind(1,b) %*% optcoef)
+           p <- p + geom_line(aes(x=!!sym(var_list$x), y = optline), color = "orange")
         }
 
         p <- p +geom_line(aes(x=!!sym(var_list$x), y = spline)) +
@@ -901,6 +962,7 @@ function(input, output, session){
         enable("intercept.nsp")
       }
     })
+
     
     session$onSessionEnded(stopApp) #automatically stop when closing browser
 }
