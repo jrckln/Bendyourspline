@@ -53,7 +53,7 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
     )
   ),
   fluidRow(
-    wellPanel(plotlyOutput("basis_plot.bs", height = "200px"))
+    column(8, wellPanel(plotlyOutput("basis_plot.bs", height = "200px")))
   )
   )
 ) 
