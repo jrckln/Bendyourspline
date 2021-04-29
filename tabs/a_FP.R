@@ -48,11 +48,6 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                     column(6, offset=0,
                            materialSwitch(inputId = "add_optfit.fp", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)
                     )
-                ), 
-                fluidRow(
-                  column(6, offset=0, actionButton("reset_input.fp", "Reset inputs")), 
-                   popify(column(6, offset=0, actionButton("setoptimalfit.fp", "Optimal fit")), "Optimal fit",
-                   "Sets all coefficients to the optimal fit according to the chosen powers.")
                 )
 ),mainPanel(
   column(8,

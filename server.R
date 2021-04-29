@@ -146,13 +146,6 @@ function(input, output, session){
         DF
     })
     
-    getoptfit.fp <- reactive({
-      DF <- FPdata()
-      var_list <- var_list_reac()
-      optfit <- lm(as.formula(paste0(var_list$y, "~ fp1 + fp2")), data=DF)
-      optfit$coefficients
-    })
-    
     output$plot.FP <- renderPlotly({
         var_list <- var_list_reac()
         data <- var_list$data
@@ -170,11 +163,6 @@ function(input, output, session){
         }
         if(input$add_loess.fp){
             p <- p + geom_smooth(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), method = "loess", formula = "y~x")
-        }
-        if(input$add_optfit.fp){
-          optcoef <- getoptfit.fp()
-          #optline <- optcoef[1]+ optcoef[2]*DF$fp1 + optcoef[3]*DF$fp2
-           p <- p + geom_line(aes(x=!!sym(var_list$x), y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2), color = "orange")
         }
         
         p <- p +geom_line(aes(x=!!sym(var_list$x), y = intercept+fp)) + 
@@ -247,18 +235,6 @@ function(input, output, session){
         enable("intercept.fp")
       }
     })
-    observeEvent(input$setoptimalfit.fp,{
-       coefs <- getoptfit.fp()
-       coefs <- unname(round(coefs,2))
-       range.coefs.fp$range.coef.left.fp <- (-1)*ceiling(max(abs(coefs[2:3])))
-       range.coefs.fp$range.coef.right.fp <- ceiling(max(abs(coefs[2:3])))
-       updateSliderInput(session, inputId = "coef1.fp", value=coefs[2])
-       updateSliderInput(session, inputId = "coef2.fp", value = coefs[3])
-       shinyjs::enable("intercept.fp")
-       updateMaterialSwitch(session, inputId =  "adjust_intercept.fp", value=FALSE)
-       updateSliderInput(session, inputId = "intercept.fp", value =coefs[1])
-    })
-    
     
     #reset button
     observeEvent(input$reset_input.fp, {
