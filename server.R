@@ -411,42 +411,51 @@ function(input, output, session){
         }
     })
     
-    getoptfit.bs <- reactive({
+    getbasis.bs <- reactive({
       var_list <- var_list_reac()
       x <- var_list$data[,var_list$x]
       degree <- input$degree.bs
       pos <- getpos.bs()
       b <- bs(x, degree=degree, knots=pos)
-      DF <- cbind(var_list$data, b)
-      colnames(DF) <- c(colnames(var_list$data), paste0("spline", 1:ncol(b)))
-      optfit <- lm(as.formula(paste0(var_list$y, "~", paste0(paste0("spline", 1:ncol(b)), collapse="+"))), data=DF)
+      colnames(b) <- paste0("spline", 1:ncol(b))
+      data <- list("x" = x, 
+                    "y" = var_list$data[, var_list$y], 
+                   "b" = b, 
+                   "names_vars" = c(var_list$x, var_list$y))
+      return(data)
+    })
+    
+    getoptfit.bs <- reactive({
+      data <- getbasis.bs()
+      data <- data.frame(cbind(data$x, data$y, data$b))
+      names(data) <- c("x","y", paste0("spline", 1:(ncol(data)-2)))
+      optfit <- lm(as.formula(paste0("y~", paste0(paste0("spline", 1:(ncol(data)-2)), collapse="+"))), data=data)
       optfit$coefficients
     })
     
     output$plot.bs <- renderPlotly({
         req(input$nknots.bs)
-        var_list <- var_list_reac()
-        data <- var_list$data
-        x <- data[,var_list$x]
-        degree <- input$degree.bs
-
+        data <- getbasis.bs()
+        b <- data$b
+        var_names <- data$var_names
+        data <- data.frame("x" = data$x, "y" = data$y)
+      
         pos <- getpos.bs()
-        b <- bs(x, degree=degree, knots=pos)
-
         coefs <- getcoef.bs()
         intercept <- getintercept.bs()
+        
         spline <- rowSums(b %*% coefs)+intercept
 
         p <- ggplot(data=data)
         if(input$add_y.bs){
-            p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
+            p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
         if(input$add_loess.bs){
-            p <- p + geom_smooth(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), method = "loess", formula = "y~x")
+            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x")
         }
         if(input$add_knots_pos.bs){
           knots <- attr(b, "knots")
-          quant <- round(quantInv(x, knots),2)
+          quant <- round(quantInv(data$x, knots),2)
           y_coord <- rowSums(predict(b, knots) %*% coefs)+intercept
           knots_df <- data.frame("x" = knots, 
                                  "y" = y_coord)
@@ -456,29 +465,28 @@ function(input, output, session){
         if(input$add_optfit.bs){
           optcoef <- getoptfit.bs()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
-           p <- p + geom_line(aes(x=!!sym(var_list$x), y = optline), color = "orange")
+           p <- p + geom_line(aes(x=x, y = optline), color = "orange")
         }
 
-        p <- p +geom_line(aes(x=!!sym(var_list$x), y = spline)) +
+        p <- p +geom_line(aes(x=x, y = spline)) +
                 theme_minimal() +
-                ylab(var_list$y)
+                ylab(var_names[2])+
+                xlab(var_names[1])
         ggplotly(p)
     })
     
     observe({
-      stats_val <- calcadjR2.bs()
+      stats_val <- calcR2.bs()
       intercept_val <- getintercept.bs()
       stats("stats_bs", stats_val, intercept_val)
     })
 
     output$basis_plot.bs<- renderPlotly({
-      req(input$nknots.bs)
-        var_list <- var_list_reac()
-        data <- var_list$data
-        x <- data[,var_list$x]
+        req(input$nknots.bs)
+        data <- getbasis.bs()
+        b <- data$b
+        data <- cbind(data$x, data$y)
         degree <- input$degree.bs
-        pos <- getpos.bs()
-        b <- bs(x, degree=degree, knots=pos)
         all.knots <- sort(c(attr(b,"Boundary.knots") ,attr(b, "knots")))
         bounds <- range(all.knots)
         knot.values <- set_colnames(predict(b, all.knots),str_c("S", seq_len(ncol(predict(b, all.knots)))))
@@ -496,38 +504,23 @@ function(input, output, session){
 
     calcR2.bs <- reactive({
         req(input$nknots.bs)
-        var_list <- var_list_reac()
-        data <- var_list$data
-        x <- data[,var_list$x]
-        degree <- input$degree.bs
-        pos <- getpos.bs()
-        b <- bs(x, degree=degree, knots=pos)
+        data <- getbasis.bs()
+        b <- data$b
+        data <- data.frame("x" = data$x, "y"= data$y)
         coefs <- getcoef.bs()
+        degree <- input$degree.bs
         spline <- rowSums(b %*% coefs)+getintercept.bs()
-        model <- lm(as.formula(paste0(var_list$y, " ~ bs(", var_list$x, ", df=", degree+length(pos),")")), data=data)
+        model <- lm(as.formula(paste0("y ~ bs(x, df=", degree+length(coefs),")")), data=data)
         fitted <- model$fitted
         p <- model$rank
-        sstot <- sum((data[,var_list$y]-mean(data[,var_list$y]))^2) #total sum of squares
-        ssres <- sum((data[, var_list$y]-spline)^2)  #residual sum of squares
-        ssres_fitted <- sum((data[, var_list$y]-fitted)^2)  #residual sum of squares fitted
-        c(1-ssres/sstot, 1-ssres_fitted/sstot, p)
-    })
-
-    calcadjR2.bs <- reactive({
-        res <- calcR2.bs()
-        R2 <- res[1]
-        maxR2 <- res[2]
-        p <- res[3]
-        var_list <- var_list_reac()
-        data <- var_list$data
-        if(input$gender == "Both"){
-            sex_ind <- "both"
-        } else {
-            sex_ind <- gender[input$gender]
-        }
-        index <- paste0(input$sample.size,"_" ,sex_ind)
+        sstot <- sum((data$y-mean(data$y))^2) #total sum of squares
+        ssres <- sum((data$y-spline)^2)  #residual sum of squares
+        ssres_fitted <- sum((data$y-fitted)^2)  #residual sum of squares fitted
+        R2 <- 1-ssres/sstot
+        maxR2 <- 1-ssres_fitted/sstot
         c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
-    })
+        })
+    
     #reset button
     observeEvent(input$reset_input.bs, {
        reset("inputs.bs") #id of tab to reset
