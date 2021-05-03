@@ -104,7 +104,7 @@ function(input, output, session){
         if(input$adjust_intercept.fp){
             var_list <- var_list_reac()
             data <- FPdata()
-            intercept <- opt.intercept(fitted=data$fp, data=data[,var_list$y], interval=c(min(data[,var_list$y]), max(data[,var_list$y])))$minimum
+            intercept <- opt.intercept(fitted=data$fp, data=data[,"y"], interval=c(min(data[,"y"]), max(data[,"y"])))$minimum
             return(intercept)
         } else {
             return(input$intercept.fp)
@@ -254,7 +254,7 @@ function(input, output, session){
     })
     
     observeEvent(c(input$nknots.bs,input$variable), {
-      req(input$nknots.bs)
+        req(input$nknots.bs)
         if(length(inserted.pos.bs)!=0){ #case of update or variable change
             if(length(inserted.pos.bs)>as.numeric(input$nknots.bs)){
                 #remove difference:
@@ -297,9 +297,7 @@ function(input, output, session){
                 }
             }
         }else{ #case of init
-            default.pos.knots.bs <- seq.int(from = 0, 
-                                            to = 1, 
-                                            length.out = input$nknots.bs +2)[-c(1, input$nknots.bs + 2)]
+            default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = input$nknots.bs + 2)[-c(1, input$nknots.bs + 2)]
             var_list <- var_list_reac()
             data <- var_list$data
             x <- data[,var_list$x]
@@ -322,8 +320,8 @@ function(input, output, session){
     inserted.coef.bs <- c()
     coef_vals_bs <- reactiveValues()
     
-    observeEvent(c(input$nknots.bs, input$degree.bs,input$variable), {
-      req(input$nknots.bs)
+    observeEvent(c(input$nknots.bs, input$degree.bs, input$variable), {
+        req(input$nknots.bs)
         num <- input$degree.bs + input$nknots.bs 
         if(length(inserted.coef.bs)!=0){ #case of update
             if(length(inserted.coef.bs)>num){
@@ -369,9 +367,13 @@ function(input, output, session){
         ind <- ind[!(is.na(ind))]
         pos <- c()
         for(i in ind){
-            pos <- c(pos, input[[names(input)[i]]])
+          pos <- c(pos, input[[names(input)[i]]])
         }
-        pos
+        if(length(pos)!=input$nknots.bs){
+          return(numeric(input$nknots.bs))
+        } else {
+          return(pos)
+        }
     })
 
     getcoef.bs <- reactive({
@@ -432,16 +434,9 @@ function(input, output, session){
         b <- bs(x, degree=degree, knots=pos)
 
         coefs <- getcoef.bs()
-        spline <- apply(b, 1, function(x, coefs.in = coefs) {
-            res <- 0
-            for(i in 1:length(x)){
-                res <- res + coefs.in[i]*x[i]
-            }
-            res
-        })
-
         intercept <- getintercept.bs()
-        spline <- intercept + spline
+        spline <- rowSums(b %*% coefs)+intercept
+
         p <- ggplot(data=data)
         if(input$add_y.bs){
             p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
@@ -450,13 +445,13 @@ function(input, output, session){
             p <- p + geom_smooth(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), method = "loess", formula = "y~x")
         }
         if(input$add_knots_pos.bs){
-            knots <- attr(b, "knots")
-            quant <- round(quantInv(x, knots),2)
-            y_coord <- max(x)
-            for(i in 1:length(knots)){
-                p <- p + geom_vline(xintercept=knots[i], color = "red", linetype="dashed")+
-                  annotate(geom = "text", x = knots[i], y = y_coord, label = paste("Q ",quant[i]), hjust = "left")
-            }
+          knots <- attr(b, "knots")
+          quant <- round(quantInv(x, knots),2)
+          y_coord <- rowSums(predict(b, knots) %*% coefs)+intercept
+          knots_df <- data.frame("x" = knots, 
+                                 "y" = y_coord)
+          p <- p + geom_point(data=knots_df, aes(x=x, y=y), alpha = 0.5)+
+              annotate(geom = "text", x = knots, y = y_coord, label = paste("Q ",quant), hjust = "left")
         }
         if(input$add_optfit.bs){
           optcoef <- getoptfit.bs()
@@ -508,14 +503,7 @@ function(input, output, session){
         pos <- getpos.bs()
         b <- bs(x, degree=degree, knots=pos)
         coefs <- getcoef.bs()
-        spline <- apply(b, 1, function(x, coefs.in = coefs) {
-            res <- 0
-            for(i in 1:length(x)){
-                res <- res + coefs.in[i]*x[i]
-            }
-            res
-        })
-        spline <- spline + getintercept.bs()
+        spline <- rowSums(b %*% coefs)+getintercept.bs()
         model <- lm(as.formula(paste0(var_list$y, " ~ bs(", var_list$x, ", df=", degree+length(pos),")")), data=data)
         fitted <- model$fitted
         p <- model$rank
@@ -588,9 +576,7 @@ function(input, output, session){
       var_list <- var_list_reac()
       data <- var_list$data
       x <- data[,var_list$x]
-      default.pos.knots.nsp <- seq.int(from = 0,
-                                       to = 1,
-                                       length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
+      default.pos.knots.nsp <- seq.int(from = 0,to = 1,length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
       pos <- quantile(x, default.pos.knots.nsp)
       div(
       sliderInput("boundary1.nsp", "Position of Boundary knot 1", min=min(x), max=pos[1]-0.1, value=min(x), step=0.1, ticks = FALSE),
@@ -721,7 +707,7 @@ function(input, output, session){
     })
 
     getpos.nsp <- reactive({
-      req(input$nknots.nsp)
+        req(input$nknots.nsp)
         #get values of knot positions:
         ind <- match(paste0("nsp_pos", 1:input$nknots.nsp, "_inner"), names(input))
         ind <- ind[!(is.na(ind))]
@@ -729,7 +715,11 @@ function(input, output, session){
         for(i in ind){
             pos <- c(pos, input[[names(input)[i]]])
         }
-        pos
+        if(length(pos)!=input$nknots.nsp){
+          return(numeric(input$nknots.nsp))
+        } else {
+          return(pos)
+        }
     })
 
     getcoef.nsp <- reactive({
@@ -790,31 +780,23 @@ function(input, output, session){
     })
 
     output$plot.nsp <- renderPlotly({
-      req(input$nknots.nsp)
+        req(input$nknots.nsp)
+        req(input$boundary1.nsp)
+        req(input$boundary2.nsp)
+      
         var_list <- var_list_reac()
         data <- var_list$data
 
         x <- data[,var_list$x]
 
         pos <- getpos.nsp()
-        if(any(is.null(input$boundary1.nsp), is.null(input$boundary2.nsp))){
-          boundaries <- c(min(x), max(x))
-        } else {
-          boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
-        }
+        boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
         b <- ns(x, knots=pos, Boundary.knots = boundaries)
 
         coefs <- getcoef.nsp()
-        spline <- apply(b, 1, function(x, coefs.in = coefs) {
-            res <- 0
-            for(i in 1:length(x)){
-                res <- res + coefs.in[i]*x[i]
-            }
-            res
-        })
-
         intercept <- getintercept.nsp()
-        spline <- intercept + spline
+        spline <- rowSums(b %*% coefs)+intercept
+        
         p <- ggplot(data=data)
         if(input$add_y.nsp){
             p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
@@ -825,16 +807,13 @@ function(input, output, session){
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
             boundaries <- attr(b, "Boundary.knots")
+            knots <- c(boundaries[1], knots, boundaries[2])
             quant <- round(quantInv(x, knots),2)
-            y_coord <- max(x)
-            for(i in 1:length(knots)){
-                p <- p + geom_vline(xintercept=knots[i], color = "red", linetype="dashed")+
-                  annotate(geom = "text", x = knots[i], y = y_coord, label = paste("Q ",quant[i]), hjust = "left")
-            }
-            p <- p + geom_vline(xintercept=boundaries[1], color = "red4", linetype="dashed")+
-              geom_vline(xintercept=boundaries[2], color = "red4", linetype="dashed")+
-              annotate(geom = "text", x = boundaries[1], y = y_coord, label = paste("Q ",quantInv(x, boundaries[1])), hjust = "left")+
-              annotate(geom = "text", x = boundaries[2], y = y_coord, label = paste("Q ",quantInv(x, boundaries[2])), hjust = "left")
+            y_coord <-rowSums(predict(b, knots) %*% coefs)+intercept
+            knots_df <- data.frame("x" = knots, 
+                                   "y" = y_coord)
+            p <- p + geom_point(data=knots_df, aes(x=x, y=y), alpha = 0.5)+
+              annotate(geom = "text", x = knots, y = y_coord, label = paste("Q ",quant), hjust = "left")
         }
         if(input$add_optfit.nsp){
           optcoef <- getoptfit.nsp()
@@ -893,7 +872,7 @@ function(input, output, session){
         data <- var_list$data
         x <- data[,var_list$x]
         pos <- getpos.nsp()
-        b <- ns(x, knots=pos, Boundary.knots = c(input$boundary1.nspinput$boundary2.nsp))
+        b <- ns(x, knots=pos, Boundary.knots = c(input$boundary1.nsp, input$boundary2.nsp))
         coefs <- getcoef.nsp()
         spline <- apply(b, 1, function(x, coefs.in = coefs) {
             res <- 0
