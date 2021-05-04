@@ -234,6 +234,8 @@ function(input, output, session){
     observeEvent(input$reset_input.fp, {
        shinyjs::reset("inputs.fp")
     })
+    #code download module
+    codeServer("code_fp", filename="www/codes/code_fp.txt")
     
     #############################################
     #######        B-splines        #############

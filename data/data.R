@@ -53,3 +53,9 @@ opt.intercept <- function(fitted, data, interval){
   return (intercept.min)
 }
 
+readasHtml <- function(filename){
+  char <- readChar(filename, file.info(filename)$size)
+  char <- gsub("\r\n", "<br>", char)
+  return(char)
+}
+

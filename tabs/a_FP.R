@@ -52,7 +52,8 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
 ),mainPanel(
   column(8,
     wellPanel(plotlyOutput("plot.fp")), 
-    wellPanel(plotlyOutput("basis_plot.fp", height = "200px"))
+    wellPanel(plotlyOutput("basis_plot.fp", height = "200px")), 
+    wellPanel(codeUI("code_fp"))
   ), 
   column(4,
         wellPanel( h5("Transformation: "),uiOutput("transformation.fp")), 
