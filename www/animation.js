@@ -3,30 +3,7 @@ $(function() {
     init();
 });
 
-function showAxes(ctx, axes) {
-    var width = ctx.canvas.width;
-    var height = ctx.canvas.height;
-    var xMin = 0;
-
-    ctx.beginPath();
-    ctx.strokeStyle = "rgb(200,200,200)";
-
-    // X-Axis
-    ctx.moveTo(xMin, height / 2);
-    ctx.lineTo(width, height / 2);
-
-    // Y-Axis
-    ctx.moveTo(width / 2, 0);
-    ctx.lineTo(width / 2, height);
-
-    // Starting line
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, height);
-
-    ctx.stroke();
-}
-
-function plotSine(ctx, xOffset, yOffset, iter) {
+function plotSine(ctx, yOffset, iter) {
     var width = ctx.canvas.width;
     var height = ctx.canvas.height;
     var scale = 20;
@@ -35,26 +12,19 @@ function plotSine(ctx, xOffset, yOffset, iter) {
     ctx.lineWidth = 2;
     ctx.strokeStyle = "rgb(200,200,200)";
 
-    // console.log("Drawing point...");
-    // drawPoint(ctx, yOffset+step);
-
-    var x = 4;
+    var x = 0;
     var y = 0;
     var amplitude = iter * 100;
-    var frequency = 250;
-    //ctx.moveTo(x, y);
+    var frequency = 270;
     ctx.moveTo(x, 200);
     while (x < width) {
-        y = height / 2 + amplitude * Math.sin((x + xOffset) / frequency);
+        y = height / 2 + amplitude * Math.sin((x + -4) / frequency);
         ctx.lineTo(x, y);
-        x++;
-        // console.log("x="+x+" y="+y);
+        x+=20;
     }
     ctx.stroke();
     ctx.save();
 
-    //console.log("Drawing point at y=" + y);
-    //drawPoint(ctx, y);
     ctx.stroke();
     ctx.restore();
 }
@@ -65,7 +35,7 @@ function draw() {
 
     context.clearRect(0, 0, 2000, 2000);
 
-    plotSine(context, step, 100, iter);
+    plotSine(context, 100, iter);
     
     if(higher){
         iter +=0.005;
@@ -81,7 +51,9 @@ function draw() {
         }
     }
     counter += 1;
-    setTimeout(function() {window.requestAnimationFrame(draw)}, 20);
+    setTimeout(function() {
+            window.requestAnimationFrame(draw);
+    }, 20);
     
 
 }
@@ -89,7 +61,7 @@ function draw() {
 function init() {
     window.requestAnimationFrame(draw);
 }
-var step = -4;
+
 var iter = 0.1;
 var counter = 0;
 var higher = true;

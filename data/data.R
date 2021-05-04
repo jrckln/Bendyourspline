@@ -44,7 +44,7 @@ quantInv <- function(distr, value) ecdf(distr)(value)
 
 load("data/data_list.RData")
 
-sample.sizes <- c("1%" = 0.01, "10%" = 0.1, "50%" = 0.5, "100%" = 1)
+sample.sizes <- c("1%" = 0.01, "10%" = 0.1, "20%" = 0.2, "30%" = 0.3,  "50%" = 0.5, "75%"=0.75,  "100%" = 1)
 gender <- list("Female"="female", "Male"="male", "Both"=c("female", "male"))
 
 opt.intercept <- function(fitted, data, interval){
