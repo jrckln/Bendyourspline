@@ -8,21 +8,21 @@ codeUI <- function(id) {
 }
 
 # Module Server
-codeServer <- function(id, filename_code) {
+codeServer <- function(id, filenames_code) {
   moduleServer(
     id,
     function(input, output, session) {
       output$code_text <- renderUI({
-          code <- readasHtml(filename_code)
+          code <- readChar(filenames_code[1], file.info(filenames_code[1])$size)
           prismCodeBlock(code)
       })
       output$downloadcode <- downloadHandler(
           filename = function() {
-            paste("output", "zip", sep=".")
+            paste0("output-",Sys.Date(), ".zip")
           },
           content = function(file) {
-            #file.copy(filename_code, file)
-            zip(zipfile = file, files = filename_code)
+            #filenames_code <- sub('.*/', '', filenames_code)
+            zip(zipfile = file, files = filenames_code, flags = "-j")
           },
       contentType = "application/zip")
     }

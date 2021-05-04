@@ -5,6 +5,15 @@ function(input, output, session){
     observeEvent(input$link_methods, {
       updateNavbarPage(session, "navbar", "Methods")
     })
+    
+    #code download module
+    observeEvent(input$variable,{
+      var <- paste0(gsub("~", "", gsub(" ", "", input$variable)), ".RData")
+      files <- list.files(path="data/")
+      datafile <- match(var, files)
+      datafile <- paste0("data/", files[datafile])
+      codeServer("code_fp", filename=c("www/codes/code_fp.R", "www/codes/helpers.R", datafile))
+    })
   
     #############################################
     #######         Data            #############
@@ -234,8 +243,7 @@ function(input, output, session){
     observeEvent(input$reset_input.fp, {
        shinyjs::reset("inputs.fp")
     })
-    #code download module
-    codeServer("code_fp", filename="www/codes/code_fp.txt")
+    
     
     #############################################
     #######        B-splines        #############
