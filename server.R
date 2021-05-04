@@ -239,6 +239,20 @@ function(input, output, session){
     #######        B-splines        #############
     #############################################
     
+    getbasis.bs <- reactive({
+      var_list <- var_list_reac()
+      x <- var_list$data[,var_list$x]
+      degree <- input$degree.bs
+      pos <- getpos.bs()
+      b <- bs(x, degree=degree, knots=pos)
+      colnames(b) <- paste0("spline", 1:ncol(b))
+      data <- list("x" = x, 
+                    "y" = var_list$data[, var_list$y], 
+                   "b" = b, 
+                   "names_vars" = c(var_list$x, var_list$y))
+      return(data)
+    })
+    
     inserted.pos.bs <- c()
     range_bs <- coef_range("bs")
     
@@ -253,63 +267,65 @@ function(input, output, session){
       }
     })
     
+    #position of knots: 
     observeEvent(c(input$nknots.bs,input$variable), {
-        req(input$nknots.bs)
+        req(input$nknots.bs, input$degree.bs)
+        num <- input$nknots.bs
+        # num ... the number of knots that should be there
+        # length(inserted.pos.bs) ... the number of nots that are actually there
         if(length(inserted.pos.bs)!=0){ #case of update or variable change
-            if(length(inserted.pos.bs)>as.numeric(input$nknots.bs)){
+            if(length(inserted.pos.bs)>num){
                 #remove difference:
-                num <- length(inserted.pos.bs) - input$nknots.bs
-                for(i in 1:num){
+                difference <- length(inserted.pos.bs) - num
+                for(i in 1:difference){
+                  #remove the last added coefficient slider
                   removeUI(
-                    selector = paste0('#', inserted.pos.bs[length(inserted.pos.bs)]) #remove the last ones
+                    selector = paste0('#', inserted.pos.bs[length(inserted.pos.bs)])
                   )
-                    inserted.pos.bs <<- inserted.pos.bs[-length(inserted.pos.bs)]
+                  # remove the last added slider from the list
+                  inserted.pos.bs <<- inserted.pos.bs[-length(inserted.pos.bs)]
                 }
-            }else if(length(inserted.pos.bs)<as.numeric(input$nknots.bs)){
+            }else if(length(inserted.pos.bs)< num){
+                #determine default knot positions: Artificially add two knots so that these two artificial knots 
+                #are the boundary knots which are then removed (to put the other in the middle). 
                 default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = input$nknots.bs + 2)[-c(1, input$nknots.bs + 2)]
-                var_list <- var_list_reac()
-                data <- var_list$data
-                x <- data[,var_list$x]
-                default.pos.knots.bs <- quantile(x, default.pos.knots.bs)
-                num <- (length(inserted.pos.bs)+1):input$nknots.bs
-                id <- paste0('bs_pos', num)
-                for(i in 1:length(num)){
+                data <- getbasis.bs()
+                default.pos.knots.bs <- quantile(data$x, default.pos.knots.bs)
+                toinsert <- (length(inserted.pos.bs)+1):num # which to insert
+                id <- paste0('bs_pos', toinsert)
+                for(i in 1:length(toinsert)){
                     insertUI(
                         selector = '#placeholder_pos_bs',
-                        ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",
-                                                                                          num[i]),
-                                                  value=default.pos.knots.bs[num[i]], step=0.01,
-                                                  min=min(x), max=max(x), ticks = FALSE), id=id[i])
+                        ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",toinsert[i]),
+                                                  value=default.pos.knots.bs[toinsert[i]], step=0.01,
+                                                  min=min(data$x), max=max(data$x), ticks = FALSE), id=id[i])
                     )
                     inserted.pos.bs <<- c(inserted.pos.bs, id[i])
                 }
-            } else if(length(inserted.pos.bs)==as.numeric(input$nknots.bs)){ #case of variable change
-                # update default knot positions
-                default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = input$nknots.bs + 2)[-c(1, input$nknots.bs + 2)]
-                var_list <- var_list_reac()
-                data <- var_list$data
-                x <- data[,var_list$x]
-                default.pos.knots.bs <- quantile(x, default.pos.knots.bs)
-                num <- 1:input$nknots.bs
-                id <- paste0('bs_pos', num)
-                for(i in 1:length(num)){
-                  updateSliderInput(session, paste0(id[i], "_inner"), min=min(x), max=max(x),value = as.numeric(default.pos.knots.bs[num[i]]))
+            } else if(length(inserted.pos.bs)== num){ #case: variable change
+                # update default knot positions according to values of new variable
+                default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = num + 2)[-c(1, num + 2)]
+                data <- getbasis.bs()
+                default.pos.knots.bs <- quantile(data$x, default.pos.knots.bs)
+                toupdate <- 1:num #update all available sliders
+                id <- paste0('bs_pos', toupdate)
+                for(i in 1:length(toupdate)){
+                  updateSliderInput(session, paste0(id[i], "_inner"), min=min(data$x), max=max(data$x),
+                                    value = as.numeric(default.pos.knots.bs[toupdate[i]]))
                 }
             }
-        }else{ #case of init
+        }else{ #case of initialisation:
             default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = input$nknots.bs + 2)[-c(1, input$nknots.bs + 2)]
-            var_list <- var_list_reac()
-            data <- var_list$data
-            x <- data[,var_list$x]
-            default.pos.knots.bs <- quantile(x, default.pos.knots.bs)
-            num <- 1:input$nknots.bs
-            id <- paste0('bs_pos', num)
-            for(i in 1:length(num)){
+            data <- getbasis.bs()
+            default.pos.knots.bs <- quantile(data$x, default.pos.knots.bs)
+            toinsert <- 1:num
+            id <- paste0('bs_pos', toinsert)
+            for(i in 1:length(toinsert)){
                 insertUI(
                     selector = '#placeholder_pos_bs',
                     ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", i),
                                               value=default.pos.knots.bs[i], step=0.01,
-                                              min=min(x), max=max(x), ticks = FALSE), id=id[i])
+                                              min=min(data$x), max=max(data$x), ticks = FALSE), id=id[i])
                 )
                 inserted.pos.bs <<- c(inserted.pos.bs, id[i])
             }
@@ -320,9 +336,12 @@ function(input, output, session){
     inserted.coef.bs <- c()
     coef_vals_bs <- reactiveValues()
     
+    # coefficient sliders
     observeEvent(c(input$nknots.bs, input$degree.bs, input$variable), {
         req(input$nknots.bs)
         num <- input$degree.bs + input$nknots.bs 
+        # num ... the number of coefficient sliders that should be there
+        # length(inserted.pos.bs) ... the number of coefficients that are actually there
         if(length(inserted.coef.bs)!=0){ #case of update
             if(length(inserted.coef.bs)>num){
                     toomuch <- length(inserted.coef.bs)-num
@@ -345,7 +364,7 @@ function(input, output, session){
                   inserted.coef.bs <<- c(inserted.coef.bs, id[i])
                 }
             }
-        } else { #case of init
+        } else { #case of initialisation
             id <- paste0('bs_coef', 1:num)
             for(i in 1:num){
               insertUI(
@@ -358,7 +377,6 @@ function(input, output, session){
         }
 
     })
-  
     
     getpos.bs <- reactive({
         req(input$nknots.bs)
@@ -377,52 +395,30 @@ function(input, output, session){
     })
 
     getcoef.bs <- reactive({
-      req(input$nknots.bs)
+      req(input$nknots.bs, input$degree.bs)
       num <- input$degree.bs + input$nknots.bs
       #get values of coefficients:
       ind <- paste0("bs_coef", 1:num)
       coef <- c()
+      if(length(coef_vals_bs)!= num){
+          return(numeric(num))
+      }
       for(i in ind){
           coef <- c(coef, as.numeric(coef_vals_bs[[i]]()))
       }
-      coef
+      return(coef)
     })
 
     getintercept.bs <- reactive({
-        if(input$adjust_intercept.bs){
-            var_list <- var_list_reac()
-            data <- var_list$data
-            x <- data[,var_list$x]
-            degree <- input$degree.bs
-            pos <- getpos.bs()
-            b <- bs(x, degree=degree, knots=pos)
-            coefs <- getcoef.bs()
-            spline <- apply(b, 1, function(x, coefs.in = coefs) {
-                res <- 0
-                for(i in 1:length(x)){
-                    res <- res + coefs.in[i]*x[i]
-                }
-                res
-            })
-            intercept <- opt.intercept(fitted=spline, data=data[,var_list$y], interval=c(min(data[,var_list$y]), max(data[,var_list$y])))$minimum
-            return(intercept)
-        } else {
-            return(input$intercept.bs)
-        }
-    })
-    
-    getbasis.bs <- reactive({
-      var_list <- var_list_reac()
-      x <- var_list$data[,var_list$x]
-      degree <- input$degree.bs
-      pos <- getpos.bs()
-      b <- bs(x, degree=degree, knots=pos)
-      colnames(b) <- paste0("spline", 1:ncol(b))
-      data <- list("x" = x, 
-                    "y" = var_list$data[, var_list$y], 
-                   "b" = b, 
-                   "names_vars" = c(var_list$x, var_list$y))
-      return(data)
+      if(input$adjust_intercept.bs){
+          data <- getbasis.bs()
+          coefs <- getcoef.bs()
+          spline <- rowSums(data$b %*% coefs)
+          intercept <- opt.intercept(fitted=spline, data=data$y, interval=c(min(data$y), max(data$y)))$minimum
+          return(intercept)
+      } else {
+          return(input$intercept.bs)
+      }
     })
     
     getoptfit.bs <- reactive({
@@ -553,6 +549,20 @@ function(input, output, session){
     inserted.pos.nsp <- c()
     range_nsp <- coef_range("nsp")
     
+    getbasis.nsp <- reactive({
+      req(input$boundary1.nsp, input$boundary2.nsp)
+      var_list <- var_list_reac()
+      x <- var_list$data[,var_list$x]
+      pos <- getpos.nsp()
+      b <- ns(x, knots = pos, Boundary.knots = c(input$boundary1.nsp, input$boundary2.nsp))
+      colnames(b) <- paste0("spline", 1:ncol(b))
+      data <- list("x" = x, 
+                    "y" = var_list$data[, var_list$y], 
+                   "b" = b, 
+                   "names_vars" = c(var_list$x, var_list$y))
+      return(data)
+    })
+    
     #update range of coefficient sliders
     observeEvent(range_nsp(), {
       req(input$nknots.nsp)
@@ -566,14 +576,16 @@ function(input, output, session){
     
     output$boundary_knots.nsp <- renderUI({
       req(input$nknots.nsp)
+      pos <- getpos.nsp()
       var_list <- var_list_reac()
-      data <- var_list$data
-      x <- data[,var_list$x]
-      default.pos.knots.nsp <- seq.int(from = 0,to = 1,length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
-      pos <- quantile(x, default.pos.knots.nsp)
+      x <- var_list$data[,var_list$x]
+      maxx <- max(x)
+      minx <- min(x)
       div(
-      sliderInput("boundary1.nsp", "Position of Boundary knot 1", min=min(x), max=pos[1]-0.1, value=min(x), step=0.1, ticks = FALSE),
-      sliderInput("boundary2.nsp", "Position of Boundary knot 2", min=pos[length(pos)]+0.1, max=max(x), value=max(x), step=0.1, ticks = FALSE)
+      sliderInput("boundary1.nsp", "Position of Boundary knot 1", min=minx, max=pos[1]-0.1, value=minx, 
+                  step=0.1, ticks = FALSE),
+      sliderInput("boundary2.nsp", "Position of Boundary knot 2", min=pos[length(pos)]+0.1, max=maxx, 
+                  value=maxx, step=0.1, ticks = FALSE)
       )
     })
     #update max and min val of boundary knots slider according to second and second to last knot position
@@ -583,67 +595,66 @@ function(input, output, session){
       updateSliderInput(session, "boundary2.nsp", min = pos[length(pos)]+0.1)
     })
 
-
+    # Internal Knot positions
     observeEvent(c(input$nknots.nsp,input$variable), {
-      req(input$nknots.nsp)
+        req(input$nknots.nsp)
+        num <- input$nknots.nsp
         if(length(inserted.pos.nsp)!=0){ #case of update
-            if(length(inserted.pos.nsp)>as.numeric(input$nknots.nsp)){
-                #remove difference:
-                num <- length(inserted.pos.nsp) - input$nknots.nsp
-                for(i in 1:num){
+            if(length(inserted.pos.nsp)> num){
+                # remove difference (always the last one added)
+                difference <- length(inserted.pos.nsp) - input$nknots.nsp
+                for(i in 1:difference){
                   removeUI(
-                    selector = paste0('#', inserted.pos.nsp[length(inserted.pos.nsp)]) #remove the last ones
+                    selector = paste0('#', inserted.pos.nsp[length(inserted.pos.nsp)])
                   )
                     inserted.pos.nsp <<- inserted.pos.nsp[-length(inserted.pos.nsp)]
                 }
-            }else if(length(inserted.pos.nsp)<as.numeric(input$nknots.nsp)){
-                var_list <- var_list_reac()
-                data <- var_list$data
-                x <- data[,var_list$x]
-                default.pos.knots.nsp <- seq.int(from = (input$boundary1.nsp-min(x))/(max(x)-min(x)),
-                                                 to = (input$boundary2.nsp-min(x))/(max(x)-min(x)),
+            }else if(length(inserted.pos.nsp) < num){
+                data <- getbasis.nsp()
+                minx <- min(data$x)
+                maxx <- max(data$x)
+                default.pos.knots.nsp <- seq.int(from = (input$boundary1.nsp-minx)/(maxx-minx),
+                                                 to = (input$boundary2.nsp-minx)/(maxx-minx),
                                                  length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
-                default.pos.knots.nsp <- quantile(x, default.pos.knots.nsp)
-                num <- (length(inserted.pos.nsp)+1):input$nknots.nsp
-                id <- paste0('nsp_pos', num)
-                for(i in 1:length(num)){
+                default.pos.knots.nsp <- quantile(data$x, default.pos.knots.nsp)
+                toinsert <- (length(inserted.pos.nsp)+1):input$nknots.nsp
+                id <- paste0('nsp_pos', toinsert)
+                for(i in 1:length(toinsert)){
                     insertUI(
                         selector = '#placeholder_pos_nsp',
-                        ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",
-                                                                                          num[i]),
-                                                  value=default.pos.knots.nsp[num[i]], step=0.01,
-                                                  min=min(x), max=max(x), ticks = FALSE), id=id[i])
+                        ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", toinsert[i]),
+                                                  value=default.pos.knots.nsp[toinsert[i]], step=0.01,
+                                                  min=minx, max=maxx, ticks = FALSE), id=id[i])
                     )
                     inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
                 }
-            }else if(length(inserted.pos.nsp)==as.numeric(input$nknots.nsp)){ #case of variable change
+            }else if(length(inserted.pos.nsp)== num){ #case of variable change
                 # update default knot positions
-                var_list <- var_list_reac()
-                data <- var_list$data
-                x <- data[,var_list$x]
-                updateSliderInput(session, "boundary1.nsp", value = min(x))
-                updateSliderInput(session, "boundary2.nsp", value = max(x))
+                data <- getbasis.nsp()
+                minx <- min(data$x)
+                maxx <- max(data$x)
+                updateSliderInput(session, "boundary1.nsp", value = minx)
+                updateSliderInput(session, "boundary2.nsp", value = maxx)
                 default.pos.knots.nsp <- seq.int(from = 0,
                                                  to = 1,
                                                  length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
-                default.pos.knots.nsp <- quantile(x, default.pos.knots.nsp)
-                num <- 1:input$nknots.nsp
-                id <- paste0('nsp_pos', num)
-                for(i in 1:length(num)){
-                  updateSliderInput(session, paste0(id[i], "_inner"), min=min(x), max=max(x),  value = as.numeric(default.pos.knots.nsp[num[i]]))
+                default.pos.knots.nsp <- quantile(data$x, default.pos.knots.nsp)
+                toupdate <- 1:num
+                id <- paste0('nsp_pos', toupdate)
+                for(i in 1:length(toupdate)){
+                  updateSliderInput(session, paste0(id[i], "_inner"), min=minx, max=maxx,  
+                                    value = as.numeric(default.pos.knots.nsp[toupdate[i]]))
                 }
             }
-        }else{ #case of init
-            default.pos.knots.nsp <- seq.int(from = 0, 
-                                             to = 1,
+        }else{ #case of initialisation
+            default.pos.knots.nsp <- seq.int(from = 0, to = 1,
                                              length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
             var_list <- var_list_reac()
-            data <- var_list$data
-            x <- data[,var_list$x]
+            x <- var_list$data[,var_list$x]
             default.pos.knots.nsp <- quantile(x, default.pos.knots.nsp)
-            num <- 1:input$nknots.nsp
-            id <- paste0('nsp_pos', num)
-            for(i in 1:length(num)){
+            toinsert <- 1:num
+            id <- paste0('nsp_pos', toinsert)
+            for(i in 1:length(toinsert)){
                 insertUI(
                     selector = '#placeholder_pos_nsp',
                     ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", i),
@@ -659,20 +670,19 @@ function(input, output, session){
     inserted.coef.nsp <- c()
     coef_vals_nsp <- reactiveValues()
     
+    # coefficients
     observeEvent(c(input$nknots.nsp,input$variable), {
-      req(input$nknots.nsp)
-        num <- 1 + input$nknots.nsp #+1 for intercept but intercept is extra
+        req(input$nknots.nsp)
+        num <- 1 + input$nknots.nsp
         if(length(inserted.coef.nsp)!=0){ #case of update
-            #num is the number of desired inputs
+            #num is the number of coefficients that should be there
             if(length(inserted.coef.nsp)>num){
-                    toomuch <- length(inserted.coef.nsp)-num
-                    for(i in 1:toomuch){
-                      removeUI(
-                        selector = paste0('#', inserted.coef.nsp[length(inserted.coef.nsp)])
-                      )
-                      coef_vals_nsp[[inserted.coef.nsp[[length(inserted.coef.nsp)]]]] <- NULL
-                      inserted.coef.nsp <<- inserted.coef.nsp[-length(inserted.coef.nsp)]
-                    }
+                toomuch <- length(inserted.coef.nsp)-num
+                for(i in 1:toomuch){
+                  removeUI(selector = paste0('#', inserted.coef.nsp[length(inserted.coef.nsp)]))
+                  coef_vals_nsp[[inserted.coef.nsp[[length(inserted.coef.nsp)]]]] <- NULL
+                  inserted.coef.nsp <<- inserted.coef.nsp[-length(inserted.coef.nsp)]
+                }
             }else if(length(inserted.coef.nsp)<num){
                 toinsert <- (length(inserted.coef.nsp)+1):num
                 id <- paste0('nsp_coef', toinsert)
@@ -688,15 +698,14 @@ function(input, output, session){
         } else { #case of init
             id <- paste0('nsp_coef', 1:num)
             for(i in 1:num){
-                insertUI(
-                    selector = '#placeholder_coef_nsp',
-                    ui = sliderplUI(id[i])
-                  )
-                  coef_vals_nsp[[id[i]]] <- sliderpl(id[i])
-                  inserted.coef.nsp <<- c(inserted.coef.nsp, id[i])
+              insertUI(
+                  selector = '#placeholder_coef_nsp',
+                  ui = sliderplUI(id[i])
+              )
+              coef_vals_nsp[[id[i]]] <- sliderpl(id[i])
+              inserted.coef.nsp <<- c(inserted.coef.nsp, id[i])
             }
         }
-
     })
 
     getpos.nsp <- reactive({
@@ -721,28 +730,21 @@ function(input, output, session){
       #get values of coefficients:
       ind <- paste0("nsp_coef", 1:num)
       coef <- c()
+      if(length(coef_vals_nsp)!= num){
+          return(numeric(num))
+        }
       for(i in ind){
           coef <- c(coef, as.numeric(coef_vals_nsp[[i]]()))
       }
-      coef
+      return(coef)
     })
 
     getintercept.nsp <- reactive({
         if(input$adjust_intercept.nsp){
-            var_list <- var_list_reac()
-            data <- var_list$data
-            x <- data[,var_list$x]
-            pos <- getpos.nsp()
-            b <- ns(x,knots=pos, Boundary.knots = c(input$boundary1.nsp, input$boundary2.nsp))
+            data <- getbasis.nsp()
             coefs <- getcoef.nsp()
-            spline <- apply(b, 1, function(x, coefs.in = coefs) {
-                res <- 0
-                for(i in 1:length(x)){
-                    res <- res + coefs.in[i]*x[i]
-                }
-                res
-            })
-            intercept <- opt.intercept(fitted=spline, data=data[,var_list$y], interval=c(min(data[,var_list$y]), max(data[,var_list$y])))$minimum
+            spline <- rowSums(data$b %*% coefs)
+            intercept <- opt.intercept(fitted=spline, data=data$y, interval=c(min(data$y), max(data$y)))$minimum
             return(intercept)
         } else {
             return(input$intercept.nsp)
@@ -750,58 +752,48 @@ function(input, output, session){
     })
     
     observe({
-      stats_val <- calcadjR2.nsp()
+      stats_val <- calcR2.nsp()
       intercept_val <- getintercept.nsp()
       stats("stats_nsp", stats_val, intercept_val)
     })
     
     getoptfit.nsp <- reactive({
-      var_list <- var_list_reac()
-      x <- var_list$data[,var_list$x]
+      req(input$boundary1.nsp, input$boundary2.nsp)
+      data <- getbasis.nsp()
       degree <- input$degree.nsp
       pos <- getpos.nsp()
-      if(any(is.null(input$boundary1.nsp), is.null(input$boundary2.nsp))){
-          boundaries <- c(min(x), max(x))
-        } else {
-          boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
-      }
-      b <- ns(x, knots=pos, Boundary.knots = boundaries)
-      DF <- cbind(var_list$data, b)
-      colnames(DF) <- c(colnames(var_list$data), paste0("spline", 1:ncol(b)))
-      optfit <- lm(as.formula(paste0(var_list$y, "~", paste0(paste0("spline", 1:ncol(b)), collapse="+"))), data=DF)
+      DF <- data.frame(cbind(data$x, data$y, data$b))
+      colnames(DF) <- c("x", "y", paste0("spline", 1:ncol(data$b)))
+      optfit <- lm(as.formula(paste0("y~", paste0(paste0("spline", 1:ncol(data$b)), collapse="+"))), data=DF)
       optfit$coefficients
     })
 
     output$plot.nsp <- renderPlotly({
-        req(input$nknots.nsp)
-        req(input$boundary1.nsp)
-        req(input$boundary2.nsp)
-      
-        var_list <- var_list_reac()
-        data <- var_list$data
-
-        x <- data[,var_list$x]
-
-        pos <- getpos.nsp()
+        req(input$nknots.nsp, input$boundary1.nsp, input$boundary2.nsp)
+        data <- getbasis.nsp()
+        
         boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
-        b <- ns(x, knots=pos, Boundary.knots = boundaries)
-
+        b <- data$b
+        pos <- getpos.nsp()
         coefs <- getcoef.nsp()
         intercept <- getintercept.nsp()
         spline <- rowSums(b %*% coefs)+intercept
         
+        var_names <- data$var_names
+        data <- data.frame("x" = data$x, "y" = data$y)
+        
         p <- ggplot(data=data)
         if(input$add_y.nsp){
-            p <- p + geom_point(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), color = "lightgrey")
+            p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
         if(input$add_loess.nsp){
-            p <- p + geom_smooth(aes(x=!!sym(var_list$x), y=!!sym(var_list$y)), method = "loess", formula = "y~x")
+            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x")
         }
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
             boundaries <- attr(b, "Boundary.knots")
             knots <- c(boundaries[1], knots, boundaries[2])
-            quant <- round(quantInv(x, knots),2)
+            quant <- round(quantInv(data$x, knots),2)
             y_coord <-rowSums(predict(b, knots) %*% coefs)+intercept
             knots_df <- data.frame("x" = knots, 
                                    "y" = y_coord)
@@ -811,28 +803,21 @@ function(input, output, session){
         if(input$add_optfit.nsp){
           optcoef <- getoptfit.nsp()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
-           p <- p + geom_line(aes(x=!!sym(var_list$x), y = optline), color = "orange")
+           p <- p + geom_line(aes(x=x, y = optline), color = "orange")
         }
 
-        p <- p +geom_line(aes(x=!!sym(var_list$x), y = spline)) +
+        p <- p +geom_line(aes(x=x, y = spline)) +
                 theme_minimal() +
-                ylab(var_list$y)
+                ylab(var_names[2])+xlab(var_names[1])
         ggplotly(p)
     })
 
     output$basis_plot.nsp<- renderPlotly({
-      req(input$nknots.nsp)
-        var_list <- var_list_reac()
-        data <- var_list$data
-        x <- data[,var_list$x]
-        bounds <- c(min(x), max(x))
+        req(input$nknots.nsp, input$boundary1.nsp, input$boundary2.nsp)
+        data <- getbasis.nsp()
+        bounds <- c(min(data$x), max(data$x))
         pos <- getpos.nsp()
-        if(any(is.null(input$boundary1.nsp), is.null(input$boundary2.nsp))){
-          boundaries <- c(min(x), max(x))
-        } else {
-          boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
-        }
-        b <- ns(x, knots=pos, Boundary.knots = boundaries)
+        b <- data$b
         all.knots <- sort(c(bounds ,attr(b, "knots")))
         bounds <- range(all.knots)
         knot.values <- set_colnames(predict(b, all.knots),str_c("S", seq_len(ncol(predict(b, all.knots)))))
@@ -858,47 +843,23 @@ function(input, output, session){
     })
 
     calcR2.nsp <- reactive({
-      req(input$nknots.nsp)
-      req(input$boundary1.nsp)
-      req(input$boundary2.nsp)
-        var_list <- var_list_reac()
-        data <- var_list$data
-        x <- data[,var_list$x]
-        pos <- getpos.nsp()
-        b <- ns(x, knots=pos, Boundary.knots = c(input$boundary1.nsp, input$boundary2.nsp))
+        req(input$nknots.nsp, input$boundary1.nsp, input$boundary2.nsp)
+        data <- getbasis.nsp()
+        b <- data$b
         coefs <- getcoef.nsp()
-        spline <- apply(b, 1, function(x, coefs.in = coefs) {
-            res <- 0
-            for(i in 1:length(x)){
-                res <- res + coefs.in[i]*x[i]
-            }
-            res
-        })
-        spline <- spline + getintercept.nsp()
-        model <- lm(as.formula(paste0(var_list$y, " ~ ns(", var_list$x, ", df=", 1+length(pos),
-                                      ", Boundary.knots=c(", ifelse(is.null(input$boundary1.nsp), min(x), input$boundary1.nsp),
-                                      ",",ifelse(is.null(input$boundary2.nsp), max(x), input$boundary2.nsp), "))")), data=data)
+        spline <- rowSums(b %*% coefs)+ getintercept.nsp()
+        
+        data <- data.frame("x"=data$x, "y"=data$y)
+        model <- lm(as.formula(paste0("y ~ ns(x, df=", ncol(b),", 
+                                      Boundary.knots=c(", input$boundary1.nsp, ",", input$boundary2.nsp ,"))")), data=data)
+        
         fitted <- model$fitted
         p <- model$rank
-        sstot <- sum((data[,var_list$y]-mean(data[,var_list$y]))^2) #total sum of squares
-        ssres <- sum((data[, var_list$y]-spline)^2)  #residual sum of squares
-        ssres_fitted <- sum((data[, var_list$y]-fitted)^2)  #residual sum of squares fitted
-        c(1-ssres/sstot, 1-ssres_fitted/sstot, p)
-    })
-
-    calcadjR2.nsp <- reactive({
-        res <- calcR2.nsp()
-        R2 <- res[1]
-        maxR2 <- res[2]
-        p <- res[3]
-        var_list <- var_list_reac()
-        data <- var_list$data
-        if(input$gender == "Both"){
-            sex_ind <- "both"
-        } else {
-            sex_ind <- gender[input$gender]
-        }
-        index <- paste0(input$sample.size,"_" ,sex_ind)
+        sstot <- sum((data$y-mean(data$y))^2) #total sum of squares
+        ssres <- sum((data$y-spline)^2)  #residual sum of squares
+        ssres_fitted <- sum((data$y-fitted)^2)  #residual sum of squares fitted
+        R2 <- 1-ssres/sstot
+        maxR2 <- 1-ssres_fitted/sstot
         c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
     })
 
