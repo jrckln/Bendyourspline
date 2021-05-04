@@ -55,7 +55,14 @@ opt.intercept <- function(fitted, data, interval){
 
 readasHtml <- function(filename){
   char <- readChar(filename, file.info(filename)$size)
-  char <- gsub("\r\n", "<br>", char)
+  #char <- gsub("\r\n", "<br>", char)
   return(char)
+}
+
+prismCodeBlock <- function(code) {
+  tagList(
+    HTML(paste("<pre><code class='language-r'>", code, "</code></pre>")),
+    tags$script("Prism.highlightAll()")
+  )
 }
 

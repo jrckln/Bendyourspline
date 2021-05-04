@@ -1,8 +1,8 @@
 # Module UI
 codeUI <- function(id) {
   ns <- NS(id)
-  div(class="code_R",
-      uiOutput(ns("code_text")), 
+  div(div(class="code_R",
+      uiOutput(ns("code_text"))), 
       downloadButton(ns("downloadcode"), label = "Download")
   )
 }
@@ -14,7 +14,7 @@ codeServer <- function(id, filename_code) {
     function(input, output, session) {
       output$code_text <- renderUI({
           code <- readasHtml(filename_code)
-          HTML(code)
+          prismCodeBlock(code)
       })
       output$downloadcode <- downloadHandler(
           filename = function() {
