@@ -3,15 +3,14 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                       tags$style(HTML(paste(paste0("[for=nsp_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}")), collapse = " "))
                     ),
             sidebarPanel(class="input_class", id = "inputs.nsp",
-                fluidRow(column(7, offset=0, h4("Input parameters")), 
-                         column(5, offset=0, 
-                                coef_rangeUI("nsp")
-                                )
-                ), 
+                h4("Input parameters"),  
                 br(), br(),
                 fluidRow(
                     column(6,
-                        numericInput("nknots.nsp", "Number of internal knots", min = 1, max = 10, value = 2, width="100px")
+                        numericInput("nknots.nsp", "Number of internal knots", min = 1, max = 10, value = 2)
+                    ), 
+                    column(6, align="center", 
+                           coef_rangeUI("nsp")
                     )
                 ), 
                 fluidRow(
@@ -42,20 +41,17 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                     )
                 ), 
                 fluidRow(
-                  column(12, offset=0, actionButton("reset_input.nsp", "Reset inputs"))
+                  column(12, offset=0, actionButton("reset_input.nsp", "Reset inputs", class = "btn reset_btn"))
                 )
 ),mainPanel(
   fluidRow(
-    column(8,
-      wellPanel(plotlyOutput("plot.nsp"))
+    column(8, 
+           wellPanel(h4("Response function"), plotlyOutput("plot.nsp")),
+           wellPanel(h4("Spline basis functions"), plotlyOutput("basis_plot.nsp", height = "200px"))
     ), 
-    column(4,
-          popify(wellPanel(statsUI("stats_nsp")), "Note", "Maximal R2 value is based on the set number of knots." )
-    )
-  ),
-    fluidRow(
-      column(8,
-        wellPanel(plotlyOutput("basis_plot.nsp", height = "200px")))
-      )
+    column(4, 
+         popify(wellPanel(h4("Goodness of fit"), statsUI("stats_nsp")), 
+             "Note", "Maximal R2 value is based on the set number of knots." )
+         )
   )
-) 
+) )

@@ -1,4 +1,7 @@
 fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
+               tags$head(
+                        tags$style(HTML(paste(paste0("[for=val_coef", 1:2,"_fp-coef]+span>.irs>.irs-single, [for=val_coef", 1:2, "_fp-coef]+span>.irs-bar-edge, [for=val_coef", 1:2, "_fp-coef]+span>.irs-bar {background: ", col[1:2], ";}"), collapse = " ")))
+                    ),
             sidebarPanel(class="input_class", id = "inputs.fp",
                 fluidRow(column(7, offset=0, h4("Input parameters")), 
                          column(5, offset=0, 
@@ -48,17 +51,20 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                     column(6, offset=0,
                            materialSwitch(inputId = "add_optfit.fp", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)
                     )
+                ), 
+                fluidRow(
+                  column(12, offset=0, actionButton("reset_input.fp", "Reset inputs", class = "btn reset_btn"))
                 )
 ),mainPanel(
   column(8,
-    wellPanel(plotlyOutput("plot.fp")), 
-    wellPanel(plotlyOutput("basis_plot.fp", height = "200px")), 
-    wellPanel(codeUI("code_fp"))
+    wellPanel(h4("Response function"), plotlyOutput("plot.fp")), 
+    wellPanel(h4("Fractional polynomials"), plotlyOutput("basis_plot.fp", height = "200px")), 
+    wellPanel(h4("Code"), codeUI("code_fp"))
   ), 
   column(4,
-        wellPanel( h5("Transformation: "),uiOutput("transformation.fp")), 
-        wellPanel(statsUI("stats_fp")),
-        wellPanel(h5("Formula: "),uiOutput("formula.fp"))
+        wellPanel(h4("Transformation: "),uiOutput("transformation.fp")), 
+        wellPanel(h4("Goodness of fit"), statsUI("stats_fp")),
+        wellPanel(h4("Formula: "),uiOutput("formula.fp"))
   )
 )
 )

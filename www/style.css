@@ -284,17 +284,7 @@ footer > .container {
 .btn {
 	border-style: none;
 }
-.shiny-notification { top: 0; 
-                        bottom: unset; 
-                        left: 0; 
-                        right: 0; 
-                        margin-left: auto; 
-                        margin-right: auto; 
-                        width: 100%; 
-                        max-width: 450px;
-                        background: #4bd67b;
-                        color: #fff;
-}
+
 body > .container-fluid {
 	padding: 0;
 }
@@ -304,3 +294,24 @@ body > .container-fluid {
 	padding-top: 100px;
 }
 
+.tab-pane[data-value='Methods'] h4{
+	font-family: "Roboto Condensed", sans-serif;
+	text-transform: uppercase;
+	letter-spacing: 3px;
+	font-size: 16px;
+	color: #606060;
+}
+
+#collapseData {
+    width: 100%;
+}
+
+#collapseData .material-switch{
+    padding-top: 40px;
+}
+
+.reset_btn {
+    border-style: solid;
+}
+
+span>.irs>.irs-single, span>.irs-bar-edge, span>.irs-bar {background: #D3D3D3;} 

@@ -3,16 +3,17 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                         tags$style(HTML(paste(paste0("[for=bs_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}"), collapse = " ")))
                     ),
              sidebarPanel(class="input_class", id = "inputs.bs",
-                fluidRow(column(7, offset=0, h4("Input parameters")),
-                         column(5, offset=0,
-                                coef_rangeUI("bs")
-                                )
-                ),
+                h4("Input parameters"),
                 br(), br(),
                 fluidRow(
-                    column(6,
-                        sliderInput("degree.bs", "Degree", min=1, max=4, value=1, step=1),
-                        numericInput("nknots.bs", "Number of internal knots", min=1, max = 10, value = 2, width="100px")
+                    column(3,
+                        numericInput("degree.bs", "Degree", min=1, max=4, value=1),
+                    ), 
+                    column(3,
+                        numericInput("nknots.bs", "Number of knots", min=1, max = 10, value = 2)
+                    ), 
+                    column(6, align="center", 
+                        coef_rangeUI("bs")
                     )
                 ),
                 fluidRow(
@@ -41,19 +42,17 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                     )
                 ),
                 fluidRow(
-                  column(12, offset=0, actionButton("reset_input.bs", "Reset inputs"))
+                  column(12, offset=0, actionButton("reset_input.bs", "Reset inputs", class = "btn reset_btn"))
                 )
 ),mainPanel(
   fluidRow(
-    column(8,
-      wellPanel(plotlyOutput("plot.bs"))
+    column(8, 
+           wellPanel(h4("Response function"), plotlyOutput("plot.bs")),
+           wellPanel(h4("Spline basis functions"), plotlyOutput("basis_plot.bs", height = "200px"))
     ), 
-    column(4,
-          popify(wellPanel(statsUI("stats_bs")), "Note", "Maximal R2 value is based on the set number of knots and set degree." )
-    )
-  ),
-  fluidRow(
-    column(8, wellPanel(plotlyOutput("basis_plot.bs", height = "200px")))
+    column(4, 
+         popify(wellPanel(h4("Goodness of fit"), statsUI("stats_bs")), 
+             "Note", "Maximal R2 value is based on the set number of knots." )
+         )
   )
-  )
-) 
+) )

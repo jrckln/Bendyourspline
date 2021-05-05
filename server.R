@@ -168,7 +168,7 @@ function(input, output, session){
             p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
         if(input$add_loess.fp){
-            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x")
+            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x", se=FALSE)
         }
         
         p <- p +geom_line(aes(x=x, y = intercept+fp)) + 
@@ -181,8 +181,8 @@ function(input, output, session){
     output$basis_plot.fp <- renderPlotly({
         DF <- FPdata()
         p <- ggplot(data=DF) + 
-            geom_line(aes(x=x, y=fp1)) +
-            geom_line(aes(x=x, y=fp2))+ 
+            geom_line(aes(x=x, y=fp1), color = col[1]) +
+            geom_line(aes(x=x, y=fp2), color = col[2])+ 
             theme_minimal()+
           ylab("")
         ggplotly(p)
@@ -253,16 +253,15 @@ function(input, output, session){
     #############################################
     
     getbasis.bs <- reactive({
-      var_list <- var_list_reac()
-      x <- var_list$data[,var_list$x]
+      data <- getdata()
       degree <- input$degree.bs
       pos <- getpos.bs()
-      b <- bs(x, degree=degree, knots=pos)
+      b <- bs(data$x, degree=degree, knots=pos)
       colnames(b) <- paste0("spline", 1:ncol(b))
-      data <- list("x" = x, 
-                    "y" = var_list$data[, var_list$y], 
+      data <- list("x" = data$x, 
+                    "y" = data$y, 
                    "b" = b, 
-                   "names_vars" = c(var_list$x, var_list$y))
+                   "names_vars" = data$names_vars)
       return(data)
     })
     
@@ -394,12 +393,12 @@ function(input, output, session){
     getpos.bs <- reactive({
         req(input$nknots.bs)
         #get values of knot positions:
-        ind <- match(paste0("bs_pos", 1:input$nknots.bs, "_inner"), names(input))
-        ind <- ind[!(is.na(ind))]
+        names <- paste0("bs_pos", 1:input$nknots.bs, "_inner")
         pos <- c()
-        for(i in ind){
-          pos <- c(pos, input[[names(input)[i]]])
+        for(i in names){
+          pos <- c(pos, input[[i]])
         }
+        pos <- pos[!is.na(pos)]
         if(length(pos)!=input$nknots.bs){
           return(numeric(input$nknots.bs))
         } else {
@@ -446,7 +445,7 @@ function(input, output, session){
         req(input$nknots.bs)
         data <- getbasis.bs()
         b <- data$b
-        var_names <- data$var_names
+        var_names <- data$names_vars
         data <- data.frame("x" = data$x, "y" = data$y)
       
         pos <- getpos.bs()
@@ -460,15 +459,15 @@ function(input, output, session){
             p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
         if(input$add_loess.bs){
-            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x")
+            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x", se=FALSE)
         }
         if(input$add_knots_pos.bs){
           knots <- attr(b, "knots")
           quant <- round(quantInv(data$x, knots),2)
-          y_coord <- rowSums(predict(b, knots) %*% coefs)+intercept
+          y_coord <- max(data$x)
           knots_df <- data.frame("x" = knots, 
                                  "y" = y_coord)
-          p <- p + geom_point(data=knots_df, aes(x=x, y=y), alpha = 0.5)+
+          p <- p + geom_vline(data=knots_df, aes(xintercept=x), color = "#D3D3D3")+
               annotate(geom = "text", x = knots, y = y_coord, label = paste("Q ",quant), hjust = "left")
         }
         if(input$add_optfit.bs){
@@ -485,14 +484,13 @@ function(input, output, session){
     })
     
     observe({
-      stats_val <- calcR2.bs()
-      intercept_val <- getintercept.bs()
-      stats("stats_bs", stats_val, intercept_val)
+      stats("stats_bs", calcR2.bs(), getintercept.bs())
     })
 
     output$basis_plot.bs<- renderPlotly({
         req(input$nknots.bs)
         data <- getbasis.bs()
+        names_vars <- data$names_vars
         b <- data$b
         data <- cbind(data$x, data$y)
         degree <- input$degree.bs
@@ -507,7 +505,10 @@ function(input, output, session){
             aes(x=x, y=y, color=Spline) +
             geom_line() +
             scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") +
-            ggtitle("Spline basis functions")
+            xlab(names_vars[1])+ylab("")
+        if(input$add_knots_pos.nsp){
+          p <- p + geom_vline(xintercept=all.knots, color = "#D3D3D3")
+        }
         ggplotly(p)
     })
 
@@ -571,7 +572,7 @@ function(input, output, session){
       data <- list("x" = data$x, 
                     "y" = data$y,
                    "b" = b, 
-                   "names_vars" = data$name_vars)
+                   "names_vars" = data$names_vars)
       return(data)
     })
     
@@ -788,7 +789,7 @@ function(input, output, session){
         intercept <- getintercept.nsp()
         spline <- rowSums(b %*% coefs)+intercept
         
-        var_names <- data$var_names
+        var_names <- data$names_vars
         data <- data.frame("x" = data$x, "y" = data$y)
         
         p <- ggplot(data=data)
@@ -796,18 +797,18 @@ function(input, output, session){
             p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
         if(input$add_loess.nsp){
-            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x")
+            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x", se=FALSE)
         }
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
             boundaries <- attr(b, "Boundary.knots")
             knots <- c(boundaries[1], knots, boundaries[2])
             quant <- round(quantInv(data$x, knots),2)
-            y_coord <-rowSums(predict(b, knots) %*% coefs)+intercept
+            y_coord <- max(data$x)
             knots_df <- data.frame("x" = knots, 
                                    "y" = y_coord)
-            p <- p + geom_point(data=knots_df, aes(x=x, y=y), alpha = 0.5)+
-              annotate(geom = "text", x = knots, y = y_coord, label = paste("Q ",quant), hjust = "left")
+            p <- p + geom_vline(data=knots_df, aes(xintercept=x), color = "#D3D3D3")+
+                annotate(geom = "text", x = knots, y = y_coord, label = paste("Q ",quant), hjust = "left")
         }
         if(input$add_optfit.nsp){
           optcoef <- getoptfit.nsp()
@@ -838,15 +839,15 @@ function(input, output, session){
             aes(x=x, y=y, color=Spline) +
             geom_line() +
             scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") +
-            ggtitle("Spline basis functions")
+            xlab(data$names_vars[1])+ylab("")
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
             boundaries <- attr(b, "Boundary.knots")
             for(i in knots){
-                p <- p + geom_vline(xintercept=i, color = "red", linetype="dashed")
+                p <- p + geom_vline(xintercept=i, color = "#D3D3D3")
             }
-            p <- p + geom_vline(xintercept=boundaries[1], color = "red4", linetype="dashed")+
-              geom_vline(xintercept=boundaries[2], color = "red4", linetype="dashed")
+            p <- p + geom_vline(xintercept=boundaries[1], color = "#D3D3D3")+
+              geom_vline(xintercept=boundaries[2], color = "#D3D3D3")
         }
         ggplotly(p)
     })
