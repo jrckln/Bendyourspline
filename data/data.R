@@ -36,11 +36,12 @@ quantInv <- function(distr, value) ecdf(distr)(value)
 
 # # Run once a new dataset is added to directory; delete data_list.RData first
 # file_list <- list.files(path = "data/", pattern = "\\.RData$", full.names = TRUE)
-# var.names <- unlist(suppressMessages(lapply(file_list, load, .GlobalEnv)))
-# data_list <- Filter(function(x) is(x, "list"), mget(ls()))
-# names.list <- lapply(data_list, function(x) x$name)
-# names(data_list) <- unlist(names.list)
-# save(data_list, file = "data/data_list.RData")
+# data_list <- list()
+# for(file in file_list){
+#   load(file)
+#   data_list[[data$name]] <- data
+# }
+# save(data_list, file="data/data_list.RData")
 
 load("data/data_list.RData")
 
