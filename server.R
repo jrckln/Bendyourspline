@@ -191,30 +191,22 @@ function(input, output, session){
     calcR2.fp <- reactive({
         DF <- FPdata()
         fp <- getintercept.fp()+DF[, "fp"]
-
-        fit <- mfp(x~ fp(transformed, df=4, scale=F), data = DF)
-        rss <- sum((fit$residuals)^2)
+        fit <- mfp(y~fp(transformed, df=4, scale=F), data = DF)
+        rss <- sum((DF[,"y"]- fit$fitted)^2)
         sstot <- sum((DF[,"y"]-mean(DF[,"y"]))^2)
         fittedR2 <- 1-rss/sstot
         ssres <- sum((DF[, "y"]-fp)^2)  #residual sum of squares
-        c(1-ssres/sstot,fittedR2)
-    })
-    
-    calcadjR2.fp <- reactive({
-        res <- calcR2.fp() 
-        R2 <- res[1]
-        maxR2 <- res[2]
-        var_list <- var_list_reac()
-        data <- var_list$data
+        
+        R2 <- 1-ssres/sstot
+        maxR2 <-fittedR2
         
         p <- ifelse(coef1.fp() == 0& coef2.fp() == 0, 0, ifelse(any(coef1.fp() == 0, coef2.fp() == 0),1,2))
-        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
+        c(R2, 1-(1-R2)*(nrow(DF)-1)/(nrow(DF)-1-4), maxR2)
     })
     
     observe({
-      stats_val <- calcadjR2.fp()
-      intercept_val <- getintercept.fp()
-      stats("stats_fp", stats_val, intercept_val)
+      vals <- calcR2.fp()
+      stats("stats_fp", vals, getintercept.fp())
     })
     
     #reset button
