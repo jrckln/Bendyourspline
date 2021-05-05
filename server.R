@@ -15,15 +15,6 @@ function(input, output, session){
       codeServer("code_fp", filename=c("www/codes/code_fp.R", "www/codes/helpers.R", datafile))
     })
     
-    getdata <- reactive({
-      var_list <- var_list_reac()
-      x <- var_list$data[,var_list$x]
-      data <- list("x" = x, 
-                    "y" = var_list$data[, var_list$y], 
-                   "names_vars" = c(var_list$x, var_list$y))
-      return(data)
-    })
-    
   
     #############################################
     #######         Data            #############
@@ -39,15 +30,8 @@ function(input, output, session){
         HTML("")
     })
     
-    observeEvent(input$seed, { #recalculate max R2 values if seed is changed:
-        if(input$seed!=14){
-                source("data_generation.R")
-                source("data/data.R")
-                showNotification(span(tagList(icon("check"), "Done. ")), id="done_notif", duration = 7)
-        }
-    })
-    
     var_list_reac <- reactive({
+        req(input$seed)
         var <- input$variable
         var_list <- data_list[[var]]
         var_list$data <- var_list$data[var_list$data[,"gender"] %in% gender[[input$gender]],]
@@ -57,6 +41,15 @@ function(input, output, session){
         ind <- sample(1:nrow(var_list$data), n)
         var_list$data <- var_list$data[ind,]
         var_list
+    })
+    
+    getdata <- reactive({
+      var_list <- var_list_reac()
+      x <- var_list$data[,var_list$x]
+      data <- list("x" = x, 
+                    "y" = var_list$data[, var_list$y], 
+                   "names_vars" = c(var_list$x, var_list$y))
+      return(data)
     })
     
     #############################################
