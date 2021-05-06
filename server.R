@@ -168,7 +168,8 @@ function(input, output, session){
             p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
         if(input$add_loess.fp){
-            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x", se=FALSE)
+            p <- p + suppressWarnings(geom_smooth(aes(x=x, y=y, text = "LOESS smoother"), 
+                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol))
         }
         
         p <- p +geom_line(aes(x=x, y = intercept+fp)) + 
@@ -177,11 +178,12 @@ function(input, output, session){
                 xlab(attr(DF, "names_vars")[1])
         if(input$add_optfit.fp){
           optcoef <- getoptfit.fp()
-          p <- p + geom_line(aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2), color = "orange")
+          p <- p + suppressWarnings(geom_line(aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2, 
+                                 text="Optimal fit based on current settings"), color = optfitcol))
         }
         
         
-        ggplotly(p)
+        ggplotly(p, tooltip="text")
     })
     
     output$basis_plot.fp <- renderPlotly({
@@ -189,8 +191,7 @@ function(input, output, session){
         p <- ggplot(data=DF) + 
             geom_line(aes(x=x, y=fp1), color = col[1]) +
             geom_line(aes(x=x, y=fp2), color = col[2])+ 
-            theme_minimal()+
-          ylab("")
+            theme_minimal()+ ylab("")
         ggplotly(p)
     })
     
@@ -463,7 +464,8 @@ function(input, output, session){
             p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
         if(input$add_loess.bs){
-            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x", se=FALSE)
+            p <- p + suppressWarnings(geom_smooth(aes(x=x, y=y, text = "LOESS smoother"), 
+                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol))
         }
         if(input$add_knots_pos.bs){
           knots <- attr(b, "knots")
@@ -471,20 +473,22 @@ function(input, output, session){
           y_coord <- max(data$x)
           knots_df <- data.frame("x" = knots, 
                                  "y" = y_coord)
-          p <- p + geom_vline(data=knots_df, aes(xintercept=x), color = "#D3D3D3")+
+          p <- p + suppressWarnings(geom_vline(data=knots_df, 
+                                               aes(xintercept=x, text = "Spline knot and corresponding quantile"), 
+                                               color = "#D3D3D3"))+
               annotate(geom = "text", x = knots, y = y_coord, label = paste("Q ",quant), hjust = "left")
         }
         if(input$add_optfit.bs){
           optcoef <- getoptfit.bs()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
-           p <- p + geom_line(aes(x=x, y = optline), color = "orange")
+           p <- p + suppressWarnings(geom_line(aes(x=x, y = optline, text = "Optimal fit based on current knot positions"), color = optfitcol))
         }
 
         p <- p +geom_line(aes(x=x, y = spline)) +
                 theme_minimal() +
                 ylab(var_names[2])+
                 xlab(var_names[1])
-        ggplotly(p)
+        ggplotly(p, tooltip = "text")
     })
     
     observe({
@@ -801,7 +805,8 @@ function(input, output, session){
             p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
         if(input$add_loess.nsp){
-            p <- p + geom_smooth(aes(x=x, y=y), method = "loess", formula = "y~x", se=FALSE)
+            p <- p + suppressWarnings(geom_smooth(aes(x=x, y=y, text="LOESS smoother"), 
+                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol))
         }
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
@@ -811,19 +816,20 @@ function(input, output, session){
             y_coord <- max(data$x)
             knots_df <- data.frame("x" = knots, 
                                    "y" = y_coord)
-            p <- p + geom_vline(data=knots_df, aes(xintercept=x), color = "#D3D3D3")+
+            p <- p + suppressWarnings(geom_vline(data=knots_df, aes(xintercept=x, text = "Knots and corresponding quantiles"), 
+                                                 color = "#D3D3D3"))+
                 annotate(geom = "text", x = knots, y = y_coord, label = paste("Q ",quant), hjust = "left")
         }
         if(input$add_optfit.nsp){
           optcoef <- getoptfit.nsp()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
-           p <- p + geom_line(aes(x=x, y = optline), color = "orange")
+           p <- p + suppressWarnings(geom_line(aes(x=x, y = optline, text = "Optimal fit based on current knot position"), color = optfitcol))
         }
 
         p <- p +geom_line(aes(x=x, y = spline)) +
                 theme_minimal() +
                 ylab(var_names[2])+xlab(var_names[1])
-        ggplotly(p)
+        ggplotly(p, tooltip = "text")
     })
 
     output$basis_plot.nsp<- renderPlotly({
