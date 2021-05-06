@@ -175,6 +175,12 @@ function(input, output, session){
                 theme_minimal() +
                 ylab(attr(DF, "names_vars")[2]) + 
                 xlab(attr(DF, "names_vars")[1])
+        if(input$add_optfit.fp){
+          optcoef <- getoptfit.fp()
+          p <- p + geom_line(aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2), color = "orange")
+        }
+        
+        
         ggplotly(p)
     })
     
@@ -207,6 +213,12 @@ function(input, output, session){
     observe({
       vals <- calcR2.fp()
       stats("stats_fp", vals, getintercept.fp())
+    })
+    
+    getoptfit.fp <- reactive({
+      DF <- FPdata()
+      optfit <- lm(y ~ fp1+fp2, data=DF)
+      optfit$coefficients
     })
     
     #reset button
