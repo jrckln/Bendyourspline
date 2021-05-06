@@ -2,7 +2,9 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                      tags$head(
                         tags$style(HTML(paste(paste0("[for=bs_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}"), collapse = " ")))
                     ),
-             sidebarPanel(class="input_class", id = "inputs.bs",
+            column(4, 
+            fluidRow(
+             sidebarPanel(class="input_class", id = "inputs.bs", width = 12,
                 h4("Input parameters"),
                 br(), br(),
                 fluidRow(
@@ -44,7 +46,10 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                 fluidRow(
                   column(12, offset=0, actionButton("reset_input.bs", "Reset inputs", class = "btn reset_btn"))
                 )
-),mainPanel(
+)),
+fluidRow(codeUI("code_bs"))),
+column(8,
+mainPanel(width = 12, 
   fluidRow(
     column(8, 
            wellPanel(h4("Response function"), plotlyOutput("plot.bs")),
@@ -56,3 +61,4 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
          )
   )
 ) )
+)

@@ -264,10 +264,6 @@ footer > .container {
     width: 100%;
 }
 
-
-
-
-
 .well {
     min - height: 20px;
     padding: 19px;
@@ -315,3 +311,9 @@ body > .container-fluid {
 }
 
 span>.irs>.irs-single, span>.irs-bar-edge, span>.irs-bar {background: #D3D3D3;} 
+
+.Rcode {
+  padding: 15px;
+}
+
+

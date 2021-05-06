@@ -2,7 +2,9 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                     tags$head(
                       tags$style(HTML(paste(paste0("[for=nsp_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}")), collapse = " "))
                     ),
-            sidebarPanel(class="input_class", id = "inputs.nsp",
+            column(4,
+            fluidRow(
+            sidebarPanel(class="input_class", id = "inputs.nsp", width = 12,
                 h4("Input parameters"),  
                 br(), br(),
                 fluidRow(
@@ -43,7 +45,10 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                 fluidRow(
                   column(12, offset=0, actionButton("reset_input.nsp", "Reset inputs", class = "btn reset_btn"))
                 )
-),mainPanel(
+)),
+fluidRow(codeUI("code_nsp"))),
+column(8,
+mainPanel(width = 12, 
   fluidRow(
     column(8, 
            wellPanel(h4("Response function"), plotlyOutput("plot.nsp")),
@@ -55,3 +60,4 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
          )
   )
 ) )
+)

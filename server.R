@@ -13,6 +13,8 @@ function(input, output, session){
       datafile <- match(var, files)
       datafile <- paste0("data/", files[datafile])
       codeServer("code_fp", filename=c("www/codes/code_fp.R", "www/codes/helpers.R", datafile))
+      codeServer("code_bs", filename=c("www/codes/code_bs.R", datafile))
+      codeServer("code_nsp", filename=c("www/codes/code_nsp.R", datafile))
     })
     
   
