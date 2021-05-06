@@ -1,6 +1,8 @@
 naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value = "nsplines",br(),
                     tags$head(
-                      tags$style(HTML(paste(paste0("[for=nsp_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}")), collapse = " "))
+                      tags$style(HTML(paste(paste0("[for=nsp_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}")), collapse = " ")), 
+                      tags$style(HTML(paste0(".label-primary[for=add_optfit_nsp] {background: ", optfitcol,";}"))), 
+                      tags$style(HTML(paste0(".label-primary[for=add_loess_nsp] {background: ", loesscol,";}")))
                     ),
             column(4,
             fluidRow(
@@ -33,13 +35,13 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                            materialSwitch(inputId = "add_y.nsp", label = "Response", status = "primary", right = FALSE, value=TRUE)
                     ), 
                     column(3, offset=0, 
-                           materialSwitch(inputId = "add_loess.nsp", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
+                           materialSwitch(inputId = "add_loess_nsp", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
                     ),
                     column(3, offset=0, 
                            materialSwitch(inputId = "add_knots_pos.nsp", label = "Knot position", status = "primary", right = FALSE, value=TRUE)
                     ),
                     column(3, offset=0,
-                           materialSwitch(inputId = "add_optfit.nsp", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)
+                           materialSwitch(inputId = "add_optfit_nsp", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)
                     )
                 ), 
                 fluidRow(

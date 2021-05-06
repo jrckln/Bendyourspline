@@ -1,6 +1,8 @@
 bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines",br(),
                      tags$head(
-                        tags$style(HTML(paste(paste0("[for=bs_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}"), collapse = " ")))
+                        tags$style(HTML(paste(paste0("[for=bs_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}"), collapse = " "))),
+                        tags$style(HTML(paste0(".label-primary[for=add_optfit_bs] {background: ", optfitcol,";}"))), 
+                        tags$style(HTML(paste0(".label-primary[for=add_loess_bs] {background: ", loesscol,";}")))
                     ),
             column(4, 
             fluidRow(
@@ -34,13 +36,13 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                            materialSwitch(inputId = "add_y.bs", label = "Response", status = "primary", right = FALSE, value=TRUE)
                     ),
                     column(3, offset=0,
-                           materialSwitch(inputId = "add_loess.bs", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
+                           materialSwitch(inputId = "add_loess_bs", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
                     ),
                     column(3, offset=0,
                            materialSwitch(inputId = "add_knots_pos.bs", label = "Knot position", status = "primary", right = FALSE, value=TRUE)
                     ),
                     column(3, offset=0,
-                           materialSwitch(inputId = "add_optfit.bs", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)
+                           materialSwitch(inputId = "add_optfit_bs", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)
                     )
                 ),
                 fluidRow(

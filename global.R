@@ -22,9 +22,9 @@ suppressMessages(lapply(tab_files, source))
 #colors for plotly
 colors3 <- c("#1d3554","#DFE07C", "#7F8E39", "#42858C","#E48F1B","#570D32","#E5C616","#D33B44")
 colors4 <- c("#4E84C4", "#E7B800","#F4EDCA", "#FC4E07","#D16103", "#C4961A","#FFDB6D", "#C3D7A4", "#52854C", "#293352", "#00AFBB")
-col <- colors3
-optfitcol <- "orange"
-loesscol <- "blue"
+col <- c(colors3[c(1, 2, 4, 5)], colors4[c(11,2, 9)])
+optfitcol <- col[length(col)]
+loesscol <-  col[length(col)-1]
 
 #load ressources:
 #name future files according to hierarchy: Navbarpage prefix b; Methods prefix a for order

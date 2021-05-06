@@ -1,7 +1,9 @@
 fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                tags$head(
-                        tags$style(HTML(paste(paste0("[for=val_coef", 1:2,"_fp-coef]+span>.irs>.irs-single, [for=val_coef", 1:2, "_fp-coef]+span>.irs-bar-edge, [for=val_coef", 1:2, "_fp-coef]+span>.irs-bar {background: ", col[1:2], ";}"), collapse = " ")))
-                    ),
+                        tags$style(HTML(paste(paste0("[for=val_coef", 1:2,"_fp-coef]+span>.irs>.irs-single, [for=val_coef", 1:2, "_fp-coef]+span>.irs-bar-edge, [for=val_coef", 1:2, "_fp-coef]+span>.irs-bar {background: ", col[1:2], ";}"), collapse = " "))),
+                        tags$style(HTML(paste0(".label-primary[for=add_optfit_fp] {background: ", optfitcol,";}"))), 
+                        tags$style(HTML(paste0(".label-primary[for=add_loess_fp] {background: ", loesscol,";}")))
+                        ),
             column(4,
                    fluidRow(
             sidebarPanel(class="input_class", id = "inputs.fp", width = 12,
@@ -48,10 +50,10 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                            materialSwitch(inputId = "add_y.fp", label = "Response", status = "primary", right = FALSE, value=TRUE)
                     ), 
                     column(6, offset=0, 
-                           materialSwitch(inputId = "add_loess.fp", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
+                           materialSwitch(inputId = "add_loess_fp", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
                     ),
                     column(6, offset=0,
-                           materialSwitch(inputId = "add_optfit.fp", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)
+                           materialSwitch(inputId = "add_optfit_fp", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)
                     )
                 ), 
                 fluidRow(

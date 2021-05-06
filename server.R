@@ -169,16 +169,16 @@ function(input, output, session){
         if(input$add_y.fp){
             p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
-        if(input$add_loess.fp){
+        if(input$add_loess_fp){
             p <- p + suppressWarnings(geom_smooth(aes(x=x, y=y, text = "LOESS smoother"), 
-                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol))
+                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol, size=0.5))
         }
         
         p <- p +geom_line(aes(x=x, y = intercept+fp)) + 
                 theme_minimal() +
                 ylab(attr(DF, "names_vars")[2]) + 
                 xlab(attr(DF, "names_vars")[1])
-        if(input$add_optfit.fp){
+        if(input$add_optfit_fp){
           optcoef <- getoptfit.fp()
           p <- p + suppressWarnings(geom_line(aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2, 
                                  text="Optimal fit based on current settings"), color = optfitcol))
@@ -465,9 +465,9 @@ function(input, output, session){
         if(input$add_y.bs){
             p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
-        if(input$add_loess.bs){
+        if(input$add_loess_bs){
             p <- p + suppressWarnings(geom_smooth(aes(x=x, y=y, text = "LOESS smoother"), 
-                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol))
+                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol, size=0.5))
         }
         if(input$add_knots_pos.bs){
           knots <- attr(b, "knots")
@@ -480,7 +480,7 @@ function(input, output, session){
                                                color = "#D3D3D3"))+
               annotate(geom = "text", x = knots, y = y_coord, label = paste("Q ",quant), hjust = "left")
         }
-        if(input$add_optfit.bs){
+        if(input$add_optfit_bs){
           optcoef <- getoptfit.bs()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
            p <- p + suppressWarnings(geom_line(aes(x=x, y = optline, text = "Optimal fit based on current knot positions"), color = optfitcol))
@@ -806,9 +806,9 @@ function(input, output, session){
         if(input$add_y.nsp){
             p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
-        if(input$add_loess.nsp){
+        if(input$add_loess_nsp){
             p <- p + suppressWarnings(geom_smooth(aes(x=x, y=y, text="LOESS smoother"), 
-                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol))
+                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol, size=0.5))
         }
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
@@ -822,7 +822,7 @@ function(input, output, session){
                                                  color = "#D3D3D3"))+
                 annotate(geom = "text", x = knots, y = y_coord, label = paste("Q ",quant), hjust = "left")
         }
-        if(input$add_optfit.nsp){
+        if(input$add_optfit_nsp){
           optcoef <- getoptfit.nsp()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
            p <- p + suppressWarnings(geom_line(aes(x=x, y = optline, text = "Optimal fit based on current knot position"), color = optfitcol))
