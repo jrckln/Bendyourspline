@@ -7,15 +7,9 @@ function(input, output, session){
     })
     
     #code download module
-    observeEvent(input$variable,{
-      var <- paste0(gsub("~", "", gsub(" ", "", input$variable)), ".RData")
-      files <- list.files(path="data/")
-      datafile <- match(var, files)
-      datafile <- paste0("data/", files[datafile])
-      codeServer("code_fp", filename=c("www/codes/code_fp.R", "www/codes/helpers.R", datafile))
-      codeServer("code_bs", filename=c("www/codes/code_bs.R", datafile))
-      codeServer("code_nsp", filename=c("www/codes/code_nsp.R", datafile))
-    })
+    codeServer("code_fp", filename=c("www/codes/code_fp.R", "www/codes/helpers.R"))
+    codeServer("code_bs", filename=c("www/codes/code_bs.R"))
+    codeServer("code_nsp", filename=c("www/codes/code_nsp.R"))
     
   
     #############################################
