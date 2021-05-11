@@ -276,7 +276,7 @@ footer > .container {
     box-shadow:  0 0 7px  rgba(0,0,0,0.1);
 }
 
-.well > .well {
+.well .well {
 	box-shadow: none;
 }
 
@@ -314,6 +314,7 @@ body > .container-fluid {
 }
 
 span>.irs>.irs-single, span>.irs-bar-edge, span>.irs-bar {background: #D3D3D3;} 
+.label-primary {background: #D3D3D3;}
 
 .Rcode {
   padding: 15px;
