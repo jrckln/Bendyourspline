@@ -44,6 +44,8 @@ i > .boxstats {
 .innertext {
 	padding: 100px;
 	text-align: left;
+	font-size: 20px;
+	letter-spacing: 3px;
 }
 .innertext > p{
 	letter-spacing: 1px;
