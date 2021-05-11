@@ -24,7 +24,8 @@ body > p{
 	line-height:0.5;
 }
 
-.boxstats > h2{
+.boxstats h2{
+    margin-top: 2px;
 	font-size: 30px;
 	color: #606060;
 }
@@ -317,4 +318,3 @@ span>.irs>.irs-single, span>.irs-bar-edge, span>.irs-bar {background: #D3D3D3;}
 .Rcode {
   padding: 15px;
 }
-
