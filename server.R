@@ -52,6 +52,12 @@ function(input, output, session){
     #######           FP            #############
     #############################################
     
+    #intercept: 
+    output$intercept_slider_fp <- renderUI({
+      data <- getdata()
+      sliderInput("intercept.fp",label="Intercept",min = 0, max = round(max(data$x),0), value = 0, step = 0.1)
+    })
+    
     #increase/decrease range of coefs
     range_fp <- coef_range("fp")
     observeEvent(range_fp(), {
@@ -109,6 +115,7 @@ function(input, output, session){
     })
     
     getintercept.fp <- reactive({
+        req(input$intercept.fp)
         if(input$adjust_intercept.fp){
             var_list <- var_list_reac()
             data <- FPdata()
@@ -252,6 +259,13 @@ function(input, output, session){
     #############################################
     #######        B-splines        #############
     #############################################
+    
+    #intercept: 
+    output$intercept_slider_bs <- renderUI({
+      data <- getdata()
+      sliderInput("intercept.bs",label="Intercept",min = 0, max = round(max(data$x),0), value = 0, step = 0.1)
+    })
+    
     
     getbasis.bs <- reactive({
       data <- getdata()
@@ -423,6 +437,7 @@ function(input, output, session){
     })
 
     getintercept.bs <- reactive({
+      req(input$intercept.bs)
       if(input$adjust_intercept.bs){
           data <- getbasis.bs()
           coefs <- getcoef.bs()
@@ -557,11 +572,16 @@ function(input, output, session){
         enable("intercept.bs")
       }
     })
-
     
     #############################################
     #######      Natural-splines    #############
     #############################################
+    
+    #intercept: 
+    output$intercept_slider_nsp <- renderUI({
+      data <- getdata()
+      sliderInput("intercept.nsp",label="Intercept",min = 0, max = round(max(data$x), 0), value = 0, step = 0.1)
+    })
     
     #dynamic insert of slider for positions of knots
     inserted.pos.nsp <- c()
@@ -758,6 +778,7 @@ function(input, output, session){
     })
 
     getintercept.nsp <- reactive({
+        req(input$intercept.nsp)
         if(input$adjust_intercept.nsp){
             data <- getbasis.nsp()
             coefs <- getcoef.nsp()

@@ -28,7 +28,7 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                       materialSwitch(inputId = "adjust_intercept.nsp", label = "Adjust intercept automatically:", 
                                        status = "primary", right = FALSE)),
                       p("or: ", style="display:inline-block; width: 4%;"),
-                      div(style="display:inline-block; width: 65%;",sliderInput("intercept.nsp",label="Intercept",min = 0, max = 40, value = 0, step = 0.1))
+                      div(style="display:inline-block; width: 65%;", uiOutput("intercept_slider_nsp"))
                 ),
                 fluidRow(
                     column(3, offset=0, 
