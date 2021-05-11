@@ -503,7 +503,8 @@ function(input, output, session){
     })
     
     observe({
-      stats("stats_bs", calcR2.bs(), getintercept.bs())
+      vals <- calcR2.bs()
+      stats("stats_bs", vals, getintercept.bs())
     })
 
     output$basis_plot.bs<- renderPlotly({
@@ -791,7 +792,8 @@ function(input, output, session){
     })
     
     observe({
-      stats("stats_nsp", calcR2.nsp(), getintercept.nsp())
+      vals <- calcR2.nsp()
+      stats("stats_nsp", vals, getintercept.nsp())
     })
     
     getoptfit.nsp <- reactive({
