@@ -9,20 +9,10 @@ codeUI <- function(id) {
 }
 
 # Module Server
-codeServer <- function(id, filenames_code) {
+codeServer <- function(id, filenames_code, variable) {
   moduleServer(
     id,
     function(input, output, session) {
-      datafile <- eventReactive(input$variable,
-        {
-          var <- paste0(gsub("~", "", gsub(" ", "", input$variable)), ".RData")
-          files <- list.files(path="data/")
-          datafile <- match(var, files)
-          datafile <- paste0("data/", files[datafile])
-          datafile
-        }
-      )
-      
       ns <- session$ns
       settngsModal <- function() {
         modalDialog(
@@ -42,7 +32,11 @@ codeServer <- function(id, filenames_code) {
             paste0("output-",Sys.Date(), ".zip")
           },
           content = function(file) {
-            zip(zipfile = file, files = c(filenames_code, datafile()), flags = "-j")
+            var <- paste0(gsub("~", "", gsub(" ", "", variable)), ".RData")
+            files <- list.files(path="data/")
+            datafile <- match(var, files)
+            datafile <- paste0("data/", files[datafile])
+            zip(zipfile = file, files = c(filenames_code, datafile), flags = "-j")
           },
       contentType = "application/zip")
     }

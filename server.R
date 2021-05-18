@@ -7,7 +7,7 @@ function(input, output, session){
     })
     
     #code download module
-    codeServer("code_fp", filename=c("www/codes/code_fp.R", "www/codes/helpers.R"))
+    codeServer("code_fp", filename=c("www/codes/code_fp.R", "www/codes/helpers.R"), variable = input$variable)
     codeServer("code_bs", filename=c("www/codes/code_bs.R"))
     codeServer("code_nsp", filename=c("www/codes/code_nsp.R"))
     
