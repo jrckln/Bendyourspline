@@ -25,12 +25,13 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                     column(6, wellPanel(tags$div(id = 'placeholder_coef_bs'), style="padding: 2px;"))
                 ),
                 fluidRow(
-                  div(style="display:inline-block; width: 20%; vertical-align: -150%;padding-left: 3%;",
-                      materialSwitch(inputId = "adjust_intercept.bs", label = "Adjust intercept automatically:", 
-                                       status = "primary", right = FALSE)),
-                      p("or: ", style="display:inline-block; width: 4%;"),
-                      div(style="display:inline-block; width: 65%;",uiOutput("intercept_slider_bs"))
-                ),
+                  column(12,
+                  wellPanel(
+                      uiOutput("intercept_slider_bs"),
+                      actionButton(inputId = "adjust_intercept.bs", label = "Adjust automatically", class='btn reset_btn')
+                  )
+                  )
+                ), 
                 fluidRow(
                     column(3, offset=0,
                            materialSwitch(inputId = "add_y.bs", label = "Response", status = "primary", right = FALSE, value=TRUE)

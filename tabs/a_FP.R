@@ -39,11 +39,12 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                            )
                 ), 
                 fluidRow(
-                  div(style="display:inline-block; width: 20%; vertical-align: -150%;padding-left: 3%;",
-                      materialSwitch(inputId = "adjust_intercept.fp", label = "Adjust intercept automatically:", 
-                                       status = "primary", right = FALSE)),
-                      p("or: ", style="display:inline-block; width: 4%;"),
-                      div(style="display:inline-block; width: 65%;",uiOutput("intercept_slider_fp"))
+                  column(12,
+                  wellPanel(
+                      uiOutput("intercept_slider_fp"),
+                      actionButton(inputId = "adjust_intercept.fp", label = "Adjust automatically", class='btn reset_btn')
+                  )
+                  )
                 ), 
                 fluidRow(
                     column(6, offset=0, 

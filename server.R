@@ -82,7 +82,7 @@ function(input, output, session){
           coef1 <- coef1
         }
         
-        fp_fun <- paste(round(getintercept.fp(),2), coef1, "\\cdot", trans1)
+        fp_fun <- paste(round(as.numeric(input$intercept.fp),2), coef1, "\\cdot", trans1)
         
         pow2 <- as.numeric(input$power2.fp)
         trans2 <- paste0("x^{", pow2, "}")
@@ -114,16 +114,12 @@ function(input, output, session){
         ))
     })
     
-    getintercept.fp <- reactive({
+    observeEvent(input$adjust_intercept.fp, {
         req(input$intercept.fp)
-        if(input$adjust_intercept.fp){
-            var_list <- var_list_reac()
-            data <- FPdata()
-            intercept <- opt.intercept(fitted=data$fp, data=data[,"y"], interval=c(min(data[,"y"]), max(data[,"y"])))$minimum
-            return(intercept)
-        } else {
-            return(input$intercept.fp)
-        }
+        var_list <- var_list_reac()
+        data <- FPdata()
+        intercept <- opt.intercept(fitted=data$fp, data=data$y, interval=c(0, max(data$y)))$minimum
+        updateSliderInput(session, 'intercept.fp', value = intercept)
     })
     
     FPdata <- reactive({
@@ -162,7 +158,8 @@ function(input, output, session){
     })
     
     output$plot.fp <- renderPlotly({
-        intercept <- getintercept.fp()
+        req(input$intercept.fp)
+        intercept <- as.numeric(input$intercept.fp)
         
         DF <- FPdata()
         p <- ggplot(data=DF)
@@ -184,8 +181,6 @@ function(input, output, session){
           p <- p + suppressWarnings(geom_line(aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2, 
                                  text="Optimal fit based on current settings"), color = optfitcol))
         }
-        
-        
         ggplotly(p, tooltip="text")
     })
     
@@ -200,13 +195,12 @@ function(input, output, session){
     
     calcR2.fp <- reactive({
         DF <- FPdata()
-        fp <- getintercept.fp()+DF[, "fp"]
+        fp <- as.numeric(input$intercept.fp)+DF$fp
         fit <- mfp(y~fp(transformed, df=4, scale=F), data = DF)
         rss <- sum((DF[,"y"]- fit$fitted)^2)
-        sstot <- sum((DF[,"y"]-mean(DF[,"y"]))^2)
+        sstot <- sum((DF$y-mean(DF$y))^2)
         fittedR2 <- 1-rss/sstot
-        ssres <- sum((DF[, "y"]-fp)^2)  #residual sum of squares
-        
+        ssres <- sum((DF$y-fp)^2)  #residual sum of squares
         R2 <- 1-ssres/sstot
         maxR2 <-fittedR2
         
@@ -216,7 +210,7 @@ function(input, output, session){
     
     observe({
       vals <- calcR2.fp()
-      stats("stats_fp", vals, getintercept.fp())
+      stats("stats_fp", vals, as.numeric(input$intercept.fp))
     })
     
     getoptfit.fp <- reactive({
@@ -228,15 +222,6 @@ function(input, output, session){
     #reset button
     observeEvent(input$reset_input.fp, {
        reset("inputs.fp") #id of tab to reset
-    })
-
-    observe({
-      if(input$adjust_intercept.fp){
-        disable("intercept.fp")
-      }
-      if(!input$adjust_intercept.fp){
-        enable("intercept.fp")
-      }
     })
     
     observe({
@@ -361,7 +346,7 @@ function(input, output, session){
 
     #dynamic insert of slider for coefficients for each spline basis function
     inserted.coef.bs <- c()
-    coef_vals_bs <- reactiveValues()
+    coef_vals_bs <- list()
     
     # coefficient sliders
     observeEvent(c(input$nknots.bs, input$degree.bs, input$variable), {
@@ -387,7 +372,7 @@ function(input, output, session){
                     selector = '#placeholder_coef_bs',
                     ui = sliderplUI(id[i], range_slider = range_bs())
                   )
-                  coef_vals_bs[[id[i]]] <- sliderpl(id[i])
+                  coef_vals_bs[[id[i]]] <<- sliderpl(id[i])
                   inserted.coef.bs <<- c(inserted.coef.bs, id[i])
                 }
             }
@@ -398,7 +383,7 @@ function(input, output, session){
                     selector = '#placeholder_coef_bs',
                     ui = sliderplUI(id[i])
               )
-              coef_vals_bs[[id[i]]] <- sliderpl(id[i])
+              coef_vals_bs[[id[i]]] <<- sliderpl(id[i])
               inserted.coef.bs <<- c(inserted.coef.bs, id[i])
             }
         }
@@ -427,26 +412,22 @@ function(input, output, session){
       #get values of coefficients:
       ind <- paste0("bs_coef", 1:num)
       coef <- c()
-      if(length(coef_vals_bs)!= num){
-          return(numeric(num))
-      }
+      # if(length(coef_vals_bs)!= num){
+      #     return(numeric(num))
+      # }
       for(i in ind){
           coef <- c(coef, as.numeric(coef_vals_bs[[i]]()))
       }
       return(coef)
     })
 
-    getintercept.bs <- reactive({
+    observeEvent(input$adjust_intercept.bs, {
       req(input$intercept.bs)
-      if(input$adjust_intercept.bs){
-          data <- getbasis.bs()
-          coefs <- getcoef.bs()
-          spline <- rowSums(data$b %*% coefs)
-          intercept <- opt.intercept(fitted=spline, data=data$y, interval=c(min(data$y), max(data$y)))$minimum
-          return(intercept)
-      } else {
-          return(input$intercept.bs)
-      }
+      data <- getbasis.bs()
+      coefs <- getcoef.bs()
+      spline <- rowSums(data$b %*% coefs)
+      intercept <- opt.intercept(fitted=spline, data=data$y, interval=c(0, max(data$y)))$minimum
+      updateSliderInput(session, "intercept.bs", value = intercept)
     })
     
     getoptfit.bs <- reactive({
@@ -465,7 +446,7 @@ function(input, output, session){
         data <- data.frame("x" = data$x, "y" = data$y)
         pos <- getpos.bs()
         coefs <- getcoef.bs()
-        intercept <- getintercept.bs()
+        intercept <- as.numeric(input$intercept.bs)
         
         spline <- rowSums(b %*% coefs)+intercept
 
@@ -503,7 +484,7 @@ function(input, output, session){
     
     observe({
       vals <- calcR2.bs()
-      stats("stats_bs", vals, getintercept.bs())
+      stats("stats_bs", vals, as.numeric(input$intercept.bs))
     })
 
     output$basis_plot.bs<- renderPlotly({
@@ -538,7 +519,7 @@ function(input, output, session){
         data <- data.frame("x" = data$x, "y"= data$y)
         coefs <- getcoef.bs()
         degree <- input$degree.bs
-        spline <- rowSums(b %*% coefs)+getintercept.bs()
+        spline <- rowSums(b %*% coefs)+as.numeric(input$intercept.bs)
         model <- lm(as.formula(paste0("y ~ bs(x, df=", degree+length(coefs),")")), data=data)
         fitted <- model$fitted
         p <- model$rank
@@ -554,14 +535,7 @@ function(input, output, session){
     observeEvent(input$reset_input.bs, {
        reset("inputs.bs") #id of tab to reset
     })
-    observe({
-      if(input$adjust_intercept.bs){
-        disable("intercept.bs")
-      }
-      if(!input$adjust_intercept.bs){
-        enable("intercept.bs")
-      }
-    })
+
     observe({
       if(!(all(input$add_mean.bs, input$add_y.bs))){
         disable("adjust_intercept.bs")
@@ -695,7 +669,7 @@ function(input, output, session){
 
     #dynamic insert of slider for coefficients for each spline basis function
     inserted.coef.nsp <- c()
-    coef_vals_nsp <- reactiveValues()
+    coef_vals_nsp <- list()
     
     # coefficients
     observeEvent(c(input$nknots.nsp, input$variable), {
@@ -718,7 +692,7 @@ function(input, output, session){
                     selector = '#placeholder_coef_nsp',
                     ui = sliderplUI(id[i], range_slider = range_nsp())
                   )
-                  coef_vals_nsp[[id[i]]] <- sliderpl(id[i])
+                  coef_vals_nsp[[id[i]]] <<- sliderpl(id[i])
                   inserted.coef.nsp <<- c(inserted.coef.nsp, id[i])
                 }
             }
@@ -729,7 +703,7 @@ function(input, output, session){
                   selector = '#placeholder_coef_nsp',
                   ui = sliderplUI(id[i])
               )
-              coef_vals_nsp[[id[i]]] <- sliderpl(id[i])
+              coef_vals_nsp[[id[i]]] <<- sliderpl(id[i])
               inserted.coef.nsp <<- c(inserted.coef.nsp, id[i])
             }
         }
@@ -768,31 +742,27 @@ function(input, output, session){
       #get values of coefficients:
       ind <- paste0("nsp_coef", 1:num)
       coef <- c()
-      if(length(coef_vals_nsp)!= num){
-          return(numeric(num))
-        }
+      # if(length(coef_vals_nsp)!= num){
+      #     return(numeric(num))
+      # }
       for(i in ind){
           coef <- c(coef, as.numeric(coef_vals_nsp[[i]]()))
       }
       return(coef)
     })
 
-    getintercept.nsp <- reactive({
+    observeEvent(input$adjust_intercept.nsp, {
         req(input$intercept.nsp)
-        if(input$adjust_intercept.nsp){
-            data <- getbasis.nsp()
-            coefs <- getcoef.nsp()
-            spline <- rowSums(data$b %*% coefs)
-            intercept <- opt.intercept(fitted=spline, data=data$y, interval=c(min(data$y), max(data$y)))$minimum
-            return(intercept)
-        } else {
-            return(input$intercept.nsp)
-        }
+        data <- getbasis.nsp()
+        coefs <- getcoef.nsp()
+        spline <- rowSums(data$b %*% coefs)
+        intercept <- opt.intercept(fitted=spline, data=data$y, interval=c(0, max(data$y)))$minimum
+        updateSliderInput(session, "intercept.nsp", value = intercept)
     })
     
     observe({
       vals <- calcR2.nsp()
-      stats("stats_nsp", vals, getintercept.nsp())
+      stats("stats_nsp", vals, as.numeric(input$intercept.nsp))
     })
     
     getoptfit.nsp <- reactive({
@@ -812,7 +782,7 @@ function(input, output, session){
         b <- data$b
         pos <- getpos.nsp()
         coefs <- getcoef.nsp()
-        intercept <- getintercept.nsp()
+        intercept <- as.numeric(input$intercept.nsp)
         spline <- rowSums(b %*% coefs)+intercept
         
         var_names <- data$names_vars
@@ -885,7 +855,7 @@ function(input, output, session){
         data <- getbasis.nsp()
         b <- data$b
         coefs <- getcoef.nsp()
-        spline <- rowSums(b %*% coefs)+ getintercept.nsp()
+        spline <- rowSums(b %*% coefs)+ as.numeric(input$intercept.nsp)
         data <- data.frame("x"=data$x, "y"=data$y)
         model <- lm(as.formula(paste0("y ~ ns(x, df=", ncol(b),", 
                                       Boundary.knots=c(", input$boundary1.nsp, ",", input$boundary2.nsp ,"))")), data=data)
@@ -904,14 +874,7 @@ function(input, output, session){
     observeEvent(input$reset_input.nsp, {
         reset("inputs.nsp") #id of tab to reset
     })
-    observe({
-      if(input$adjust_intercept.nsp){
-        disable("intercept.nsp")
-      }
-      if(!input$adjust_intercept.nsp){
-        enable("intercept.nsp")
-      }
-    })
+    
     observe({
       if(!(all(input$add_mean.nsp, input$add_y.nsp))){
         disable("adjust_intercept.nsp")
