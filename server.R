@@ -595,23 +595,21 @@ function(input, output, session){
       updateSliderInput(session, "boundary2.nsp", min = pos[length(pos)]+0.1)
     })
     
-    #if data is changed - set to knot positions default values
+    
     observeEvent(input$variable, {
       data <- getdata()
       minx <- min(data$x)
       maxx <- max(data$x)
       default.pos.knots.nsp <- seq.int(from = 0,to = 1,length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
       default.pos.knots.nsp <- round(quantile(data$x, default.pos.knots.nsp), 3)
-      updateSliderInput(session, "boundary1.nsp", value = minx, min = minx, max= as.numeric(default.pos.knots.nsp[1]-0.1))
-      updateSliderInput(session, "boundary2.nsp", value = maxx, min = as.numeric(default.pos.knots.nsp[length(default.pos.knots.nsp)]+0.01), 
-                        max= maxx)
-      #cat(file=stderr(), "updating done values: ", minx, maxx,  default.pos.knots.nsp[1]-0.01,default.pos.knots.nsp[length(default.pos.knots.nsp)]+0.01 ,"\n")
       toupdate <- 1:input$nknots.nsp
       id <- paste0('nsp_pos', toupdate)
       for(i in 1:length(toupdate)){
         updateSliderInput(session, paste0(id[i], "_inner"), min=minx, max=maxx,
                          value = as.numeric(default.pos.knots.nsp[toupdate[i]]))
       }
+      updateSliderInput(session, "boundary1.nsp", value = minx, min = minx, max= default.pos.knots.nsp[1]-0.1) 
+      updateSliderInput(session, "boundary2.nsp", value = maxx, min = default.pos.knots.nsp[length(default.pos.knots.nsp)]+0.1, max= maxx)
     })
     
     # Internal Knot positions
@@ -672,7 +670,7 @@ function(input, output, session){
     coef_vals_nsp <- list()
     
     # coefficients
-    observeEvent(c(input$nknots.nsp, input$variable), {
+    observeEvent(c(input$nknots.nsp), {
         req(input$nknots.nsp)
         num <- 1 + input$nknots.nsp
         if(length(inserted.coef.nsp)!=0){ #case of update
@@ -742,9 +740,9 @@ function(input, output, session){
       #get values of coefficients:
       ind <- paste0("nsp_coef", 1:num)
       coef <- c()
-      # if(length(coef_vals_nsp)!= num){
-      #     return(numeric(num))
-      # }
+      if(length(coef_vals_nsp)!= num){
+          return(numeric(num))
+      }
       for(i in ind){
           coef <- c(coef, as.numeric(coef_vals_nsp[[i]]()))
       }
@@ -851,14 +849,20 @@ function(input, output, session){
     })
 
     calcR2.nsp <- reactive({
-        req(input$nknots.nsp, input$boundary1.nsp, input$boundary2.nsp)
+        req(input$nknots.nsp)
         data <- getbasis.nsp()
         b <- data$b
         coefs <- getcoef.nsp()
         spline <- rowSums(b %*% coefs)+ as.numeric(input$intercept.nsp)
         data <- data.frame("x"=data$x, "y"=data$y)
-        model <- lm(as.formula(paste0("y ~ ns(x, df=", ncol(b),", 
-                                      Boundary.knots=c(", input$boundary1.nsp, ",", input$boundary2.nsp ,"))")), data=data)
+        
+        # #Problem occurs when changing variables: data is changed before boundaries are updated -> higher boundaries than data on the right and vice versa
+        # boundaries <- sort(c(max(min(data$x), input$boundary1.nsp), min(max(data$x), input$boundary2.nsp)))
+        # cat(file = stderr(), "boundaries: ", boundaries, "\n")
+        # cat(file = stderr(), "mn and max: ", min(data$x), max(data$x), "\n")
+        
+        #TODO: make dependent of boundary knots
+        model <- lm(as.formula(paste0("y ~ ns(x, df=", ncol(b),")")), data=data) #",Boundary.knots=c(", boundaries[1], ",", boundaries[2] ,
         
         fitted <- model$fitted
         p <- model$rank
