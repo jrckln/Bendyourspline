@@ -253,6 +253,11 @@ function(input, output, session){
     
     
     getbasis.bs <- reactive({
+      validate(
+        need(is.numeric(input$degree.bs), 'Please provide a valid degree.'),
+        need(is.numeric(input$nknots.bs) & input$nknots.bs < 10, 'Please provide a valid number of knots.')
+      )
+      
       data <- getdata()
       degree <- input$degree.bs
       pos <- getpos.bs()
@@ -351,6 +356,7 @@ function(input, output, session){
     # coefficient sliders
     observeEvent(c(input$nknots.bs, input$degree.bs, input$variable), {
         req(input$nknots.bs)
+        req(input$degree.bs)
         num <- input$degree.bs + input$nknots.bs 
         # num ... the number of coefficient sliders that should be there
         # length(inserted.pos.bs) ... the number of coefficients that are actually there
@@ -439,7 +445,7 @@ function(input, output, session){
     })
     
     output$plot.bs <- renderPlotly({
-        req(input$nknots.bs)
+        req(input$nknots.bs, input$intercept.bs)
         data <- getbasis.bs()
         b <- data$b
         var_names <- data$names_vars
@@ -447,7 +453,6 @@ function(input, output, session){
         pos <- getpos.bs()
         coefs <- getcoef.bs()
         intercept <- as.numeric(input$intercept.bs)
-        
         spline <- rowSums(b %*% coefs)+intercept
 
         p <- ggplot(data=data)
@@ -455,17 +460,17 @@ function(input, output, session){
             p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
         }
         if(input$add_loess_bs){
-            p <- p + suppressWarnings(geom_smooth(aes(x=x, y=y, text = "LOESS smoother"), 
+            p <- p + suppressWarnings(geom_smooth(aes(x=x, y=y, text = "LOESS smoother"),
                                                   method = "loess", formula = "y~x", se=FALSE, color = loesscol, size=0.5))
         }
         if(input$add_knots_pos.bs){
           knots <- attr(b, "knots")
           quant <- round(quantInv(data$x, knots),2)
           y_coord <- max(data$y)
-          knots_df <- data.frame("x" = knots, 
+          knots_df <- data.frame("x" = knots,
                                  "y" = y_coord)
-          p <- p + suppressWarnings(geom_vline(data=knots_df, 
-                                               aes(xintercept=x, text = "Spline knot and corresponding quantile"), 
+          p <- p + suppressWarnings(geom_vline(data=knots_df,
+                                               aes(xintercept=x, text = "Spline knot and corresponding quantile"),
                                                color = "#D3D3D3"))+
               annotate(geom = "text", x = knots, y = y_coord, label = paste("Q ",quant), hjust = "left")
         }
@@ -563,6 +568,9 @@ function(input, output, session){
     
     getbasis.nsp <- reactive({
       req(input$boundary1.nsp, input$boundary2.nsp)
+      validate(
+        need(is.numeric(input$nknots.nsp) & input$nknots.nsp < 10, 'Please provide a valid number of internal knots.')
+      )
       data <- getdata()
       pos <- getpos.nsp()
       b <- ns(data$x, knots = pos, Boundary.knots = c(input$boundary1.nsp, input$boundary2.nsp))
