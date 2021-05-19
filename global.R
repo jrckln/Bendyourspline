@@ -13,6 +13,7 @@ library(stringr)
 library(reshape2)
 library(tidyverse)
 library(shinyhelper)
+library(shinycssloaders)
 
 source("data/data.R")
 #load modules:

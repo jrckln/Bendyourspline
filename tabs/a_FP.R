@@ -65,8 +65,8 @@ fluidRow(codeUI("code_fp"))),
 column(8,
 mainPanel(width = 12,
   column(8,
-    wellPanel(h4("Response function"), plotlyOutput("plot.fp")), 
-    wellPanel(h4("Fractional polynomials"), plotlyOutput("basis_plot.fp", height = "200px"))
+    wellPanel(h4("Response function"), withSpinner(plotlyOutput("plot.fp"), color = colors3[1], size = 1)), 
+    wellPanel(h4("Fractional polynomials"), withSpinner(plotlyOutput("basis_plot.fp", height = "200px"), color = colors3[1], size = 1))
   ), 
   column(4,
         wellPanel(h4("Transformation: "),uiOutput("transformation.fp")), 
