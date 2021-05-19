@@ -11,6 +11,16 @@ function(input, output, session){
     codeServer("code_bs", filename=c("www/codes/code_bs.R"), variable = input$variable)
     codeServer("code_nsp", filename=c("www/codes/code_nsp.R"), variable = input$variable)
     
+    observeEvent(input$help, {
+        #introjs(session, events = list(onbeforechange = readCallback("switchTabs")))
+        #updateNavbarPage(session, "navbar", "Methods")
+        if(input$navbar != "Methods"){
+        
+        } else {
+          guide$init()$start()
+        }
+        
+    })
   
     #############################################
     #######         Data            #############

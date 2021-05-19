@@ -14,6 +14,8 @@ library(reshape2)
 library(tidyverse)
 library(shinyhelper)
 library(shinycssloaders)
+#library(rintrojs)
+library(cicerone)
 
 source("data/data.R")
 #load modules:
@@ -31,3 +33,18 @@ loesscol <-  col[length(col)-1]
 #name future files according to hierarchy: Navbarpage prefix b; Methods prefix a for order
 tab_files <- list.files(path = "tabs", full.names = T, recursive = T)
 suppressMessages(lapply(tab_files, source))
+
+
+guide <- Cicerone$
+  new()$ 
+  step(
+    el = "collapseData",
+    title = "Data options",
+    description = "Specify your variable pair to analyse. Click on header to collapse"
+  )$
+  step(
+    "tabsetmethods",
+    "Methods",
+    "Select a nonlinear modelling technique."
+  )
+
