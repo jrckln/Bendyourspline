@@ -36,7 +36,7 @@ suppressMessages(lapply(tab_files, source))
 
 
 guide <- Cicerone$
-  new(opacity = 0.5)$ 
+  new(opacity = 0)$ 
   step(
     "collapseData",
     "Data options",
@@ -50,3 +50,4 @@ guide <- Cicerone$
     "Select a nonlinear modelling technique."
   )
 
+source("data/exercises.R")

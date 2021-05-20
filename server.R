@@ -910,7 +910,35 @@ function(input, output, session){
         enable("intercept.nsp")
       }
     })
-
+    
+    #############################################
+    #######      Exercises          #############
+    #############################################
+    
+    counter_exercise <- reactiveVal(1)
+    
+    output$next_exercise <- renderUI({
+      if(input$start_exercise & counter_exercise() <= length(exercises[[input$exercise]])){
+        tagList(
+        HTML('<p>', paste0(as.character(exercises[[input$exercise]][["instructions"]][counter_exercise()])), '</p>'), 
+        if(eval(parse(text=exercises[[input$exercise]][["validate"]][counter_exercise()]))){
+          tagList(HTML('<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+              </svg>
+               '),
+          actionButton("next_exercise_btn", "Next"))
+        }
+        )
+      } else if(counter_exercise() > length(exercises[[input$exercise]])){
+        counter_exercise(1)
+      }
+    })
+    observeEvent(input$next_exercise_btn, {
+      newVal <- counter_exercise() + 1
+      counter_exercise(newVal)
+    })
+    
     
     session$onSessionEnded(stopApp) #automatically stop when closing browser
 }

@@ -71,6 +71,11 @@ mainPanel(width = 12,
   ), 
   column(4,
     jqui_sortable(div(
+        wellPanel(h4("Exercise"), 
+                  selectInput("exercise", "", c("test"), selected="test"),
+                  actionButton("start_exercise", "Start"),
+                  uiOutput("next_exercise")
+                  ),
         wellPanel(h4("Transformation: "),uiOutput("transformation.fp")), 
         wellPanel(h4("Goodness of fit"), statsUI("stats_fp")),
         wellPanel(h4("Formula: "),uiOutput("formula.fp")), 
