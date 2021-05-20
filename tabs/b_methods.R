@@ -8,8 +8,9 @@ methods <-
                                                     selectInput("variable", "Choose a variable pair:",names(data_list)) %>% 
                                                         helper(type = "markdown", title= "Data information",
                                                                content = "VariablePairs")
-                                                )), 
-                                            column(3, 
+                                                )),
+                                            column(3, uiOutput("information_vars")),
+                                            column(2, 
                                                    materialSwitch(inputId = "adv_settings", value = FALSE, label="Advanced settings")
                                                    ), 
                                             column(5,
@@ -22,10 +23,7 @@ methods <-
                                                                     radioGroupButtons(inputId = "gender", label = "Sex:", choices = names(gender),status = "primary", selected = "Both")
                                                                 ), 
                                                              )
-                                                   ),
-                                            column(1, div(style = "font-size: 13px; padding: 10px 0px; margin:0%",
-                                                    uiOutput("information.vars")
-                                                ))
+                                                   )
                                             ),
             style = "primary")),
             fluidRow(

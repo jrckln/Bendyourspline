@@ -1,4 +1,4 @@
-body > p{
+body p{
   font: 400 16px/1.8 "Segoe UI", sans-serif;
 }
 
@@ -322,4 +322,6 @@ body > .container-fluid {
 span>.irs>.irs-single, span>.irs-bar-edge, span>.irs-bar {background: #D3D3D3;} 
 .label-primary {background: #D3D3D3;}
 
-
+#information_vars {
+    margin-top: 20px;
+}

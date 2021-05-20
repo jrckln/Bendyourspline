@@ -26,14 +26,17 @@ function(input, output, session){
     #######         Data            #############
     #############################################
     
-    output$information.vars <- renderUI({
+    output$information_vars <- renderUI({
         var <- as.character(input$variable)
         var_list <- data_list[[var]]
-        # HTML(paste0('Chosen variable pair: ', input$variable, "<br>", 
-        #             var_list$x, " in ", var_list$x_unit, "<br>", 
-        #             "filtered for sex: ", input$gender
-        #             ))
-        HTML("")
+        filtered <- var_list_reac()
+        obs <- ifelse(input$sample.size == '100%', 
+                      paste0('all observations (', nrow(var_list$data), ')'),
+                      paste0(nrow(filtered$data), " out of ", nrow(var_list$data), ' observations'))
+        filt <- ifelse(input$gender == "Both", "", paste0(', filtered for gender: ', input$gender))
+        HTML(paste0('<p> Showing ', obs, filt, ' of variable ', var_list$x, ' in ', var_list$x_unit, 
+                    ' with ', var_list$y, ' in ', var_list$y_unit, ' as response. </p>'
+                    ))
     })
     
     var_list_reac <- reactive({
