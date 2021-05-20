@@ -68,7 +68,7 @@ function(input, output, session){
     #intercept: 
     output$intercept_slider_fp <- renderUI({
       data <- getdata()
-      sliderInput("intercept.fp",label="Intercept",min = 0, max = round(max(data$x),0), value = 0, step = 0.1)
+      sliderInput("intercept.fp",label="Intercept",min = 0, max = round(max(data$y),0), value = 0, step = 0.1)
     })
     
     #increase/decrease range of coefs
@@ -261,7 +261,7 @@ function(input, output, session){
     #intercept: 
     output$intercept_slider_bs <- renderUI({
       data <- getdata()
-      sliderInput("intercept.bs",label="Intercept",min = 0, max = round(max(data$x),0), value = 0, step = 0.1)
+      sliderInput("intercept.bs",label="Intercept",min = 0, max = round(max(data$y),0), value = 0, step = 0.1)
     })
     
     
@@ -572,7 +572,7 @@ function(input, output, session){
     #intercept: 
     output$intercept_slider_nsp <- renderUI({
       data <- getdata()
-      sliderInput("intercept.nsp",label="Intercept",min = 0, max = round(max(data$x), 0), value = 0, step = 0.1)
+      sliderInput("intercept.nsp",label="Intercept",min = 0, max = round(max(data$y), 0), value = 0, step = 0.1)
     })
     
     #dynamic insert of slider for positions of knots
@@ -600,8 +600,8 @@ function(input, output, session){
       data <- getdata()
       pos <- seq.int(from = 0,to = 1,length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
       pos <- round(quantile(data$x, pos), 3)
-      maxx <- max(data$x)
-      minx <- min(data$x)
+      maxx <- round(max(data$x), 3)
+      minx <- round(min(data$x), 3)
       div(
       sliderInput("boundary1.nsp", "Position of Boundary knot 1", min=minx, max=pos[1]-0.1, value=minx, 
                   step=0.1, ticks = FALSE),
@@ -619,8 +619,8 @@ function(input, output, session){
     
     observeEvent(input$variable, {
       data <- getdata()
-      minx <- min(data$x)
-      maxx <- max(data$x)
+      minx <- round(min(data$x), 3)
+      maxx <- round(max(data$x), 3)
       default.pos.knots.nsp <- seq.int(from = 0,to = 1,length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
       default.pos.knots.nsp <- round(quantile(data$x, default.pos.knots.nsp), 3)
       toupdate <- 1:input$nknots.nsp
