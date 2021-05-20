@@ -14,11 +14,11 @@ function(input, output, session){
     observeEvent(input$help, {
         #introjs(session, events = list(onbeforechange = readCallback("switchTabs")))
         #updateNavbarPage(session, "navbar", "Methods")
-        if(input$navbar != "Methods"){
-        
-        } else {
+        # if(input$navbar != "Methods"){
+        # 
+        # } else {
           guide$init()$start()
-        }
+        #}
         
     })
   

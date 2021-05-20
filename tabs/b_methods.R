@@ -31,7 +31,6 @@ methods <-
             fluidRow(
                 column(width = 12,
                     tabsetPanel(id="tabsetmethods",
-                        #introBox("", data.step = 2, data.intro = "Select a nonlinear modelling technique.", data.position = "bottom"),
                          fp, 
                          bsplines, 
                          naturalsplines, 

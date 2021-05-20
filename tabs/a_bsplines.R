@@ -49,18 +49,22 @@ bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines
                 fluidRow(
                   column(12, offset=0, actionButton("reset_input.bs", "Reset inputs", class = "btn reset_btn"))
                 )
-)),
-fluidRow(codeUI("code_bs"))),
+))),
 column(8,
 mainPanel(width = 12, 
   fluidRow(
     column(8, 
+           jqui_sortable(div(
            wellPanel(h4("Response function"), withSpinner(plotlyOutput("plot.bs"), color = colors3[1], size = 1)),
            wellPanel(h4("Spline basis functions"), withSpinner(plotlyOutput("basis_plot.bs", height = "200px"), color = colors3[1], size = 1))
-    ), 
+           ))
+           ), 
     column(4, 
+           jqui_sortable(div(
          popify(wellPanel(h4("Goodness of fit"), statsUI("stats_bs")), 
-             "Note", "Maximal R2 value is based on the set number of knots." )
+             "Note", "Maximal R2 value is based on the set number of knots." ),
+           codeUI("code_bs")
+         ))
          )
   )
 ) )

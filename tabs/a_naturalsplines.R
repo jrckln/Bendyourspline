@@ -48,19 +48,22 @@ naturalsplines <- tabPanel("Natural Splines", id="nsplines", class="fade", value
                 fluidRow(
                   column(12, offset=0, actionButton("reset_input.nsp", "Reset inputs", class = "btn reset_btn"))
                 )
-)),
-fluidRow(codeUI("code_nsp"))),
+))),
 column(8,
 mainPanel(width = 12, 
   fluidRow(
     column(8, 
+           jqui_sortable(div(
            wellPanel(h4("Response function"), withSpinner(plotlyOutput("plot.nsp"), color = colors3[1], size = 1)),
            wellPanel(h4("Spline basis functions"), withSpinner(plotlyOutput("basis_plot.nsp", height = "200px"), color = colors3[1], size = 1))
-    ), 
+           ))
+           ), 
     column(4, 
+           jqui_sortable(div(
          popify(wellPanel(h4("Goodness of fit"), statsUI("stats_nsp")), 
-             "Note", "Maximal R2 value is based on the set number of knots." )
-         )
+             "Note", "Maximal R2 value is based on the set number of knots." ),
+         codeUI("code_nsp")
+           ))
   )
 ) )
-)
+))

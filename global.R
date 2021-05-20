@@ -14,7 +14,7 @@ library(reshape2)
 library(tidyverse)
 library(shinyhelper)
 library(shinycssloaders)
-#library(rintrojs)
+library(shinyjqui)
 library(cicerone)
 
 source("data/data.R")
@@ -36,11 +36,13 @@ suppressMessages(lapply(tab_files, source))
 
 
 guide <- Cicerone$
-  new()$ 
+  new(opacity = 0.5)$ 
   step(
-    el = "collapseData",
-    title = "Data options",
-    description = "Specify your variable pair to analyse. Click on header to collapse"
+    "collapseData",
+    "Data options",
+    "Specify your variable pair to analyse. Click on header to collapse"#, 
+    #tab_id = "navbar", #currently not working known issue see github page of package
+    #tab = "Methods"
   )$
   step(
     "tabsetmethods",

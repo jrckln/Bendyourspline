@@ -280,6 +280,11 @@ footer > .container {
 	box-shadow: none;
 }
 
+.well > div {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
 .btn {
 	border-style: none;
 }
@@ -292,6 +297,7 @@ body > .container-fluid {
 	padding: 15px;
 	padding-top: 100px;
 }
+
 
 .tab-pane[data-value='Methods'] h4{
 	font-family: "Roboto Condensed", sans-serif;
@@ -316,6 +322,4 @@ body > .container-fluid {
 span>.irs>.irs-single, span>.irs-bar-edge, span>.irs-bar {background: #D3D3D3;} 
 .label-primary {background: #D3D3D3;}
 
-.Rcode {
-  padding: 15px;
-}
+

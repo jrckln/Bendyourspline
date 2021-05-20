@@ -60,18 +60,22 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                 fluidRow(
                   column(12, offset=0, actionButton("reset_input.fp", "Reset inputs", class = "btn reset_btn"))
                 )
-)),
-fluidRow(codeUI("code_fp"))),
+))),
 column(8,
 mainPanel(width = 12,
   column(8,
-    wellPanel(h4("Response function"), withSpinner(plotlyOutput("plot.fp"), color = colors3[1], size = 1)), 
-    wellPanel(h4("Fractional polynomials"), withSpinner(plotlyOutput("basis_plot.fp", height = "200px"), color = colors3[1], size = 1))
+    jqui_sortable(div(
+      wellPanel(h4("Response function"), withSpinner(plotlyOutput("plot.fp"), color = colors3[1], size = 1)), 
+      wellPanel(h4("Fractional polynomials"), withSpinner(plotlyOutput("basis_plot.fp", height = "200px"), color = colors3[1], size = 1))
+      ))
   ), 
   column(4,
+    jqui_sortable(div(
         wellPanel(h4("Transformation: "),uiOutput("transformation.fp")), 
         wellPanel(h4("Goodness of fit"), statsUI("stats_fp")),
-        wellPanel(h4("Formula: "),uiOutput("formula.fp"))
+        wellPanel(h4("Formula: "),uiOutput("formula.fp")), 
+        codeUI("code_fp")
+    ))
   )
 ))
 )
