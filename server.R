@@ -217,13 +217,15 @@ function(input, output, session){
         R2 <- 1-ssres/sstot
         maxR2 <-fittedR2
         
+        prederr <- sd(DF$y-fp)
+        
         p <- ifelse(coef1.fp() == 0& coef2.fp() == 0, 0, ifelse(any(coef1.fp() == 0, coef2.fp() == 0),1,2))
-        c(R2, 1-(1-R2)*(nrow(DF)-1)/(nrow(DF)-1-4), maxR2)
+        c(R2, 1-(1-R2)*(nrow(DF)-1)/(nrow(DF)-1-4), maxR2, prederr)
     })
     
     observe({
       vals <- calcR2.fp()
-      stats("stats_fp", vals, as.numeric(input$intercept.fp))
+      stats("stats_fp", vals)
     })
     
     getoptfit.fp <- reactive({
@@ -502,7 +504,7 @@ function(input, output, session){
     
     observe({
       vals <- calcR2.bs()
-      stats("stats_bs", vals, as.numeric(input$intercept.bs))
+      stats("stats_bs", vals)
     })
 
     output$basis_plot.bs<- renderPlotly({
@@ -546,7 +548,10 @@ function(input, output, session){
         ssres_fitted <- sum((data$y-fitted)^2)  #residual sum of squares fitted
         R2 <- 1-ssres/sstot
         maxR2 <- 1-ssres_fitted/sstot
-        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
+        
+        prederr <- sd(data$y-spline)
+        
+        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2, prederr)
         })
     
     #reset button
@@ -781,7 +786,7 @@ function(input, output, session){
     
     observe({
       vals <- calcR2.nsp()
-      stats("stats_nsp", vals, as.numeric(input$intercept.nsp))
+      stats("stats_nsp", vals)
     })
     
     getoptfit.nsp <- reactive({
@@ -892,7 +897,10 @@ function(input, output, session){
         ssres_fitted <- sum((data$y-fitted)^2)  #residual sum of squares fitted
         R2 <- 1-ssres/sstot
         maxR2 <- 1-ssres_fitted/sstot
-        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2)
+        
+        prederr <- sd(data$y-spline)
+        
+        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2, prederr)
     })
 
     #reset button
