@@ -923,9 +923,16 @@ function(input, output, session){
     #######      Exercises          #############
     #############################################
     
-    counter_exercise <- reactiveVal(1)
+    counter_exercise <- reactiveVal(0)
+    
+    output$start_exercise <- renderUI({
+      if(counter_exercise() == 0){
+        HTML('<button class="btn btn-default action-button btn reset_btn" id="start_exercise" type="button">Start</button>')
+      } else {HTML('')}
+    })
     
     output$next_exercise <- renderUI({
+      req(input$start_exercise, input$exercise)
       if(input$start_exercise & counter_exercise() <= length(exercises[[input$exercise]][["instructions"]])){
         tagList(
           HTML('<p>', paste0(as.character(exercises[[input$exercise]][["instructions"]][counter_exercise()])), '</p>'), 
@@ -939,12 +946,19 @@ function(input, output, session){
           }
         )
       } else if(counter_exercise() > length(exercises[[input$exercise]])){
-        counter_exercise(1)
+        counter_exercise(0)
       }
     })
-    observeEvent(input$next_exercise_btn, {
+    
+    observeEvent(c(input$next_exercise_btn), {
       newVal <- counter_exercise() + 1
       counter_exercise(newVal)
+    })
+    observeEvent(c(input$start_exercise), {
+      if(input$start_exercise > 0) {
+        newVal <- counter_exercise() + 1
+      counter_exercise(newVal)
+      }
     })
     
     
