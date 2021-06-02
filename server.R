@@ -194,7 +194,7 @@ function(input, output, session){
           p <- p + suppressWarnings(geom_line(aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2, 
                                  text="Optimal fit based on current settings"), color = optfitcol))
         }
-        ggplotly(p, tooltip="text")
+        print(ggplotly(p, tooltip="text"))
     })
     
     output$basis_plot.fp <- renderPlotly({
@@ -203,7 +203,7 @@ function(input, output, session){
             geom_line(aes(x=x, y=fp1), color = col[1]) +
             geom_line(aes(x=x, y=fp2), color = col[2])+ 
             theme_minimal()+ ylab("")
-        ggplotly(p)
+        print(ggplotly(p))
     })
     
     calcR2.fp <- reactive({
@@ -499,7 +499,7 @@ function(input, output, session){
                 theme_minimal() +
                 ylab(var_names[2])+
                 xlab(var_names[1])
-        ggplotly(p, tooltip = "text")
+        print(ggplotly(p, tooltip = "text"))
     })
     
     observe({
@@ -529,7 +529,7 @@ function(input, output, session){
         if(input$add_knots_pos.nsp){
           p <- p + geom_vline(xintercept=all.knots, color = "#D3D3D3")
         }
-        ggplotly(p)
+        print(ggplotly(p))
     })
 
     calcR2.bs <- reactive({
@@ -841,7 +841,7 @@ function(input, output, session){
         p <- p +geom_line(aes(x=x, y = spline)) +
                 theme_minimal() +
                 ylab(var_names[2])+xlab(var_names[1])
-        ggplotly(p, tooltip = "text")
+        print(ggplotly(p, tooltip = "text"))
     })
 
     output$basis_plot.nsp<- renderPlotly({
@@ -871,7 +871,7 @@ function(input, output, session){
             p <- p + geom_vline(xintercept=boundaries[1], color = "#D3D3D3")+
               geom_vline(xintercept=boundaries[2], color = "#D3D3D3")
         }
-        ggplotly(p)
+        print(ggplotly(p))
     })
 
     calcR2.nsp <- reactive({
