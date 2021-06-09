@@ -1,4 +1,4 @@
-fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
+fp <- tabPanel("Fractional Polynomials",br(),
                tags$head(
                         tags$style(HTML(paste(paste0("[for=val_coef", 1:2,"_fp-coef]+span>.irs>.irs-single, [for=val_coef", 1:2, "_fp-coef]+span>.irs-bar-edge, [for=val_coef", 1:2, "_fp-coef]+span>.irs-bar {background: ", col[1:2], ";}"), collapse = " "))),
                         tags$style(HTML(paste0(".label-primary[for=add_optfit_fp] {background: ", optfitcol,";}"))), 
@@ -6,7 +6,7 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                         ),
             column(4,
                    fluidRow(
-            sidebarPanel(class="input_class", id = "inputs.fp", width = 12,
+            sidebarPanel(class="input_class", id = "inputs_fp", width = 12,
                 fluidRow(column(7, offset=0, h4("Input parameters")), 
                          column(5, offset=0, 
                                 coef_rangeUI("fp")
@@ -26,13 +26,13 @@ fp <- tabPanel("Fractional Polynomials", id="fp",class="active",value="fp",br(),
                 ),
                 fluidRow(
                     column(4, offset=0, 
-                           wellPanel(
+                           wellPanel(id = "powers_fp",
                             sliderTextInput(inputId = "power1.fp", label="First",choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1), 
                             sliderTextInput(inputId = "power2.fp",label="Second", choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3), selected=1)
                             )
                     ), 
                     column(8, offset=0,
-                           wellPanel(
+                           wellPanel(id = "coefficients_fp", 
                              sliderplUI("val_coef1_fp"), 
                              sliderplUI("val_coef2_fp")
                            )
@@ -72,7 +72,7 @@ mainPanel(width = 12,
   column(4,
     jqui_sortable(div(
         wellPanel(h4("Exercise"), 
-                  selectInput("exercise", "", c("test"), selected="test"),
+                  selectInput("exercise", "", names(exercises), selected="test"),
                   uiOutput("start_exercise"),
                   uiOutput("next_exercise")
                   ),

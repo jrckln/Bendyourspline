@@ -22,5 +22,9 @@ exercises <- list(
             "input[['val_coef2_fp-coef']] >= -(input[['val_coef1_fp-coef']]/(40/100))/2 - 0.05 & input[['val_coef2_fp-coef']] <= -(input[['val_coef1_fp-coef']]/(40/100))/2 + 0.05", 
             "TRUE", 
             "input$power2.fp == 2 & input$power1.fp == 2", 
-            "TRUE" ))
+            "TRUE", "TRUE")), 
+    "test2" = list(
+        "instructions" = c("hi", "whatever"), 
+        "validate" = c("TRUE", "TRUE")
+    )
 )

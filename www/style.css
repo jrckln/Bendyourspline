@@ -2,6 +2,14 @@ body p{
   font: 400 16px/1.8 "Segoe UI", sans-serif;
 }
 
+label {
+  font: 400 16px/1.8 "Segoe UI", sans-serif;
+}
+
+span, button {
+  font: 400 14px/1.8 "Segoe UI", sans-serif;
+}
+
 .gridstats {
   min-height: 100%;
   display: flex;
@@ -378,5 +386,12 @@ span>.irs>.irs-single, span>.irs-bar-edge, span>.irs-bar {background: #D3D3D3;}
   100% {
     box-shadow: inset 0px 0px 0px 30px #7ac142;
   }
+}
+
+canvas {
+  display: block;
+  position: relative;
+  zindex: 1;
+  pointer-events: none;
 }
 

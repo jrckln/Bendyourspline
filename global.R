@@ -18,6 +18,7 @@ library(shinyjqui)
 library(cicerone)
 
 source("data/data.R")
+source("data/exercises.R")
 #load modules:
 tab_files <- list.files(path = "modules", full.names = T, recursive = T)
 suppressMessages(lapply(tab_files, source))
@@ -36,18 +37,20 @@ suppressMessages(lapply(tab_files, source))
 
 
 guide <- Cicerone$
-  new(opacity = 0)$ 
+  new(opacity = 0.75)$ 
   step(
     "collapseData",
     "Data options",
-    "Specify your variable pair to analyse. Click on header to collapse"#, 
-    #tab_id = "navbar", #currently not working known issue see github page of package
-    #tab = "Methods"
+    "Specify your variable pair to analyse. Click on header to collapse."
   )$
   step(
     "tabsetmethods",
     "Methods",
-    "Select a nonlinear modelling technique."
+    "Here you can select a nonlinear modelling technique."
+  )$
+  step(
+    "inputs_fp",
+    "Input Panel",
+    "Specify inputs needed here.",
+    position = "right"
   )
-
-source("data/exercises.R")

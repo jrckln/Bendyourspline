@@ -1,7 +1,7 @@
 methods <- 
-    tabPanel("Methods", id="methods", shinyjs::useShinyjs(),
+    tabPanel("Methods", shinyjs::useShinyjs(), #HTML('<canvas id="canvas_confetti"></canvas>'), 
                 bsCollapse(id = "collapseData", open = "Data Options",
-                           bsCollapsePanel("Data Options", 
+                           bsCollapsePanel("Data Options",
                                         fluidRow(
                                             column(2,
                                                 div(style = "font-size: 13px; padding: 10px 0px; margin:0%",

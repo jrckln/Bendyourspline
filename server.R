@@ -11,15 +11,26 @@ function(input, output, session){
     codeServer("code_bs", filename=c("www/codes/code_bs.R"), variable = input$variable)
     codeServer("code_nsp", filename=c("www/codes/code_nsp.R"), variable = input$variable)
     
+    #starting tour guide
     observeEvent(input$help, {
-        #introjs(session, events = list(onbeforechange = readCallback("switchTabs")))
-        #updateNavbarPage(session, "navbar", "Methods")
-        # if(input$navbar != "Methods"){
-        # 
-        # } else {
           guide$init()$start()
-        #}
-        
+    })
+    
+    #hide tour button if not on methods tabs
+    observeEvent(input$navbar, {
+       choice = input$navbar
+       if(choice == "Methods")
+       {
+        runjs(
+          "document.getElementById('help').style.visibility = 'visible';"
+        )
+       }
+       else
+       {
+        runjs(
+          "document.getElementById('help').style.visibility = 'hidden';"
+        )
+       }
     })
   
     #############################################
@@ -931,12 +942,13 @@ function(input, output, session){
       } else {HTML('')}
     })
     
-    output$next_exercise <- renderUI({
+    next_exercise_reactive <- eventReactive(c(input$start_exercise, input$next_exercise_btn), {
       req(input$start_exercise, input$exercise)
-      if(input$start_exercise & counter_exercise() <= length(exercises[[input$exercise]][["instructions"]])){
+      counter <- counter_exercise()
+      if((input$start_exercise > 0) & (counter <= length(exercises[[input$exercise]][["instructions"]]))){
         tagList(
-          HTML('<p>', paste0(as.character(exercises[[input$exercise]][["instructions"]][counter_exercise()])), '</p>'), 
-          if(eval(parse(text=exercises[[input$exercise]][["validate"]][counter_exercise()]))){
+          HTML('<p>', paste0(as.character(exercises[[input$exercise]][["instructions"]][counter])), '</p>'), 
+          if(eval(parse(text=exercises[[input$exercise]][["validate"]][counter]))){
             tagList(HTML('<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                 <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
                 <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
@@ -945,14 +957,36 @@ function(input, output, session){
             actionButton("next_exercise_btn", "Next"))
           }
         )
-      } else if(counter_exercise() > length(exercises[[input$exercise]])){
-        counter_exercise(0)
+      } else if(counter > length(exercises[[input$exercise]])){
+        #counter_exercise(0)
+        
+        # modalDialog(
+        #   HTML('<div class="canvas_confetti">
+        #         <canvas id="canvas" width="2000" height="400"></canvas>
+        #       </div>
+        #       <p> Congratulations! You finished the exercises. Please select another exercise to continue. </p>
+        #       '), 
+        #             footer = tagList(
+        #     HTML('<button type="button" class="btn btn-default" id="stopButton" data-dismiss="modal">Cancel</button>'),
+        #     HTML('<button type="button" class="btn btn-default" id="startButton">Start</button>')
+        #   )
+        # )
+        tagList(
+          HTML('<button type="button" class="btn btn-default" id="stopButton">Cancel</button>'),
+          HTML('<button type="button" class="btn btn-default" id="startButton">Start</button>')
+        )
       }
     })
     
+    output$next_exercise <- renderUI({
+      next_exercise_reactive()
+    })
+    
     observeEvent(c(input$next_exercise_btn), {
-      newVal <- counter_exercise() + 1
-      counter_exercise(newVal)
+      if(input$next_exercise_btn > 0) {
+        newVal <- counter_exercise() + 1
+        counter_exercise(newVal)
+      }
     })
     observeEvent(c(input$start_exercise), {
       if(input$start_exercise > 0) {
