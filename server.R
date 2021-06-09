@@ -246,7 +246,7 @@ function(input, output, session){
     })
     
     #reset button
-    observeEvent(input$reset_input.fp, {
+    observeEvent(c(input$reset_input.fp, input$variable), {
        reset("inputs.fp") #id of tab to reset
     })
     
@@ -259,11 +259,6 @@ function(input, output, session){
         enable("adjust_intercept.fp")
         enable("intercept.fp")
       }
-    })
-    
-    #reset button
-    observeEvent(input$reset_input.fp, {
-       shinyjs::reset("inputs.fp")
     })
     
     
@@ -566,7 +561,7 @@ function(input, output, session){
         })
     
     #reset button
-    observeEvent(input$reset_input.bs, {
+    observeEvent(c(input$reset_input.bs, input$variable), {
        reset("inputs.bs") #id of tab to reset
     })
 
@@ -915,7 +910,7 @@ function(input, output, session){
     })
 
     #reset button
-    observeEvent(input$reset_input.nsp, {
+    observeEvent(c(input$reset_input.nsp,input$variable), {
         reset("inputs.nsp") #id of tab to reset
     })
     
