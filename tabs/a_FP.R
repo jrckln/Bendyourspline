@@ -40,7 +40,7 @@ fp <- tabPanel("Fractional Polynomials",br(),
                 ), 
                 fluidRow(
                   column(12,
-                  wellPanel(
+                  wellPanel(id = "intercept_fp_all", 
                       uiOutput("intercept_slider_fp"),
                       actionButton(inputId = "adjust_intercept.fp", label = "Adjust automatically", class='btn reset_btn')
                   )
@@ -65,20 +65,20 @@ column(8,
 mainPanel(width = 12,
   column(8,
     jqui_sortable(div(
-      wellPanel(h4("Response function"), withSpinner(plotlyOutput("plot.fp"), color = colors3[1], size = 1)), 
-      wellPanel(h4("Fractional polynomials"), withSpinner(plotlyOutput("basis_plot.fp", height = "200px"), color = colors3[1], size = 1))
+      wellPanel(id = 'response_fp', h4("Response function"), withSpinner(plotlyOutput("plot.fp"), color = colors3[1], size = 1)), 
+      wellPanel(id = 'basis_fp', h4("Fractional polynomials"), withSpinner(plotlyOutput("basis_plot.fp", height = "200px"), color = colors3[1], size = 1))
       ))
   ), 
   column(4,
     jqui_sortable(div(
-        wellPanel(h4("Exercise"), 
+        wellPanel(id = "exercises_fp", h4("Exercise"), 
                   selectInput("exercise", "", names(exercises), selected="test"),
                   uiOutput("start_exercise"),
                   uiOutput("next_exercise")
                   ),
-        wellPanel(h4("Transformation: "),uiOutput("transformation.fp")), 
-        wellPanel(h4("Goodness of fit"), statsUI("stats_fp")),
-        wellPanel(h4("Formula: "),uiOutput("formula.fp")), 
+        wellPanel(id = 'transformation_fp', h4("Transformation: "),uiOutput("transformation.fp")), 
+        wellPanel(id = 'goodness_fit_fp',h4("Goodness of fit"), statsUI("stats_fp")),
+        wellPanel(id = 'formula_fp',h4("Formula: "),uiOutput("formula.fp")), 
         codeUI("code_fp")
     ))
   )
