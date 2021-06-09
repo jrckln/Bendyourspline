@@ -942,7 +942,7 @@ function(input, output, session){
       } else {HTML('')}
     })
     
-    next_exercise_reactive <- eventReactive(c(input$start_exercise, input$next_exercise_btn), {
+    output$next_exercise <- renderUI({
       req(input$start_exercise, input$exercise)
       counter <- counter_exercise()
       if((input$start_exercise > 0) & (counter <= length(exercises[[input$exercise]][["instructions"]]))){
@@ -958,7 +958,7 @@ function(input, output, session){
           }
         )
       } else if(counter > length(exercises[[input$exercise]])){
-        #counter_exercise(0)
+        counter_exercise(0)
         
         # modalDialog(
         #   HTML('<div class="canvas_confetti">
@@ -971,15 +971,11 @@ function(input, output, session){
         #     HTML('<button type="button" class="btn btn-default" id="startButton">Start</button>')
         #   )
         # )
-        tagList(
-          HTML('<button type="button" class="btn btn-default" id="stopButton">Cancel</button>'),
-          HTML('<button type="button" class="btn btn-default" id="startButton">Start</button>')
-        )
+        #tagList(
+          #HTML('<button type="button" class="btn btn-default" id="stopButton">Cancel</button>'),
+          #HTML('<button type="button" class="btn btn-default" id="startButton">Start</button>')
+        #)
       }
-    })
-    
-    output$next_exercise <- renderUI({
-      next_exercise_reactive()
     })
     
     observeEvent(c(input$next_exercise_btn), {

@@ -14,7 +14,7 @@ exercises <- list(
         'With the powers at 2 and 2, try to adjust the coefficients such that you approximately get a U-shaped response function!',
         'Keeping the powers as they are, try to ‘invert’ this U into a ∩ only with the coefficient sliders!'
         ), 
-        "validate" = c("input$tabsetmethods == 'fp' & input$variable == 'Bmi ~ Age' & !input$add_y.fp & !input$add_loess_fp & !input$add_optfit_fp",
+        "validate" = c("input$tabsetmethods == 'Fractional Polynomials' & input$variable == 'Bmi ~ Age' & !input$add_y.fp & !input$add_loess_fp & !input$add_optfit_fp",
             "input[['val_coef1_fp-coef']] == 1", 
             "input$power2.fp == 2 & input[['val_coef2_fp-coef']] == 1", 
             "input[['val_coef1_fp-coef']] == -1",
