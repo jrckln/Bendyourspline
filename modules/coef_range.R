@@ -15,16 +15,21 @@ coef_range <- function(id) {
     function(input, output, session) {
       range.coefs <- reactiveVal(1)
       observeEvent(input$increase_range, {
-                new <- range.coefs() + 10
-                range.coefs(new)
-             })
+        if(range.coefs() == 1){
+          new <- range.coefs() + 9
+        } else {
+          new <- range.coefs() + 10
+        }
+        range.coefs(new)
+      })
       observeEvent(input$decrease_range, {
-              if(range.coefs() != 1){
-                new <- range.coefs() - 10
-                range.coefs(new)
-
-              }
-            })
+        if(range.coefs() == 10){
+          new <- range.coefs() - 9
+        } else if(range.coefs() != 1){
+          new <- range.coefs() - 10
+        }
+        range.coefs(new)
+      })
      return(range.coefs)
     }
   )
