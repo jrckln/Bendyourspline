@@ -34,15 +34,6 @@ se_fitted <- function(DF, y, intercept){
 
 quantInv <- function(distr, value) ecdf(distr)(value)
 
-# # Run once a new dataset is added to directory; delete data_list.RData first
-# file_list <- list.files(path = "data/", pattern = "\\.RData$", full.names = TRUE)
-# data_list <- list()
-# for(file in file_list){
-#   load(file)
-#   data_list[[data$name]] <- data
-# }
-# save(data_list, file="data/data_list.RData")
-
 load("data/data_list.RData")
 
 sample.sizes <- c("1%" = 0.01, "10%" = 0.1, "20%" = 0.2, "30%" = 0.3,  "50%" = 0.5, "75%"=0.75,  "100%" = 1)
