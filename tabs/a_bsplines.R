@@ -1,4 +1,4 @@
-bsplines <- tabPanel("B-Splines", id="bsplines", class="fade", value = "bsplines",br(),
+bsplines <- tabPanel("B-Splines", value = "bsplines",br(),
                      tags$head(
                         tags$style(HTML(paste(paste0("[for=bs_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}"), collapse = " "))),
                         tags$style(HTML(paste0(".label-primary[for=add_optfit_bs] {background: ", optfitcol,";}"))), 

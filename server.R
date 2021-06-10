@@ -72,6 +72,35 @@ function(input, output, session){
       return(data)
     })
     
+    #create basic plot for response: 
+    basic_plot <- eventReactive(c(input$add_y.fp, input$add_y.bs, input$add_y.nsp), {
+       #get current tab: 
+       cur_tab = input$tabsetmethods
+       data <- getdata()
+       names_vars <- data$names_vars
+       data <- data.frame("x" = data$x, "y" = data$y)
+       p <- ggplot(data = data)+ 
+            theme_minimal() 
+       if(cur_tab == 'Fractional Polynomials' & input$add_y.fp){
+          p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")+
+                ylab(names_vars[2]) + 
+                xlab(names_vars[1])
+          return(p)
+       } else if(cur_tab == 'bsplines' & input$add_y.bs){
+          p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")+
+                ylab(names_vars[2]) + 
+                xlab(names_vars[1])
+          return(p)
+       } else if(cur_tab == 'nsplines' & input$add_y.nsp){
+          p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")+
+                ylab(names_vars[2]) + 
+                xlab(names_vars[1])
+          return(p)
+       } else {
+         return(p)
+       }
+    })
+    
     #############################################
     #######           FP            #############
     #############################################
@@ -186,26 +215,20 @@ function(input, output, session){
         intercept <- as.numeric(input$intercept.fp)
         
         DF <- FPdata()
-        p <- ggplot(data=DF)
+        p <- basic_plot()
         
-        if(input$add_y.fp){
-            p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
-        }
         if(input$add_loess_fp){
-            p <- p + suppressWarnings(geom_smooth(aes(x=x, y=y, text = "LOESS smoother"), 
+            p <- p + suppressWarnings(geom_smooth(data = DF, aes(x=x, y=y, text = "LOESS smoother"), 
                                                   method = "loess", formula = "y~x", se=FALSE, color = loesscol, size=0.5))
         }
         
-        p <- p +geom_line(aes(x=x, y = intercept+fp)) + 
-                theme_minimal() +
-                ylab(attr(DF, "names_vars")[2]) + 
-                xlab(attr(DF, "names_vars")[1])
+        p <- p +geom_line(data = DF, aes(x=x, y = intercept+fp)) 
         if(input$add_optfit_fp){
           optcoef <- getoptfit.fp()
-          p <- p + suppressWarnings(geom_line(aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2, 
+          p <- p + suppressWarnings(geom_line(data = DF, aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2, 
                                  text="Optimal fit based on current settings"), color = optfitcol))
         }
-        print(ggplotly(p, tooltip="text"))
+        ggplotly(p, tooltip="text")
     })
     
     output$basis_plot.fp <- renderPlotly({
@@ -476,19 +499,17 @@ function(input, output, session){
         req(input$nknots.bs, input$intercept.bs)
         data <- getbasis.bs()
         b <- data$b
-        var_names <- data$names_vars
+        
         data <- data.frame("x" = data$x, "y" = data$y)
         pos <- getpos.bs()
         coefs <- getcoef.bs()
         intercept <- as.numeric(input$intercept.bs)
         spline <- rowSums(b %*% coefs)+intercept
 
-        p <- ggplot(data=data)
-        if(input$add_y.bs){
-            p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
-        }
+        p <- basic_plot()
+        
         if(input$add_loess_bs){
-            p <- p + suppressWarnings(geom_smooth(aes(x=x, y=y, text = "LOESS smoother"),
+            p <- p + suppressWarnings(geom_smooth(data = data, aes(x=x, y=y, text = "LOESS smoother"),
                                                   method = "loess", formula = "y~x", se=FALSE, color = loesscol, size=0.5))
         }
         if(input$add_knots_pos.bs){
@@ -505,14 +526,11 @@ function(input, output, session){
         if(input$add_optfit_bs){
           optcoef <- getoptfit.bs()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
-           p <- p + suppressWarnings(geom_line(aes(x=x, y = optline, text = "Optimal fit based on current knot positions"), color = optfitcol))
+           p <- p + suppressWarnings(geom_line(data = data, aes(x=x, y = optline, text = "Optimal fit based on current knot positions"), color = optfitcol))
         }
 
-        p <- p +geom_line(aes(x=x, y = spline)) +
-                theme_minimal() +
-                ylab(var_names[2])+
-                xlab(var_names[1])
-        print(ggplotly(p, tooltip = "text"))
+        p <- p +geom_line(data = data, aes(x=x, y = spline)) 
+        ggplotly(p, tooltip = "text")
     })
     
     observe({
@@ -831,12 +849,10 @@ function(input, output, session){
         var_names <- data$names_vars
         data <- data.frame("x" = data$x, "y" = data$y)
         
-        p <- ggplot(data=data)
-        if(input$add_y.nsp){
-            p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")
-        }
+        p <- basic_plot()
+
         if(input$add_loess_nsp){
-            p <- p + suppressWarnings(geom_smooth(aes(x=x, y=y, text="LOESS smoother"), 
+            p <- p + suppressWarnings(geom_smooth(data = data, aes(x=x, y=y, text="LOESS smoother"), 
                                                   method = "loess", formula = "y~x", se=FALSE, color = loesscol, size=0.5))
         }
         if(input$add_knots_pos.nsp){
@@ -854,13 +870,11 @@ function(input, output, session){
         if(input$add_optfit_nsp){
           optcoef <- getoptfit.nsp()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
-           p <- p + suppressWarnings(geom_line(aes(x=x, y = optline, text = "Optimal fit based on current knot position"), color = optfitcol))
+           p <- p + suppressWarnings(geom_line(data = data, aes(x=x, y = optline, text = "Optimal fit based on current knot position"), color = optfitcol))
         }
 
-        p <- p +geom_line(aes(x=x, y = spline)) +
-                theme_minimal() +
-                ylab(var_names[2])+xlab(var_names[1])
-        print(ggplotly(p, tooltip = "text"))
+        p <- p +geom_line(aes(x=x, y = spline))
+        ggplotly(p, tooltip = "text")
     })
 
     output$basis_plot.nsp<- renderPlotly({
