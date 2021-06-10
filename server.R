@@ -19,17 +19,10 @@ function(input, output, session){
     #hide tour button if not on methods tabs
     observeEvent(input$navbar, {
        choice = input$navbar
-       if(choice == "Methods")
-       {
-        runjs(
-          "document.getElementById('help').style.visibility = 'visible';"
-        )
-       }
-       else
-       {
-        runjs(
-          "document.getElementById('help').style.visibility = 'hidden';"
-        )
+       if(choice == "Methods"){
+         runjs("document.getElementById('help').style.visibility = 'visible';")
+       } else {
+         runjs("document.getElementById('help').style.visibility = 'hidden';")
        }
     })
   
@@ -237,7 +230,7 @@ function(input, output, session){
             geom_line(aes(x=x, y=fp1), color = col[1]) +
             geom_line(aes(x=x, y=fp2), color = col[2])+ 
             theme_minimal()+ ylab("")+xlab(attr(DF, "names_vars")[1])
-        print(ggplotly(p))
+        ggplotly(p)
     })
     
     calcR2.fp <- reactive({
@@ -560,7 +553,7 @@ function(input, output, session){
         if(input$add_knots_pos.nsp){
           p <- p + geom_vline(xintercept=all.knots, color = "#D3D3D3")
         }
-        print(ggplotly(p))
+        ggplotly(p)
     })
 
     calcR2.bs <- reactive({
@@ -904,7 +897,7 @@ function(input, output, session){
             p <- p + geom_vline(xintercept=boundaries[1], color = "#D3D3D3")+
               geom_vline(xintercept=boundaries[2], color = "#D3D3D3")
         }
-        print(ggplotly(p))
+        ggplotly(p)
     })
 
     calcR2.nsp <- reactive({
@@ -958,45 +951,41 @@ function(input, output, session){
     
     counter_exercise <- reactiveVal(0)
     
-    output$start_exercise <- renderUI({
-      if(counter_exercise() == 0){
-        HTML('<button class="btn btn-default action-button btn reset_btn" id="start_exercise" type="button">Start</button>')
-      } else {HTML('')}
+    observe({
+       counter <- counter_exercise()
+       if(counter == 0){
+         runjs("document.getElementById('start_exercise').style.visibility = 'visible';")
+       } else {
+         runjs("document.getElementById('start_exercise').style.visibility = 'hidden';")
+       }
     })
     
     output$next_exercise <- renderUI({
       req(input$start_exercise, input$exercise)
       counter <- counter_exercise()
-      if((input$start_exercise > 0) & (counter <= length(exercises[[input$exercise]][["instructions"]]))){
+      if((input$start_exercise > 0) & (counter <= length(exercises[[input$exercise]][["instructions"]])) & (counter > 0)){
         tagList(
           HTML('<p>', paste0(as.character(exercises[[input$exercise]][["instructions"]][counter])), '</p>'), 
           if(eval(parse(text=exercises[[input$exercise]][["validate"]][counter]))){
-            tagList(HTML('<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            HTML('<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
                 <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
                 <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
               </svg>
-               '),
-            actionButton("next_exercise_btn", "Next"))
+                <button id="next_exercise_btn" type="button" class="btn btn-default action-button">Next</button>
+               ')
+          } else {
+            HTML('')
           }
         )
-      } else if(counter > length(exercises[[input$exercise]])){
-        counter_exercise(0)
-        
-        # modalDialog(
-        #   HTML('<div class="canvas_confetti">
-        #         <canvas id="canvas" width="2000" height="400"></canvas>
-        #       </div>
-        #       <p> Congratulations! You finished the exercises. Please select another exercise to continue. </p>
-        #       '), 
-        #             footer = tagList(
-        #     HTML('<button type="button" class="btn btn-default" id="stopButton" data-dismiss="modal">Cancel</button>'),
-        #     HTML('<button type="button" class="btn btn-default" id="startButton">Start</button>')
-        #   )
-        # )
-        #tagList(
-          #HTML('<button type="button" class="btn btn-default" id="stopButton">Cancel</button>'),
-          #HTML('<button type="button" class="btn btn-default" id="startButton">Start</button>')
-        #)
+      } else if(counter > length(exercises[[input$exercise]][["instructions"]])){
+          if(input$start_exercise == 1){
+            runjs("InitializeConfetti();")
+          } else {
+            runjs("RestartConfetti();")
+          }
+          runjs("$('#exercise_modal').modal().focus();")
+          counter_exercise(0)
+          return('')
       }
     })
     
@@ -1009,7 +998,7 @@ function(input, output, session){
     observeEvent(c(input$start_exercise), {
       if(input$start_exercise > 0) {
         newVal <- counter_exercise() + 1
-      counter_exercise(newVal)
+        counter_exercise(newVal)
       }
     })
     

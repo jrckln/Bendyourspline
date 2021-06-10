@@ -73,7 +73,7 @@ mainPanel(width = 12,
     jqui_sortable(div(
         wellPanel(id = "exercises_fp", h4("Exercise"), 
                   selectInput("exercise", "", names(exercises), selected="test"),
-                  uiOutput("start_exercise"),
+                  HTML('<button class="btn btn-default action-button btn reset_btn" id="start_exercise" type="button">Start</button>'),
                   uiOutput("next_exercise")
                   ),
         wellPanel(id = 'transformation_fp', h4("Transformation: "),uiOutput("transformation.fp")), 

@@ -1,6 +1,23 @@
 methods <- 
-    tabPanel("Methods", shinyjs::useShinyjs(), #HTML('<canvas id="canvas_confetti"></canvas>'), 
-                bsCollapse(id = "collapseData", open = "Data Options",
+    tabPanel("Methods", shinyjs::useShinyjs(), 
+            HTML('<canvas id="canvas_confetti"></canvas>
+            <div id="exercise_modal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+                 <div class="modal-dialog">
+                    <!-- Modal content -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Congratulations!</h4>
+                        </div>
+                        <div class="modal-body"> <p> You finished the exercises. Please select another exercise to continue. </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" id="stop_modal_confetti" data-dismiss="modal">Dismiss</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                 '),
+            bsCollapse(id = "collapseData", open = "Data Options",
                            bsCollapsePanel("Data Options",
                                         fluidRow(
                                             column(2,
