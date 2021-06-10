@@ -62,7 +62,6 @@ fp <- tabPanel("Fractional Polynomials",br(),
                 )
 ))),
 column(8,
-mainPanel(width = 12,
   column(8,
     jqui_sortable(div(
       wellPanel(id = 'response_fp', h4("Response function"), withSpinner(plotlyOutput("plot.fp"), color = colors3[1], size = 1)), 
@@ -81,6 +80,5 @@ mainPanel(width = 12,
         wellPanel(id = 'formula_fp',h4("Formula: "),uiOutput("formula.fp")), 
         codeUI("code_fp")
     ))
-  )
 ))
 )

@@ -33,31 +33,25 @@ function(input, output, session){
     output$information_vars <- renderUI({
         var <- as.character(input$variable)
         var_list <- data_list[[var]]
-        filtered <- var_list_reac()
+        filtered <- getdata()
         obs <- ifelse(input$sample.size == '100%', 
                       paste0('all observations (', nrow(var_list$data), ')'),
-                      paste0(nrow(filtered$data), " out of ", nrow(var_list$data), ' observations'))
+                      paste0(length(filtered$x), " out of ", nrow(var_list$data), ' observations'))
         filt <- ifelse(input$gender == "Both", "", paste0(', filtered for gender: ', input$gender))
         HTML(paste0('<p> Showing ', obs, filt, ' of variable ', var_list$x_name, ' in ', var_list$x_unit, 
                     ' with ', var_list$y_name, ' in ', var_list$y_unit, ' as response. </p>'
                     ))
     })
-    
-    var_list_reac <- reactive({
-        req(input$seed)
-        var <- input$variable
-        var_list <- data_list[[var]]
-        var_list$data <- var_list$data[var_list$data[,"gender"] %in% gender[[input$gender]],]
 
-        set.seed(input$seed)
-        n <- floor(sample.sizes[input$sample.size]*nrow(var_list$data))
-        ind <- sample(1:nrow(var_list$data), n)
-        var_list$data <- var_list$data[ind,]
-        var_list
-    })
-    
     getdata <- reactive({
-      var_list <- var_list_reac()
+      req(input$seed)
+      var <- input$variable
+      var_list <- data_list[[var]]
+      var_list$data <- var_list$data[var_list$data[,"gender"] %in% gender[[input$gender]],]
+      set.seed(input$seed)
+      n <- floor(sample.sizes[input$sample.size]*nrow(var_list$data))
+      ind <- sample(1:nrow(var_list$data), n)
+      var_list$data <- var_list$data[ind,]
       x <- var_list$data[,var_list$x]
       data <- list("x" = x, 
                     "y" = var_list$data[, var_list$y], 
@@ -66,7 +60,8 @@ function(input, output, session){
     })
     
     #create basic plot for response: 
-    basic_plot <- eventReactive(c(input$add_y.fp, input$add_y.bs, input$add_y.nsp), {
+    basic_plot <- eventReactive(c(input$add_y.fp, input$add_y.bs, input$add_y.nsp,
+                                  input$variable, input$seed, input$gender, input$sample.size), {
        #get current tab: 
        cur_tab = input$tabsetmethods
        data <- getdata()
@@ -149,30 +144,25 @@ function(input, output, session){
     })
     
     output$transformation.fp <- renderUI({
-        var_list <- var_list_reac()
-        data <- var_list$data
-        
-        x <- data[,var_list$x]
+        data <- getdata()
+        x <- data$x
         pT <- fp.scale(x)
-        
         withMathJax(paste0(
-            "$$ x =  \\frac{ \\text{", var_list$x , "} + ", pT$shift, "}{", pT$scale ,"}$$"
+            "$$ x =  \\frac{ \\text{", data$names_vars[1] , "} + ", pT$shift, "}{", pT$scale ,"}$$"
         ))
     })
     
     observeEvent(input$adjust_intercept.fp, {
         req(input$intercept.fp)
-        var_list <- var_list_reac()
         data <- FPdata()
         intercept <- opt.intercept(fitted=data$fp, data=data$y, interval=c(0, max(data$y)))$minimum
         updateSliderInput(session, 'intercept.fp', value = intercept)
     })
     
     FPdata <- reactive({
-        var_list <- var_list_reac()
-        data <- var_list$data
+        data <- getdata()
         
-        x <- data[,var_list$x]
+        x <- data$x
         pT <- fp.scale(x)
         transformed <- (x + pT$shift)/pT$scale
         
@@ -196,10 +186,11 @@ function(input, output, session){
         if(length(fp)==0){
             fp <- rep(0,nrow(data))
         }
-        data <- data[, c(var_list$x, var_list$y)]
-        names(data) <- c("x","y")
+        names_vars <- data$names_vars
+        data <- data.frame('x' = data$x, 'y' = data$y)
+        
         DF <- cbind(data, transformed, fp, fp1, fp2)
-        attr(DF, "names_vars") <- c(var_list$x_name, var_list$y_name)
+        attr(DF, "names_vars") <- names_vars
         DF
     })
     
