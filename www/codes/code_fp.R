@@ -2,7 +2,7 @@
 library(mfp)
 
 #load data:
-load("data.RData")
+source('code_data.R')
 
 # Transform input data:
 pT <- fp.scale(data$x) #fp.scale() determines which transformation is appropriate

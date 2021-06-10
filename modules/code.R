@@ -9,7 +9,7 @@ codeUI <- function(id) {
 }
 
 # Module Server
-codeServer <- function(id, filenames_code, variable) {
+codeServer <- function(id, filenames_code) {
   moduleServer(
     id,
     function(input, output, session) {
@@ -32,11 +32,7 @@ codeServer <- function(id, filenames_code, variable) {
             paste0("output-",Sys.Date(), ".zip")
           },
           content = function(file) {
-            var <- paste0(gsub("~", "", gsub(" ", "", variable)), ".RData")
-            files <- list.files(path="data/")
-            datafile <- match(var, files)
-            datafile <- paste0("data/", files[datafile])
-            zip(zipfile = file, files = c(filenames_code, datafile), flags = "-j")
+            zip(zipfile = file, files = c(filenames_code), flags = "-j")
           },
       contentType = "application/zip")
     }

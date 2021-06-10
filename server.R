@@ -7,9 +7,9 @@ function(input, output, session){
     })
     
     #code download module
-    codeServer("code_fp", filename=c("www/codes/code_fp.R", "www/codes/helpers.R"), variable = input$variable)
-    codeServer("code_bs", filename=c("www/codes/code_bs.R"), variable = input$variable)
-    codeServer("code_nsp", filename=c("www/codes/code_nsp.R"), variable = input$variable)
+    codeServer("code_fp", filename=c("www/codes/code_fp.R", "www/codes/helpers.R", "www/codes/code_data.R"))
+    codeServer("code_bs", filename=c("www/codes/code_bs.R", "www/codes/code_data.R"))
+    codeServer("code_nsp", filename=c("www/codes/code_nsp.R", "www/codes/code_data.R"))
     
     #starting tour guide
     observeEvent(input$help, {
@@ -45,8 +45,8 @@ function(input, output, session){
                       paste0('all observations (', nrow(var_list$data), ')'),
                       paste0(nrow(filtered$data), " out of ", nrow(var_list$data), ' observations'))
         filt <- ifelse(input$gender == "Both", "", paste0(', filtered for gender: ', input$gender))
-        HTML(paste0('<p> Showing ', obs, filt, ' of variable ', var_list$x, ' in ', var_list$x_unit, 
-                    ' with ', var_list$y, ' in ', var_list$y_unit, ' as response. </p>'
+        HTML(paste0('<p> Showing ', obs, filt, ' of variable ', var_list$x_name, ' in ', var_list$x_unit, 
+                    ' with ', var_list$y_name, ' in ', var_list$y_unit, ' as response. </p>'
                     ))
     })
     
@@ -177,7 +177,7 @@ function(input, output, session){
         data <- data[, c(var_list$x, var_list$y)]
         names(data) <- c("x","y")
         DF <- cbind(data, transformed, fp, fp1, fp2)
-        attr(DF, "names_vars") <- c(var_list$x, var_list$y)
+        attr(DF, "names_vars") <- c(var_list$x_name, var_list$y_name)
         DF
     })
     
@@ -213,7 +213,7 @@ function(input, output, session){
         p <- ggplot(data=DF) + 
             geom_line(aes(x=x, y=fp1), color = col[1]) +
             geom_line(aes(x=x, y=fp2), color = col[2])+ 
-            theme_minimal()+ ylab("")
+            theme_minimal()+ ylab("")+xlab(attr(DF, "names_vars")[1])
         print(ggplotly(p))
     })
     
@@ -278,7 +278,6 @@ function(input, output, session){
         need(is.numeric(input$degree.bs) & input$nknots.bs < 5, 'Please provide a valid degree.'),
         need(is.numeric(input$nknots.bs) & input$nknots.bs < 10, 'Please provide a valid number of knots.')
       )
-      
       data <- getdata()
       degree <- input$degree.bs
       pos <- getpos.bs()

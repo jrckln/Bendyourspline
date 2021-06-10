@@ -2,7 +2,7 @@
 library(splines)
 
 #load data:
-load("data.RData")
+source('code_data.R')
 
 #determine knot positions: following the guidelines of [Hmisc::rcspline.eval()]
 number.knots <- 4
