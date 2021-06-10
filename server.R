@@ -315,7 +315,7 @@ function(input, output, session){
     observeEvent(c(input$nknots.bs,input$variable), {
         req(input$nknots.bs, input$degree.bs)
         validate(
-          need(is.numeric(input$degree.bs) & input$nknots.bs < 5, 'Please provide a valid degree.'),
+          need(is.numeric(input$degree.bs) & input$degree.bs < 5, 'Please provide a valid degree.'),
           need(is.numeric(input$nknots.bs) & input$nknots.bs < 10, 'Please provide a valid number of knots.')
         )
         num <- input$nknots.bs
@@ -387,7 +387,7 @@ function(input, output, session){
     # coefficient sliders
     observeEvent(c(input$nknots.bs, input$degree.bs, input$variable), {
         validate(
-          need(is.numeric(input$degree.bs) & input$nknots.bs < 5, 'Please provide a valid degree.'),
+          need(is.numeric(input$degree.bs) & input$degree.bs < 5, 'Please provide a valid degree.'),
           need(is.numeric(input$nknots.bs) & input$nknots.bs < 10, 'Please provide a valid number of knots.')
         )
         req(input$nknots.bs)
