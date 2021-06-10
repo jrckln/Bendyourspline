@@ -395,3 +395,8 @@ canvas {
   pointer-events: none;
 }
 
+.MathJax_Display {
+    margin: 0px;
+    text-align: center;
+}
+

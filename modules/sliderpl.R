@@ -1,12 +1,15 @@
 # Module UI
-sliderplUI <- function(id, range_slider = 1) {
+sliderplUI <- function(id, range_slider = 1, label = "") {
   ns <- NS(id)
-  div(
+  tagList(
+    withMathJax(), 
+     div(
       actionButton(ns("minus"), "", icon = icon("minus"), style='padding:1%; font-size:80%;
                    vertical-align: -150%;background: #FFFFFF; width: 8%;display: inline-block;'),
-      sliderInput(ns("coef"),label="",min = (-1)*range_slider, max = range_slider, value = 0, step = 0.01, width= "80%", ticks = FALSE),
+      sliderInput(ns("coef"),label= label,min = (-1)*range_slider, max = range_slider, value = 0, step = 0.01, width= "75%", ticks = FALSE),
       actionButton(ns("plus"), "", icon = icon("plus"), style='padding:1%; font-size:80%; 
                    vertical-align: -150%;background: #FFFFFF; width: 8%;display: inline-block;'), id = id)
+  )
 }
 
 # Module Server

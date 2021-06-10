@@ -275,7 +275,7 @@ function(input, output, session){
     
     getbasis.bs <- reactive({
       validate(
-        need(is.numeric(input$degree.bs), 'Please provide a valid degree.'),
+        need(is.numeric(input$degree.bs) & input$nknots.bs < 5, 'Please provide a valid degree.'),
         need(is.numeric(input$nknots.bs) & input$nknots.bs < 10, 'Please provide a valid number of knots.')
       )
       
@@ -308,6 +308,10 @@ function(input, output, session){
     #position of knots: 
     observeEvent(c(input$nknots.bs,input$variable), {
         req(input$nknots.bs, input$degree.bs)
+        validate(
+          need(is.numeric(input$degree.bs) & input$nknots.bs < 5, 'Please provide a valid degree.'),
+          need(is.numeric(input$nknots.bs) & input$nknots.bs < 10, 'Please provide a valid number of knots.')
+        )
         num <- input$nknots.bs
         # num ... the number of knots that should be there
         # length(inserted.pos.bs) ... the number of nots that are actually there
@@ -376,6 +380,10 @@ function(input, output, session){
     
     # coefficient sliders
     observeEvent(c(input$nknots.bs, input$degree.bs, input$variable), {
+        validate(
+          need(is.numeric(input$degree.bs) & input$nknots.bs < 5, 'Please provide a valid degree.'),
+          need(is.numeric(input$nknots.bs) & input$nknots.bs < 10, 'Please provide a valid number of knots.')
+        )
         req(input$nknots.bs)
         req(input$degree.bs)
         num <- input$degree.bs + input$nknots.bs 
@@ -397,7 +405,7 @@ function(input, output, session){
                 for(i in 1:length(toinsert)){
                   insertUI(
                     selector = '#placeholder_coef_bs',
-                    ui = sliderplUI(id[i], range_slider = range_bs())
+                    ui = sliderplUI(id[i], range_slider = range_bs(), label = paste0('$$\\beta_',length(inserted.coef.bs)+ i, "$$"))
                   )
                   coef_vals_bs[[id[i]]] <<- sliderpl(id[i])
                   inserted.coef.bs <<- c(inserted.coef.bs, id[i])
@@ -408,7 +416,7 @@ function(input, output, session){
             for(i in 1:num){
               insertUI(
                     selector = '#placeholder_coef_bs',
-                    ui = sliderplUI(id[i])
+                    ui = sliderplUI(id[i], label = paste0('$$\\beta_', i, "$$"))
               )
               coef_vals_bs[[id[i]]] <<- sliderpl(id[i])
               inserted.coef.bs <<- c(inserted.coef.bs, id[i])
@@ -646,6 +654,9 @@ function(input, output, session){
     
     # Internal Knot positions
     observeEvent(c(input$nknots.nsp, input$variable), {
+        validate(
+          need(is.numeric(input$nknots.nsp) & input$nknots.nsp < 10, 'Please provide a valid number of internal knots.')
+        )
         req(input$nknots.nsp)
         num <- input$nknots.nsp
         if(length(inserted.pos.nsp)!=0){ #case of update
@@ -703,6 +714,9 @@ function(input, output, session){
     
     # coefficients
     observeEvent(c(input$nknots.nsp), {
+        validate(
+          need(is.numeric(input$nknots.nsp) & input$nknots.nsp < 10, 'Please provide a valid number of internal knots.')
+        )
         req(input$nknots.nsp)
         num <- 1 + input$nknots.nsp
         if(length(inserted.coef.nsp)!=0){ #case of update
