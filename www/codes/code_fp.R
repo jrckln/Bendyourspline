@@ -4,9 +4,6 @@ library(mfp)
 #load data:
 source('code_data.R')
 
-# Transform input data:
-pT <- fp.scale(data$x) #fp.scale() determines which transformation is appropriate
-transformed <- (data$x + pT$shift)/pT$scale #actual transformation
+model <- mfp(y~fp(x), data)
 
-model <- mfp(x ~ fp(transformed, df=4, scale=F), data = data)
 summary(model)
