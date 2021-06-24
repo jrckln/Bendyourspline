@@ -449,6 +449,7 @@ function(input, output, session){
 
     getcoef.bs <- reactive({
       req(input$nknots.bs, input$degree.bs)
+      req(length(coef_vals_bs) == input$degree.bs + input$nknots.bs)
       num <- input$degree.bs + input$nknots.bs
       #get values of coefficients:
       ind <- paste0("bs_coef", 1:num)
@@ -783,6 +784,7 @@ function(input, output, session){
 
     getcoef.nsp <- reactive({
       req(input$nknots.nsp)
+      req(length(coef_vals_nsp) == 1 + input$nknots.nsp)
       num <- 1 + input$nknots.nsp
       #get values of coefficients:
       ind <- paste0("nsp_coef", 1:num)
