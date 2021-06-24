@@ -1,5 +1,4 @@
 function(input, output, session){
-  
     observe_helpers(help_dir = "help_mds")
   
     observeEvent(input$link_methods, {
@@ -938,62 +937,9 @@ function(input, output, session){
       }
     })
     
-    #############################################
-    #######      Exercises          #############
-    #############################################
     
-    counter_exercise <- reactiveVal(0)
     
-    observe({
-       counter <- counter_exercise()
-       if(counter == 0){
-         runjs("document.getElementById('start_exercise').style.visibility = 'visible';")
-       } else {
-         runjs("document.getElementById('start_exercise').style.visibility = 'hidden';")
-       }
-    })
     
-    output$next_exercise <- renderUI({
-      req(input$start_exercise, input$exercise)
-      counter <- counter_exercise()
-      if((input$start_exercise > 0) & (counter <= length(exercises[[input$exercise]][["instructions"]])) & (counter > 0)){
-        tagList(
-          HTML('<p>', paste0(as.character(exercises[[input$exercise]][["instructions"]][counter])), '</p>'), 
-          if(eval(parse(text=exercises[[input$exercise]][["validate"]][counter]))){
-            HTML('<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-              </svg>
-                <button id="next_exercise_btn" type="button" class="btn btn-default action-button">Next</button>
-               ')
-          } else {
-            HTML('')
-          }
-        )
-      } else if(counter > length(exercises[[input$exercise]][["instructions"]])){
-          if(input$start_exercise == 1){
-            runjs("InitializeConfetti();")
-          } else {
-            runjs("RestartConfetti();")
-          }
-          runjs("$('#exercise_modal').modal().focus();")
-          counter_exercise(0)
-          return('')
-      }
-    })
-    
-    observeEvent(c(input$next_exercise_btn), {
-      if(input$next_exercise_btn > 0) {
-        newVal <- counter_exercise() + 1
-        counter_exercise(newVal)
-      }
-    })
-    observeEvent(c(input$start_exercise), {
-      if(input$start_exercise > 0) {
-        newVal <- counter_exercise() + 1
-        counter_exercise(newVal)
-      }
-    })
     
     
     session$onSessionEnded(stopApp) #automatically stop when closing browser
