@@ -12,7 +12,7 @@ exercises <- list(
         'Set both powers to 2. The two powers are now set to equal numbers, which defines a <b> repeated power </b>, and in 
         this case the second term is also multiplied with log(x). (Check the formula)', 
         'With the powers at 2 and 2, try to adjust the coefficients such that you approximately get a U-shaped response function!',
-        'Keeping the powers as they are, try to ‘invert’ this U into a ∩ only with the coefficient sliders!'
+        'Keeping the powers as they are, try to invert this U into a ∩ only with the coefficient sliders!'
         ), 
         "validate" = c("input$tabsetmethods == 'Fractional Polynomials' & input$variable == 'Bmi ~ Age' & !input$add_y.fp & !input$add_loess_fp & !input$add_optfit_fp",
             "input[['val_coef1_fp-coef']] == 1", 
@@ -22,9 +22,5 @@ exercises <- list(
             "input[['val_coef2_fp-coef']] >= -(input[['val_coef1_fp-coef']]/(40/100))/2 - 0.05 & input[['val_coef2_fp-coef']] <= -(input[['val_coef1_fp-coef']]/(40/100))/2 + 0.05", 
             "TRUE", 
             "input$power2.fp == 2 & input$power1.fp == 2", 
-            "TRUE", "TRUE")), 
-    "test2" = list(
-        "instructions" = c("hi", "whatever"), 
-        "validate" = c("TRUE", "TRUE")
-    )
+            "TRUE", "TRUE"))
 )
