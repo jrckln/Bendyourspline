@@ -60,6 +60,11 @@ mainPanel(width = 12,
            ), 
     column(4, 
            jqui_sortable(div(
+               wellPanel(id = 'nsp', h4("Exercise"),
+              selectInput("exercise_nsp", "", names(exercises[['nsp']]), selected="Christine"),
+              actionButton('start_exercise_nsp', 'Start'),
+              uiOutput("next_exercise_nsp")
+        ),
          popify(wellPanel(h4("Goodness of fit"), statsUI("stats_nsp")), 
              "Note", "Maximal R2 value is based on the set number of knots." ),
          codeUI("code_nsp")

@@ -70,6 +70,11 @@ column(8,
   ), 
   column(4,
     jqui_sortable(div(
+        wellPanel(id = 'fp', h4("Exercise"),
+              selectInput("exercise_fp", "", names(exercises[['fp']]), selected="test"),
+              actionButton('start_exercise_fp', 'Start'),
+              uiOutput("next_exercise_fp")
+        ),
         wellPanel(id = 'transformation_fp', h4("Transformation: "),uiOutput("transformation.fp")), 
         wellPanel(id = 'goodness_fit_fp',h4("Goodness of fit"), statsUI("stats_fp")),
         wellPanel(id = 'formula_fp',h4("Formula: "),uiOutput("formula.fp")), 

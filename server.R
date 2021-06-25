@@ -344,7 +344,7 @@ function(input, output, session){
                     insertUI(
                         selector = '#placeholder_pos_bs',
                         ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ",toinsert[i]),
-                                                  value=default.pos.knots.bs[toinsert[i]], step=0.01,
+                                                  value=default.pos.knots.bs[toinsert[i]], step=0.1,
                                                   min=min(data$x), max=max(data$x), ticks = FALSE), id=id[i])
                     )
                     inserted.pos.bs <<- c(inserted.pos.bs, id[i])
@@ -371,7 +371,7 @@ function(input, output, session){
                 insertUI(
                     selector = '#placeholder_pos_bs',
                     ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", i),
-                                              value=default.pos.knots.bs[i], step=0.01,
+                                              value=default.pos.knots.bs[i], step=0.1,
                                               min=min(data$x), max=max(data$x), ticks = FALSE), id=id[i])
                 )
                 inserted.pos.bs <<- c(inserted.pos.bs, id[i])
@@ -684,7 +684,7 @@ function(input, output, session){
                     insertUI(
                         selector = '#placeholder_pos_nsp',
                         ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", toinsert[i]),
-                                                  value=default.pos.knots.nsp[toinsert[i]], step=0.01,
+                                                  value=default.pos.knots.nsp[toinsert[i]], step=0.1,
                                                   min=minx, max=maxx, ticks = FALSE), id=id[i])
                     )
                     inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
@@ -701,7 +701,7 @@ function(input, output, session){
                 insertUI(
                     selector = '#placeholder_pos_nsp',
                     ui = tags$div(sliderInput(paste0(id[i], "_inner"), label = paste0("Position of knot ", i),
-                                              value=default.pos.knots.nsp[i], step=0.01,
+                                              value=default.pos.knots.nsp[i], step=0.1,
                                               min=min(data$x), max=max(data$x), ticks = FALSE), id=id[i])
                 )
                 inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
@@ -936,6 +936,236 @@ function(input, output, session){
         enable("intercept.nsp")
       }
     })
+    
+    #############################################
+    #######      Exercises          #############
+    #############################################
+    
+    validation_all <- reactiveValues()
+    
+    #for fractional polynomials: 
+    observe({
+      req(input$start_exercise_fp>0)
+      titles <- input$exercise_fp
+      newval <- switch(titles, 
+                       test = c(
+                         input$tabsetmethods == 'Fractional Polynomials' & input$variable == 'Bmi ~ Age' & !input$add_y.fp & !input$add_loess_fp & !input$add_optfit_fp, 
+                         input[['val_coef1_fp-coef']] == 1, 
+                         input$power2.fp == 2 & input[['val_coef2_fp-coef']] == 1, 
+                         input[['val_coef1_fp-coef']] == -1, 
+                         input[['val_coef1_fp-coef']] == 1 & input[['val_coef2_fp-coef']] == -1, 
+                         input[['val_coef2_fp-coef']] >= -(input[['val_coef1_fp-coef']]/(40/100))/2 - 0.05 & input[['val_coef2_fp-coef']] <= -(input[['val_coef1_fp-coef']]/(40/100))/2 + 0.05, 
+                         TRUE, 
+                         input$power2.fp == 2 & input$power1.fp == 2, 
+                         TRUE, 
+                         TRUE
+                       )
+        
+      )
+      validation_all$fp <- newval
+    })
+    
+    counter_exercise_fp <- reactiveVal(0)
+    observe({
+       counter <- counter_exercise_fp()
+       if(counter == 0){
+         runjs("document.getElementById('start_exercise_fp').style.visibility = 'visible';")
+       } else {
+         runjs("document.getElementById('start_exercise_fp').style.visibility = 'hidden';")
+       }
+    })
+        
+    output$next_exercise_fp <- renderUI({
+      req(input$start_exercise_fp, input$exercise_fp)
+      counter <- counter_exercise_fp()
+      validation <- validation_all$fp
+      which <- as.character(input$exercise_fp)
+        if((counter <= length(exercises[['fp']][[which]])) & (counter > 0)){
+          tagList(
+            HTML('<p>', paste0(as.character(exercises[['fp']][[which]][counter])), '</p>'), 
+            if(validation[counter]){
+              tagList(
+              HTML('<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                  <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                  <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+                 '), 
+              actionButton('next_exercise_btn_fp', 'Next')
+              )
+            } else {
+              HTML('')
+            }
+          )
+        } else if(counter > length(exercises[['fp']][[which]])){
+            if(any(input$start_exercise_fp == 1)){
+              runjs("InitializeConfetti();")
+            } else {
+              runjs("RestartConfetti();")
+            }
+            runjs("$('#exercise_modal').modal().focus();")
+            counter_exercise_fp(0)
+            return('')
+        }
+    })
+        
+    observeEvent(input$next_exercise_btn_fp, {
+      if(input$next_exercise_btn_fp > 0) {
+        newVal <- counter_exercise_fp() + 1
+        counter_exercise_fp(newVal)
+      }
+    })
+    observeEvent(input$start_exercise_fp, {
+      if(input$start_exercise_fp > 0) {
+        newVal <- counter_exercise_fp() + 1
+        counter_exercise_fp(newVal)
+      }
+    })
+    
+    #for BSplines: 
+    observe({
+      req(input$start_exercise_bs>0)
+      titles <- input$exercise_bs
+      newval <- switch(titles, 
+                       Christine = c(
+                         TRUE
+                       )
+        
+      )
+      validation_all$bs <- newval
+    })
+    
+    counter_exercise_bs <- reactiveVal(0)
+    observe({
+       counter <- counter_exercise_bs()
+       if(counter == 0){
+         runjs("document.getElementById('start_exercise_bs').style.visibility = 'visible';")
+       } else {
+         runjs("document.getElementById('start_exercise_bs').style.visibility = 'hidden';")
+       }
+    })
+        
+    output$next_exercise_bs <- renderUI({
+      req(input$start_exercise_bs, input$exercise_bs)
+      counter <- counter_exercise_bs()
+      validation <- validation_all$bs
+      which <- as.character(input$exercise_bs)
+        if((counter <= length(exercises[['bs']][[which]])) & (counter > 0)){
+          tagList(
+            HTML('<p>', paste0(as.character(exercises[['bs']][[which]][counter])), '</p>'), 
+            if(validation[counter]){
+              tagList(
+              HTML('<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                  <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                  <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+                 '), 
+              actionButton('next_exercise_btn_bs', 'Next')
+              )
+            } else {
+              HTML('')
+            }
+          )
+        } else if(counter > length(exercises[['bs']][[which]])){
+            if(any(input$start_exercise_bs == 1, input$start_exercise_fp == 1)){
+              runjs("InitializeConfetti();")
+            } else {
+              runjs("RestartConfetti();")
+            }
+            runjs("$('#exercise_modal').modal().focus();")
+            counter_exercise_bs(0)
+            return('')
+        }
+    })
+        
+    observeEvent(input$next_exercise_btn_bs, {
+      if(input$next_exercise_btn_bs > 0) {
+        newVal <- counter_exercise_bs() + 1
+        counter_exercise_bs(newVal)
+      }
+    })
+    observeEvent(input$start_exercise_bs, {
+      if(input$start_exercise_bs > 0) {
+        newVal <- counter_exercise_bs() + 1
+        counter_exercise_bs(newVal)
+      }
+    })
+    
+    #for Natural splines: 
+    observe({
+      req(input$start_exercise_nsp>0)
+      titles <- input$exercise_nsp
+      newval <- switch(titles, 
+                       Christine = c(
+                         input$tabsetmethods == 'nsplines' & input$variable == 'Height ~ Age' & input$add_y.bs & input$sample.size == '100%' & input$gender == 'Both', 
+                         input$nknots.nsp == 2 & between(input$nsp_pos1_inner, 11.8, 12.2) & between(input$nsp_pos2_inner, 14.8, 15.2) & 
+                           between(input$boundary1.nsp, 3.8, 4.2) & between(input$boundary2.nsp, 17.8, 18.2), 
+                         input$adjust_intercept.nsp > 0, 
+                         calcR2.nsp()[1]>0.65, 
+                         TRUE, 
+                         input$adjust_intercept.nsp > 1
+                       )
+      )
+      validation_all$nsp <- newval
+    })
+    
+    counter_exercise_nsp <- reactiveVal(0)
+    observe({
+       counter <- counter_exercise_nsp()
+       if(counter == 0){
+         runjs("document.getElementById('start_exercise_nsp').style.visibility = 'visible';")
+       } else {
+         runjs("document.getElementById('start_exercise_nsp').style.visibility = 'hidden';")
+       }
+    })
+        
+    output$next_exercise_nsp <- renderUI({
+      req(input$start_exercise_nsp, input$exercise_nsp)
+      counter <- counter_exercise_nsp()
+      validation <- validation_all$nsp
+      which <- as.character(input$exercise_nsp)
+        if((counter <= length(exercises[['nsp']][[which]])) & (counter > 0)){
+          tagList(
+            HTML('<p>', paste0(as.character(exercises[['nsp']][[which]][counter])), '</p>'), 
+            if(validation[counter]){
+              tagList(
+              HTML('<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                  <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                  <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+                 '), 
+              actionButton('next_exercise_btn_nsp', 'Next')
+              )
+            } else {
+              HTML('')
+            }
+          )
+        } else if(counter > length(exercises[['nsp']][[which]])){
+            if(any(input$start_exercise_nsp == 1, input$start_exercise_fp == 1)){
+              runjs("InitializeConfetti();")
+            } else {
+              runjs("RestartConfetti();")
+            }
+            runjs("$('#exercise_modal').modal().focus();")
+            counter_exercise_nsp(0)
+            return('')
+        }
+    })
+        
+    observeEvent(input$next_exercise_btn_nsp, {
+      if(input$next_exercise_btn_nsp > 0) {
+        newVal <- counter_exercise_nsp() + 1
+        counter_exercise_nsp(newVal)
+      }
+    })
+    observeEvent(input$start_exercise_nsp, {
+      if(input$start_exercise_nsp > 0) {
+        newVal <- counter_exercise_nsp() + 1
+        counter_exercise_nsp(newVal)
+      }
+    })
+    
+    
+    
     
     
     
