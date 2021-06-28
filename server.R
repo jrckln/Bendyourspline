@@ -1092,6 +1092,7 @@ function(input, output, session){
     
     #for Natural splines: 
     observe({
+      print(input$nsp_pos2_inner)
       req(input$start_exercise_nsp>0)
       titles <- input$exercise_nsp
       newval <- switch(titles, 
@@ -1101,7 +1102,7 @@ function(input, output, session){
                            between(input$boundary1.nsp, 3.8, 4.2) & between(input$boundary2.nsp, 17.8, 18.2), 
                          input$adjust_intercept.nsp > 0, 
                          calcR2.nsp()[1]>0.65, 
-                         TRUE, 
+                         between(input$nsp_pos1_inner, 9.8, 10.2), 
                          input$adjust_intercept.nsp > 1
                        )
       )
