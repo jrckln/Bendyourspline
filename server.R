@@ -1092,7 +1092,6 @@ function(input, output, session){
     
     #for Natural splines: 
     observe({
-      print(input$nsp_pos2_inner)
       req(input$start_exercise_nsp>0)
       titles <- input$exercise_nsp
       newval <- switch(titles, 
