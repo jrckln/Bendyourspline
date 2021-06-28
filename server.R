@@ -1095,7 +1095,7 @@ function(input, output, session){
       req(input$start_exercise_nsp>0)
       titles <- input$exercise_nsp
       newval <- switch(titles, 
-                       Christine = c(
+                       'Advanced Exercise' = c(
                          input$tabsetmethods == 'nsplines' & input$variable == 'Height ~ Age' & input$add_y.bs & input$sample.size == '100%' & input$gender == 'Both', 
                          input$nknots.nsp == 2 & between(input$nsp_pos1_inner, 11.8, 12.2) & between(input$nsp_pos2_inner, 14.8, 15.2) & 
                            between(input$boundary1.nsp, 3.8, 4.2) & between(input$boundary2.nsp, 17.8, 18.2), 
