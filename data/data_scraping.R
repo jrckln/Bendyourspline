@@ -53,11 +53,12 @@ data_list[[bmi_age$name]] <- bmi_age
 library(nhanesA)
 data <- merge(nhanes('BPX_E')[,c('SEQN', 'BPXDI1')],nhanes('DEMO_E')[,c('SEQN', 'RIDAGEYR', 'RIAGENDR')])
 data <- na.omit(select(data, -SEQN))
-names(data) <- c('dbp', 'age', 'gender')
-data <- data %>% mutate(gender = ifelse(gender == 2, 'female', 'male'))
+names(data) <- c('DBP', 'age', 'gender')
+data <- data %>% mutate(gender = ifelse(gender == 2, 'female', 'male')) %>% 
+    filter(DBP != 0)
 
 dbp_age <- list(
-    'x' = 'age', 'y'= 'dbp', 
+    'x' = 'age', 'y'= 'DBP', 
     'data' = data, 
     'x_unit' = 'years', 'y_unit'= 'mmHg', 
     'name' = 'Diastolic blood pressure ~ Age',
