@@ -55,8 +55,8 @@ mainPanel(width = 12,
   fluidRow(
     column(8, 
            jqui_sortable(div(
-           wellPanel(h4("Response function"), withSpinner(plotlyOutput("plot.bs"), color = colors3[1], size = 1)),
-           wellPanel(h4("Spline basis functions"), withSpinner(plotlyOutput("basis_plot.bs", height = "200px"), color = colors3[1], size = 1))
+           wellPanel(h4("Response function"), withSpinner(plotlyOutput("plot.bs"), color = spinnercol, size = 1)),
+           wellPanel(h4("Spline basis functions"), withSpinner(plotlyOutput("basis_plot.bs", height = "200px"), color = spinnercol, size = 1))
            ))
            ), 
     column(4, 
