@@ -1,4 +1,3 @@
 about <- tabPanel("About", value="about", id='about',
-            HTML('
-')
+            includeHTML("www/about.html")
 )
