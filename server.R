@@ -1,4 +1,23 @@
 function(input, output, session){
+  
+    query_modal <- modalDialog(
+      title = 'Note',
+      HTML(
+        '
+        <p>
+        This website is still in the development phase. In case of crashes or unexpected behavior please report at 
+        <a href="https://github.com/ljiricka/Bendyourspline/issues">Github</a>. <br>
+        Thank you for your understanding!
+        </p>
+        '
+      ),
+      easyClose = F
+    )
+  
+    # Show the model on start up ...
+    showModal(query_modal)
+  
+  
     observe_helpers(help_dir = "help_mds")
   
     observeEvent(input$link_methods, {
