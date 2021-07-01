@@ -11,7 +11,8 @@ function(input, output, session){
         </p>
         '
       ),
-      easyClose = F
+      easyClose = F, 
+      footer = modalButton("Cancel")
     )
   
     # Show the model on start up ...

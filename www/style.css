@@ -176,7 +176,7 @@ i > .boxstats {
   text-transform: uppercase;
   letter-spacing: 5px;
   font-size: 30px;
-  text-align: center;
+  text-align: left;
   color: rgb(115,115,115);
   margin: 10px;
   margin-left: 100px;
