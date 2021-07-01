@@ -2,10 +2,28 @@ rm(list = ls(), envir = globalenv()) ## to prevent cross over from old runs
 
 library(pacman)
 
-requirements <- c('shiny', 'plotly', 'shinyBS', 'shinyWidgets', 'shinyjs', 'splines', 'mfp', 
-                  'stringr', 'reshape2', 'tidyverse', 'shinyhelper', 'shinycssloaders', 'shinyjqui', 
-                  'cicerone', 'ggplot2', 'magrittr')
-p_load(char = requirements)
+# requirements <- c('shiny', 'plotly', 'shinyBS', 'shinyWidgets', 'shinyjs', 'splines', 'mfp', 
+#                   'stringr', 'reshape2', 'tidyverse', 'shinyhelper', 'shinycssloaders', 'shinyjqui', 
+#                   'cicerone', 'ggplot2', 'magrittr')
+# p_load(char = requirements)
+
+library(shiny)
+library(plotly)
+library(shinyBS)
+library(shinyWidgets)
+library(shinyjs)
+library(splines)
+library(mfp)
+library(stringr)
+library(reshape2)
+library(tidyverse)
+library(shinyhelper)
+library(shinycssloaders)
+library(shinyjqui)
+library(cicerone)
+library(ggplot2)
+library(magrittr)
+
 
 source("data/data.R")
 source("data/exercises.R")
