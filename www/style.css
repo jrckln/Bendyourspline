@@ -51,9 +51,9 @@ i > .boxstats {
 }
 
 .innertext {
-	padding: 100px;
+	padding: 30px 60px;
 	text-align: left;
-	font-size: 20px;
+	font-size: 16px;
 	letter-spacing: 3px;
 }
 .innertext > p{
@@ -169,6 +169,25 @@ i > .boxstats {
   margin: 0 0 70px;
 }
 
+.sub-title2 {
+  font-family: "Roboto Condensed", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  font-size: 30px;
+  text-align: center;
+  color: rgb(115,115,115);
+  margin: 0 0 70px;
+}
+
+.sub-sub-title {
+  position: relative;
+  padding: 30px 60px;
+  letter-spacing: 2px;
+  text-align: left;
+  color: rgb(160,160,160);
+  margin: 20px 20px;
+}
+
 .title-content {
   display: table-cell;
   vertical-align: middle;
@@ -238,6 +257,7 @@ footer {
 	width:100%;
 	font-family: "Roboto Condensed", sans-serif;
 	letter-spacing: 3px;
+	background-color: #ffffff;
 }
 
 footer p{
@@ -408,4 +428,13 @@ canvas {
   left:0;
   z-index: 3;
 }
+
+.title1 > a:link {
+    text-decoration: none;
+    color: rgb(115,115,115);
+}
+.title1 > a:hover {
+    text-decoration: none;
+}
+
 
