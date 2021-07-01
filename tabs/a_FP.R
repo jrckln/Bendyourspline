@@ -71,7 +71,7 @@ column(8,
   column(4,
     jqui_sortable(div(
         wellPanel(id = 'fp', h4("Exercise"),
-              selectInput("exercise_fp", "", names(exercises[['fp']]), selected="test"),
+              selectInput("exercise_fp", "", names(exercises[['fp']]), selected="Basic"),
               actionButton('start_exercise_fp', 'Start'),
               uiOutput("next_exercise_fp")
         ),

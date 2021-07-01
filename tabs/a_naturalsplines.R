@@ -61,7 +61,7 @@ mainPanel(width = 12,
     column(4, 
            jqui_sortable(div(
                wellPanel(id = 'nsp', h4("Exercise"),
-              selectInput("exercise_nsp", "", names(exercises[['nsp']]), selected="Christine"),
+              selectInput("exercise_nsp", "", names(exercises[['nsp']]), selected="Advanced"),
               actionButton('start_exercise_nsp', 'Start'),
               uiOutput("next_exercise_nsp")
         ),

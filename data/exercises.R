@@ -1,6 +1,6 @@
 exercises <- list(
     'fp' = list(
-        "test"= 
+        "Basic"= 
             c(
             'Switch to Fractional polynomials in the methods section and use Bmi ~ Age as dataset. Make sure that response, optimal fit and loess smoother are turned off.',
             'Move the slider of coefficient 1 to 1 and see how the response curve reacts!', 
@@ -21,7 +21,7 @@ exercises <- list(
         )
     ), 
     'nsp' = list(
-        'Advanced Exercise'= c(
+        'Advanced'= c(
             'In this exercise, we will fit a simple regression where we try to describe Height as a function of age using natural splines. 
             In advanced settings, set sample size to 100%, sex to "both", and display the height values by adding and clicking at "Response". 
             The data set consists of 654 observations.', 

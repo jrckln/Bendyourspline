@@ -22,9 +22,9 @@ methods <-
                                         fluidRow(
                                             column(2,
                                                 div(style = "font-size: 13px; padding: 10px 0px; margin:0%",
-                                                    selectInput("variable", "Choose a variable pair:",names(data_list)) %>% 
-                                                        helper(type = "markdown", title= "Data information",
-                                                               content = "VariablePairs")
+                                                    selectInput("variable", "Choose a variable pair:",names(data_list)) #%>% 
+                                                        #helper(type = "markdown", title= "Data information",
+                                                        #       content = "../www/VariablePairs")
                                                 )),
                                             column(3, uiOutput("information_vars")),
                                             column(2, 
