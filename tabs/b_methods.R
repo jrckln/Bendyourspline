@@ -48,8 +48,7 @@ methods <-
                     tabsetPanel(id="tabsetmethods",
                          fp, 
                          bsplines, 
-                         naturalsplines, 
-                         about_sub
+                         naturalsplines
                     )
                       )
             )
