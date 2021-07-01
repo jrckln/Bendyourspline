@@ -256,7 +256,7 @@ function(input, output, session){
         prederr <- sd(DF$y-fp)
         
         p <- ifelse(coef1.fp() == 0& coef2.fp() == 0, 0, ifelse(any(coef1.fp() == 0, coef2.fp() == 0),1,2))
-        c(R2, 1-(1-R2)*(nrow(DF)-1)/(nrow(DF)-1-4), maxR2, prederr)
+        c(R2, 1-(1-R2)*(nrow(DF)-1)/(nrow(DF)-1-4), 1-(1-maxR2)*(nrow(DF)-1)/(nrow(DF)-1-4), prederr)
     })
     
     observe({
@@ -585,7 +585,7 @@ function(input, output, session){
         
         prederr <- sd(data$y-spline)
         
-        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2, prederr)
+        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), 1-(1-maxR2)*(nrow(data)-1)/(nrow(data)-1-p), prederr)
         })
     
     #reset button
@@ -937,7 +937,7 @@ function(input, output, session){
         
         prederr <- sd(data$y-spline)
         
-        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), maxR2, prederr)
+        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), 1-(1-maxR2)*(nrow(data)-1)/(nrow(data)-1-p), prederr)
     })
 
     #reset button
