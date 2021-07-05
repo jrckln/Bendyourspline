@@ -22,7 +22,7 @@ exercises <- list(
     ), 
     'nsp' = list(
         'Advanced'= c(
-            'In this exercise, we will fit a simple regression where we try to describe Height as a function of age using natural splines. 
+            'In this exercise, we will fit a simple regression where we try to describe height as a function of age using natural splines. 
             In advanced settings, set sample size to 100%, sex to "both", and display the height values by adding and clicking at "Response". 
             The data set consists of 654 observations.', 
             'We want to fit a natural spline with 5 segments (two internal knots and two boundery knots). Set the knot positions to 
