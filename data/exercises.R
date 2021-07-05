@@ -28,7 +28,7 @@ exercises <- list(
             'We want to fit a natural spline with 5 segments (two internal knots and two boundery knots). Set the knot positions to 
              approximately 12 and 15, and the boundary knots to 4 and 18.', 
             'The horizontal black line on the bottom is our current response function. First we adjust the intercept automatically. The black line will move to the average height.', 
-            'Increase the coefficient range to -40 and +40, and set coefficient 1,  2 and 3 such that you receive a similar shape like the optimal fit (darkred). Adjust the intercept by hand to calibrate the response function. Can you find coefficients such that the adjusted R squared is higher than 0.65?', 
+            'Increase the coefficient range to -40 and +40, and set coefficient 1,  2 and 3 such that you receive a similar shape like the optimal fit (darkred). Adjust the intercept by hand to calibrate the response function. Can you find coefficients such that the adjusted R² is higher than 0.65?', 
             'Reduce the value of knot 1 from 12 to 10. Can you increase the R2 by adjusting the coefficients?', 
             'Look at your current intercept and memorize the number. Now click "Adjust intercept automatically". Did the number change or was your previous guess a good one?'
         )
