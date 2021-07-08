@@ -317,6 +317,7 @@ function(input, output, session){
     })
     
     inserted.pos.bs <- c()
+    
     range_bs <- coef_range("bs")
     
     #update range of coefficient sliders
@@ -588,6 +589,21 @@ function(input, output, session){
         
         c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), 1-(1-maxR2)*(nrow(data)-1)/(nrow(data)-1-p), prederr)
         })
+    
+    #set opt fit: 
+    observeEvent(input$set_optfit_bs, {
+      optfit <- as.numeric(round(getoptfit.bs(), 2))
+      intercept <- round(optfit[1], 1)
+      optfit <- optfit[2:length(optfit)]
+      #update intercept: 
+      updateSliderInput(session, 'intercept.bs', value = intercept) 
+      absmax <- max(abs(optfit))
+      coef_range_new <- ceiling(absmax/10)*10
+      for(i in 1:length(optfit)){
+        id <- paste0('bs_coef', i, '-coef')
+        updateSliderInput(session, id, min=(-1)*coef_range_new, max = coef_range_new, value = optfit[i])
+      }
+    })
     
     #reset button
     observeEvent(c(input$reset_input.bs, input$variable), {
