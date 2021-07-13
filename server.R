@@ -533,7 +533,7 @@ function(input, output, session){
         if(input$add_knots_pos.bs){
           knots <- attr(b, "knots")
           quant <- round(quantInv(data$x, knots),2)
-          y_coord <- max(data$y)
+          y_coord <- ifelse(input$add_y.bs, max(data$y), 1)
           knots_df <- data.frame("x" = knots,
                                  "y" = y_coord)
           p <- p + suppressWarnings(geom_vline(data=knots_df,
@@ -894,7 +894,7 @@ function(input, output, session){
             boundaries <- attr(b, "Boundary.knots")
             knots <- c(boundaries[1], knots, boundaries[2])
             quant <- round(quantInv(data$x, knots),2)
-            y_coord <- max(data$y)
+            y_coord <- ifelse(!(input$add_y.nsp | input$add_loess_nsp | input$add_optfit_nsp),1,max(data$y))
             knots_df <- data.frame("x" = knots, 
                                    "y" = y_coord)
             p <- p + suppressWarnings(geom_vline(data=knots_df, aes(xintercept=x, text = "Knots and corresponding quantiles"), 
