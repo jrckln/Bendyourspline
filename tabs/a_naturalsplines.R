@@ -46,7 +46,8 @@ naturalsplines <- tabPanel("Natural Splines", value = "nsplines",br(),
                     )
                 ), 
                 fluidRow(
-                  column(12, offset=0, actionButton("reset_input.nsp", "Reset inputs", class = "btn reset_btn"))
+                  column(6, offset=0, actionButton("reset_input.nsp", "Reset inputs", class = "btn reset_btn")),
+                  column(6, offset=0, actionButton("set_optfit_nsp", "Set optimal fit", class = "btn reset_btn", style="float:right"))
                 )
 ))),
 column(8,
