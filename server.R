@@ -224,13 +224,12 @@ function(input, output, session){
             p <- p + suppressWarnings(geom_smooth(data = DF, aes(x=x, y=y, text = "LOESS smoother"), 
                                                   method = "loess", formula = "y~x", se=FALSE, color = loesscol, size=0.5))
         }
-        
-        p <- p +geom_line(data = DF, aes(x=x, y = intercept+fp)) 
         if(input$add_optfit_fp){
           optcoef <- getoptfit.fp()
           p <- p + suppressWarnings(geom_line(data = DF, aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2, 
                                  text="Optimal fit based on current settings"), color = optfitcol))
         }
+        p <- p +geom_line(data = DF, aes(x=x, y = intercept+fp)) 
         ggplotly(p, tooltip="text")
     })
     
