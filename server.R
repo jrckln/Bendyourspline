@@ -104,7 +104,7 @@ function(input, output, session){
                 xlab(names_vars[1])
           return(p)
        } else {
-         return(p)
+         return(p + xlab('x') + ylab('response'))
        }
     })
     
@@ -238,7 +238,7 @@ function(input, output, session){
         p <- ggplot(data=DF) + 
             geom_line(aes(x=x, y=fp1), color = col[1]) +
             geom_line(aes(x=x, y=fp2), color = col[2])+ 
-            theme_minimal()+ ylab("")+xlab(attr(DF, "names_vars")[1])
+            theme_minimal()+ ylab("") + xlab(ifelse(input$add_y.fp, attr(DF, "names_vars")[1], 'x'))
         ggplotly(p)
     })
     
@@ -574,7 +574,7 @@ function(input, output, session){
             aes(x=x, y=y, color=Spline) +
             geom_line() +
             scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") +
-            xlab(names_vars[1])+ylab("")
+            xlab(ifelse(input$add_y.bs, names_vars[1], 'x'))+ ylab("")
         if(input$add_knots_pos.nsp){
           p <- p + geom_vline(xintercept=all.knots, color = "#D3D3D3")
         }
@@ -927,8 +927,9 @@ function(input, output, session){
         p <- ggplot(interp.df) +
             aes(x=x, y=y, color=Spline) +
             geom_line() +
-            scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") +
-            xlab(data$names_vars[1])+ylab("")
+            scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") + 
+            xlab(ifelse(input$add_y.nsp, data$names_vars[1], 'x'))+
+            ylab("")
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
             boundaries <- attr(b, "Boundary.knots")
