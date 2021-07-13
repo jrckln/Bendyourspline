@@ -93,12 +93,12 @@ function(input, output, session){
                 ylab(names_vars[2]) + 
                 xlab(names_vars[1])
           return(p)
-       } else if(cur_tab == 'bsplines' & input$add_y_bs){
+       } else if(cur_tab == 'B-Splines' & input$add_y_bs){
           p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")+
                 ylab(names_vars[2]) + 
                 xlab(names_vars[1])
           return(p)
-       } else if(cur_tab == 'nsplines' & input$add_y_nsp){
+       } else if(cur_tab == 'Natural Splines' & input$add_y_nsp){
           p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")+
                 ylab(names_vars[2]) + 
                 xlab(names_vars[1])
@@ -262,7 +262,7 @@ function(input, output, session){
     observe({
       vals <- calcR2.fp()
       stats("stats_fp", vals)
-    })
+    }, priority = -100)
     
     getoptfit.fp <- reactive({
       DF <- FPdata()
@@ -554,7 +554,7 @@ function(input, output, session){
     observe({
       vals <- calcR2.bs()
       stats("stats_bs", vals)
-    })
+    }, priority = -100)
 
     output$basis_plot.bs<- renderPlotly({
         req(input$nknots.bs)
@@ -858,7 +858,7 @@ function(input, output, session){
     observe({
       vals <- calcR2.nsp()
       stats("stats_nsp", vals)
-    })
+    }, priority = -100)
     
     getoptfit.nsp <- reactive({
       req(input$boundary1.nsp, input$boundary2.nsp)
@@ -1093,7 +1093,7 @@ function(input, output, session){
       titles <- input$exercise_bs
       newval <- switch(titles, 
                        Basic = c(
-                         input$tabsetmethods == 'B-Splines' & input$variable == ' Diastolic blood pressure ~ Age' & input$degree.bs == 3 & input$nknots.bs == 4
+                         input$tabsetmethods == 'B-Splines' & input$variable == 'Diastolic blood pressure ~ Age' & input$degree.bs == 3 & input$nknots.bs == 4
                        )
         
       )
@@ -1162,7 +1162,7 @@ function(input, output, session){
       titles <- input$exercise_nsp
       newval <- switch(titles, 
                        'Advanced' = c(
-                         input$tabsetmethods == 'nsplines' & input$variable == 'Height ~ Age' & input$add_y_bs & input$sample.size == '100%' & input$gender == 'Both', 
+                         input$tabsetmethods == 'Natural Splines' & input$variable == 'Height ~ Age' & input$add_y_bs & input$sample.size == '100%' & input$gender == 'Both', 
                          input$nknots.nsp == 2 & between(input$nsp_pos1_inner, 11.8, 12.2) & between(input$nsp_pos2_inner, 14.8, 15.2) & 
                            between(input$boundary1.nsp, 3.8, 4.2) & between(input$boundary2.nsp, 17.8, 18.2), 
                          input$adjust_intercept.nsp > 0, 
