@@ -315,7 +315,7 @@ function(input, output, session){
     
     getbasis.bs <- reactive({
       validate(
-        need(is.numeric(input$degree.bs) & input$nknots.bs < 5, 'Please provide a valid degree.'),
+        need(is.numeric(input$degree.bs) & input$degree.bs < 5, 'Please provide a valid degree.'),
         need(is.numeric(input$nknots.bs) & input$nknots.bs < 10, 'Please provide a valid number of knots.')
       )
       data <- getdata()
@@ -331,7 +331,6 @@ function(input, output, session){
     })
     
     inserted.pos.bs <- c()
-    
     range_bs <- coef_range("bs")
     
     #update range of coefficient sliders
@@ -412,7 +411,7 @@ function(input, output, session){
                 inserted.pos.bs <<- c(inserted.pos.bs, id[i])
             }
         }
-    })
+    }, priority = 100)
 
     #dynamic insert of slider for coefficients for each spline basis function
     inserted.coef.bs <- c()
@@ -463,7 +462,7 @@ function(input, output, session){
             }
         }
 
-    })
+    }, priority = 100)
     
     getpos.bs <- reactive({
         req(input$nknots.bs)
@@ -483,7 +482,7 @@ function(input, output, session){
 
     getcoef.bs <- reactive({
       req(input$nknots.bs, input$degree.bs)
-      req(length(coef_vals_bs) == input$degree.bs + input$nknots.bs)
+      req(length(coef_vals_bs) == (input$degree.bs + input$nknots.bs))
       num <- input$degree.bs + input$nknots.bs
       #get values of coefficients:
       ind <- paste0("bs_coef", 1:num)
@@ -701,7 +700,7 @@ function(input, output, session){
       }
       updateSliderInput(session, "boundary1.nsp", value = minx, min = minx, max= default.pos.knots.nsp[1]-0.1) 
       updateSliderInput(session, "boundary2.nsp", value = maxx, min = default.pos.knots.nsp[length(default.pos.knots.nsp)]+0.1, max= maxx)
-    })
+    }, priority = 90)
     
     # Internal Knot positions
     observeEvent(c(input$nknots.nsp, input$variable), {
@@ -757,7 +756,7 @@ function(input, output, session){
                 inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
             }
         }
-    })
+    }, priority = 100)
 
     #dynamic insert of slider for coefficients for each spline basis function
     inserted.coef.nsp <- c()
@@ -802,7 +801,7 @@ function(input, output, session){
               inserted.coef.nsp <<- c(inserted.coef.nsp, id[i])
             }
         }
-    })
+    }, priority = 100)
     
     #update range of coefficient sliders
     observeEvent(range_nsp(), {
@@ -833,7 +832,7 @@ function(input, output, session){
 
     getcoef.nsp <- reactive({
       req(input$nknots.nsp)
-      req(length(coef_vals_nsp) == 1 + input$nknots.nsp)
+      req(length(coef_vals_nsp) == (1 + input$nknots.nsp))
       num <- 1 + input$nknots.nsp
       #get values of coefficients:
       ind <- paste0("nsp_coef", 1:num)
