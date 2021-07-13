@@ -115,7 +115,7 @@ function(input, output, session){
     #intercept: 
     output$intercept_slider_fp <- renderUI({
       data <- getdata()
-      sliderInput("intercept.fp",label="Intercept",min = 0, max = round(max(data$y),0), value = 0, step = 0.1)
+      sliderInput("intercept.fp",label="Intercept",min = 0, max = 2.5*round(max(data$y),0), value = 0, step = 0.1)
     })
     
     #increase/decrease range of coefs
@@ -269,6 +269,21 @@ function(input, output, session){
       DF <- FPdata()
       optfit <- lm(y ~ fp1+fp2, data=DF)
       optfit$coefficients
+    })
+    
+    #set opt fit: 
+    observeEvent(input$set_optfit_fp, {
+      optfit <- as.numeric(round(getoptfit.fp(), 2))
+      intercept <- round(optfit[1], 1)
+      optfit <- optfit[2:length(optfit)]
+      #update intercept: 
+      absmax <- max(abs(optfit))
+      coef_range_new <- ceiling(absmax/10)*10
+      updateSliderInput(session, 'intercept.fp', value = intercept) 
+      updateSliderInput(session, "val_coef1_fp-coef", min = (-1)*coef_range_new, max = coef_range_new, 
+                        value = optfit[1])
+      updateSliderInput(session, "val_coef2_fp-coef", min = (-1)*coef_range_new, max = coef_range_new, 
+                        value = optfit[2])
     })
     
     #reset button
