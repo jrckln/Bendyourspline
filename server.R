@@ -1092,8 +1092,8 @@ function(input, output, session){
       req(input$start_exercise_bs>0)
       titles <- input$exercise_bs
       newval <- switch(titles, 
-                       Christine = c(
-                         TRUE
+                       Basic = c(
+                         input$tabsetmethods == 'B-Splines' & input$variable == ' Diastolic blood pressure ~ Age' & input$degree.bs == 3 & input$nknots.bs == 4
                        )
         
       )

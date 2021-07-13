@@ -2,7 +2,7 @@ exercises <- list(
     'fp' = list(
         "Basic"= 
             c(
-            'Switch to Fractional polynomials in the methods section and use Bmi ~ Age as dataset. Make sure that response, optimal fit and loess smoother are turned off.',
+            'Use Bmi ~ Age as dataset. Make sure that response, optimal fit and loess smoother are turned off.',
             'Move the slider of coefficient 1 to 1 and see how the response curve reacts!', 
             'Set the second power to 2 and move the associated coefficient to 1!', 
             'Now move coefficient 1 to -1!', 
@@ -16,8 +16,8 @@ exercises <- list(
             )
     ),
     'bs' = list(
-        'Christine'= c(
-            'Write something'
+        'Basic'= c(
+            'Use  Diastolic blood pressure ~ Age as dataset. Set the degree to 3 and choose 4 knots.'
         )
     ), 
     'nsp' = list(

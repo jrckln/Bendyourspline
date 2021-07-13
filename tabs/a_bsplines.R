@@ -1,4 +1,4 @@
-bsplines <- tabPanel("B-Splines", value = "bsplines",br(),
+bsplines <- tabPanel("B-Splines",br(),
                      tags$head(
                         tags$style(HTML(paste(paste0("[for=bs_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=bs_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}"), collapse = " "))),
                         tags$style(HTML(paste0(".label-primary[for=add_optfit_bs] {background: ", optfitcol,";}"))), 
@@ -74,11 +74,11 @@ mainPanel(width = 12,
            ), 
     column(4, 
            jqui_sortable(div(
-              #wellPanel(id = 'bs', h4("Exercise"),
-              #selectInput("exercise_bs", "", names(exercises[['bs']]), selected="Christine"),
-              #actionButton('start_exercise_bs', 'Start'),
-              #uiOutput("next_exercise_bs")
-        #),
+              wellPanel(id = 'bs', h4("Exercise"),
+              selectInput("exercise_bs", "", names(exercises[['bs']]), selected="Basic"),
+              actionButton('start_exercise_bs', 'Start'),
+              uiOutput("next_exercise_bs")
+              ),
               conditionalPanel('input.add_y_bs | input.add_loess_bs | input.add_optfit_bs', wellPanel(h4("Goodness of fit"), statsUI("stats_bs"))),
               codeUI("code_bs")
          ))
