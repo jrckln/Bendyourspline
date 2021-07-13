@@ -47,14 +47,23 @@ fp <- tabPanel("Fractional Polynomials",br(),
                   )
                 ), 
                 fluidRow(
-                    column(6, offset=0, 
-                           materialSwitch(inputId = "add_y.fp", label = "Response", status = "primary", right = FALSE, value=TRUE)
+                    column(4, offset=0, 
+                           div(
+                             span('Response'),
+                             materialSwitch(inputId = "add_y.fp", label = "", right = FALSE, value=TRUE)
+                           )
                     ), 
-                    column(6, offset=0, 
-                           materialSwitch(inputId = "add_loess_fp", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
+                    column(4, offset=0, 
+                           div(
+                              span('Loess Smoother'),
+                              materialSwitch(inputId = "add_loess_fp", label = "", right = FALSE, value=TRUE)
+                           )
                     ),
-                    column(6, offset=0,
-                           materialSwitch(inputId = "add_optfit_fp", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)
+                    column(4, offset=0,
+                           div(
+                              span('Optimal fit'),
+                              materialSwitch(inputId = "add_optfit_fp", label = "", right = FALSE, value=TRUE)
+                           )
                     )
                 ), 
                 fluidRow(

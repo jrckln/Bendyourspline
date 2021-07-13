@@ -32,17 +32,29 @@ naturalsplines <- tabPanel("Natural Splines", value = "nsplines",br(),
                   )
                 ), 
                 fluidRow(
-                    column(3, offset=0, 
-                           materialSwitch(inputId = "add_y.nsp", label = "Response", status = "primary", right = FALSE, value=TRUE)
-                    ), 
-                    column(3, offset=0, 
-                           materialSwitch(inputId = "add_loess_nsp", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
-                    ),
-                    column(3, offset=0, 
-                           materialSwitch(inputId = "add_knots_pos.nsp", label = "Knot position", status = "primary", right = FALSE, value=TRUE)
+                    column(3, offset=0,
+                           div(
+                             span('Response'),
+                             materialSwitch(inputId = "add_y.nsp", label = "", right = FALSE, value=TRUE)
+                           )
                     ),
                     column(3, offset=0,
-                           materialSwitch(inputId = "add_optfit_nsp", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)
+                           div(
+                             span('Loess Smoother'),
+                             materialSwitch(inputId = "add_loess_nsp", label = "", right = FALSE, value=TRUE)
+                           )
+                    ),
+                    column(3, offset=0, 
+                           div(
+                             span('Knot position'),
+                             materialSwitch(inputId = "add_knots_pos.nsp", label = "", right = FALSE, value=TRUE)
+                           )
+                    ),
+                    column(3, offset=0,
+                           div(
+                             span('Optimal fit'),
+                             materialSwitch(inputId = "add_optfit_nsp", label = "", right = FALSE, value=TRUE)
+                           )
                     )
                 ), 
                 fluidRow(

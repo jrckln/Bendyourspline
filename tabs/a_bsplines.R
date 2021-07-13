@@ -34,16 +34,28 @@ bsplines <- tabPanel("B-Splines", value = "bsplines",br(),
                 ), 
                 fluidRow(
                     column(3, offset=0,
-                           materialSwitch(inputId = "add_y.bs", label = "Response", status = "primary", right = FALSE, value=TRUE)
+                           div(
+                             span('Response'),
+                             materialSwitch(inputId = "add_y.bs", label = "", right = FALSE, value=TRUE)
+                           )
                     ),
                     column(3, offset=0,
-                           materialSwitch(inputId = "add_loess_bs", label = "Loess Smoother", status = "primary", right = FALSE, value=TRUE)
+                           div(
+                             span('Loess Smoother'),
+                             materialSwitch(inputId = "add_loess_bs", label = "", right = FALSE, value=TRUE)
+                           )
                     ),
                     column(3, offset=0, 
-                           materialSwitch(inputId = "add_knots_pos.bs", label = "Knot position", status = "primary", right = FALSE, value=TRUE)
+                           div(
+                             span('Knot position'),
+                             materialSwitch(inputId = "add_knots_pos.bs", label = "", right = FALSE, value=TRUE)
+                           )
                     ),
                     column(3, offset=0,
-                           materialSwitch(inputId = "add_optfit_bs", label = "Optimal fit", status = "primary", right = FALSE, value=TRUE)
+                           div(
+                             span('Optimal fit'),
+                             materialSwitch(inputId = "add_optfit_bs", label = "", right = FALSE, value=TRUE)
+                           )
                     )
                 ),
                 fluidRow(
