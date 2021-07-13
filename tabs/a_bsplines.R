@@ -11,7 +11,7 @@ bsplines <- tabPanel("B-Splines",br(),
                 br(), br(),
                 fluidRow(
                     column(3,
-                        numericInput("degree.bs", "Degree", min=1, max=4, value=1),
+                        numericInput("degree.bs", "Degree", min=1, max=4, value=2),
                     ), 
                     column(3,
                         numericInput("nknots.bs", "Number of knots", min=1, max = 10, value = 2)
