@@ -78,8 +78,7 @@ mainPanel(width = 12,
               actionButton('start_exercise_nsp', 'Start'),
               uiOutput("next_exercise_nsp")
         ),
-         popify(wellPanel(h4("Goodness of fit"), statsUI("stats_nsp")), 
-             "Note", "Maximal R2 value is based on the set number of knots." ),
+         wellPanel(h4("Goodness of fit"), statsUI("stats_nsp")),
          codeUI("code_nsp")
            ))
   )
