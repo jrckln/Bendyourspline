@@ -32,15 +32,13 @@ tab_files <- list.files(path = "modules", full.names = T, recursive = T)
 suppressMessages(lapply(tab_files, source))
 
 #colors for plotly
-#colors3 <- c("#1d3554","#DFE07C", "#7F8E39", "#42858C","#E48F1B","#570D32","#E5C616","#D33B44")
-#colors4 <- c("#4E84C4", "#E7B800","#F4EDCA", "#FC4E07","#D16103", "#C4961A","#FFDB6D", "#C3D7A4", "#52854C", "#293352", "#00AFBB")
 #col <- c(colors3[c(1, 2, 4, 5)], colors4[c(11,2, 9)])
 col <- c("#e6194B", "#ffe119", "#3cb44b", "#4363d8", "#f032e6", "#f58231", "#bfef45", "#42d4f4", "#911eb4", "#a9a9a9", 
          "#9A6324", "#808000", "#469990")
-spinnercol <- "#dcbeff" 
+optfitcol <- "#dcbeff" 
 #optfitcol <- col[length(col)]
 #loesscol <-  col[length(col)-1]
-optfitcol <- "#800000"
+spinnercol <- "#800000"
 loesscol <- "#000075"
 
 #load ressources:
