@@ -50,7 +50,7 @@ fp <- tabPanel("Fractional Polynomials",br(),
                     column(4, offset=0, 
                            div(
                              span('Response'),
-                             materialSwitch(inputId = "add_y.fp", label = "", right = FALSE, value=TRUE)
+                             materialSwitch(inputId = "add_y_fp", label = "", right = FALSE, value=TRUE)
                            )
                     ), 
                     column(4, offset=0, 
@@ -86,7 +86,7 @@ column(8,
               uiOutput("next_exercise_fp")
         ),
         wellPanel(id = 'transformation_fp', h4("Transformation: "),uiOutput("transformation.fp")), 
-        wellPanel(id = 'goodness_fit_fp',h4("Goodness of fit"), statsUI("stats_fp")),
+        conditionalPanel('input.add_y_fp | input.add_loess_fp | input.add_optfit_fp', wellPanel(id = 'goodness_fit_fp',h4("Goodness of fit"), statsUI("stats_fp"))),
         wellPanel(id = 'formula_fp',h4("Formula: "),uiOutput("formula.fp")), 
         codeUI("code_fp")
     ))

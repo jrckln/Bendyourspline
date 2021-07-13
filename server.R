@@ -79,7 +79,7 @@ function(input, output, session){
     })
     
     #create basic plot for response: 
-    basic_plot <- eventReactive(c(input$add_y.fp, input$add_y.bs, input$add_y.nsp,
+    basic_plot <- eventReactive(c(input$add_y_fp, input$add_y_bs, input$add_y_nsp,
                                   input$variable, input$seed, input$gender, input$sample.size), {
        #get current tab: 
        cur_tab = input$tabsetmethods
@@ -88,17 +88,17 @@ function(input, output, session){
        data <- data.frame("x" = data$x, "y" = data$y)
        p <- ggplot(data = data)+ 
             theme_minimal() 
-       if(cur_tab == 'Fractional Polynomials' & input$add_y.fp){
+       if(cur_tab == 'Fractional Polynomials' & input$add_y_fp){
           p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")+
                 ylab(names_vars[2]) + 
                 xlab(names_vars[1])
           return(p)
-       } else if(cur_tab == 'bsplines' & input$add_y.bs){
+       } else if(cur_tab == 'bsplines' & input$add_y_bs){
           p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")+
                 ylab(names_vars[2]) + 
                 xlab(names_vars[1])
           return(p)
-       } else if(cur_tab == 'nsplines' & input$add_y.nsp){
+       } else if(cur_tab == 'nsplines' & input$add_y_nsp){
           p <- p + geom_point(aes(x=x, y=y), color = "lightgrey")+
                 ylab(names_vars[2]) + 
                 xlab(names_vars[1])
@@ -238,7 +238,7 @@ function(input, output, session){
         p <- ggplot(data=DF) + 
             geom_line(aes(x=x, y=fp1), color = col[1]) +
             geom_line(aes(x=x, y=fp2), color = col[2])+ 
-            theme_minimal()+ ylab("") + xlab(ifelse(input$add_y.fp, attr(DF, "names_vars")[1], 'x'))
+            theme_minimal()+ ylab("") + xlab(ifelse(input$add_y_fp, attr(DF, "names_vars")[1], 'x'))
         ggplotly(p)
     })
     
@@ -291,11 +291,11 @@ function(input, output, session){
     })
     
     observe({
-      if(!(all(input$add_mean.fp, input$add_y.fp))){
+      if(!(all(input$add_mean.fp, input$add_y_fp))){
         disable("adjust_intercept.fp")
         disable("intercept.fp")
       }
-      if(any(input$add_mean.fp, input$add_y.fp)){
+      if(any(input$add_mean.fp, input$add_y_fp)){
         enable("adjust_intercept.fp")
         enable("intercept.fp")
       }
@@ -533,7 +533,7 @@ function(input, output, session){
         if(input$add_knots_pos.bs){
           knots <- attr(b, "knots")
           quant <- round(quantInv(data$x, knots),2)
-          y_coord <- ifelse(input$add_y.bs, max(data$y), 1)
+          y_coord <- ifelse(input$add_y_bs, max(data$y), 1)
           knots_df <- data.frame("x" = knots,
                                  "y" = y_coord)
           p <- p + suppressWarnings(geom_vline(data=knots_df,
@@ -574,7 +574,7 @@ function(input, output, session){
             aes(x=x, y=y, color=Spline) +
             geom_line() +
             scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") +
-            xlab(ifelse(input$add_y.bs, names_vars[1], 'x'))+ ylab("")
+            xlab(ifelse(input$add_y_bs, names_vars[1], 'x'))+ ylab("")
         if(input$add_knots_pos.nsp){
           p <- p + geom_vline(xintercept=all.knots, color = "#D3D3D3")
         }
@@ -624,11 +624,11 @@ function(input, output, session){
     })
 
     observe({
-      if(!(all(input$add_mean.bs, input$add_y.bs))){
+      if(!(all(input$add_mean.bs, input$add_y_bs))){
         disable("adjust_intercept.bs")
         disable("intercept.bs")
       }
-      if(any(input$add_mean.bs, input$add_y.bs)){
+      if(any(input$add_mean.bs, input$add_y_bs)){
         enable("adjust_intercept.bs")
         enable("intercept.bs")
       }
@@ -894,7 +894,7 @@ function(input, output, session){
             boundaries <- attr(b, "Boundary.knots")
             knots <- c(boundaries[1], knots, boundaries[2])
             quant <- round(quantInv(data$x, knots),2)
-            y_coord <- ifelse(!(input$add_y.nsp | input$add_loess_nsp | input$add_optfit_nsp),1,max(data$y))
+            y_coord <- ifelse(!(input$add_y_nsp | input$add_loess_nsp | input$add_optfit_nsp),1,max(data$y))
             knots_df <- data.frame("x" = knots, 
                                    "y" = y_coord)
             p <- p + suppressWarnings(geom_vline(data=knots_df, aes(xintercept=x, text = "Knots and corresponding quantiles"), 
@@ -928,7 +928,7 @@ function(input, output, session){
             aes(x=x, y=y, color=Spline) +
             geom_line() +
             scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") + 
-            xlab(ifelse(input$add_y.nsp, data$names_vars[1], 'x'))+
+            xlab(ifelse(input$add_y_nsp, data$names_vars[1], 'x'))+
             ylab("")
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
@@ -993,11 +993,11 @@ function(input, output, session){
     })
     
     observe({
-      if(!(all(input$add_mean.nsp, input$add_y.nsp))){
+      if(!(all(input$add_mean.nsp, input$add_y_nsp))){
         disable("adjust_intercept.nsp")
         disable("intercept.nsp")
       }
-      if(any(input$add_mean.nsp, input$add_y.nsp)){
+      if(any(input$add_mean.nsp, input$add_y_nsp)){
         enable("adjust_intercept.nsp")
         enable("intercept.nsp")
       }
@@ -1015,7 +1015,7 @@ function(input, output, session){
       titles <- input$exercise_fp
       newval <- switch(titles, 
                        Basic = c(
-                         input$tabsetmethods == 'Fractional Polynomials' & input$variable == 'Bmi ~ Age' & !input$add_y.fp & !input$add_loess_fp & !input$add_optfit_fp, 
+                         input$tabsetmethods == 'Fractional Polynomials' & input$variable == 'Bmi ~ Age' & !input$add_y_fp & !input$add_loess_fp & !input$add_optfit_fp, 
                          input[['val_coef1_fp-coef']] == 1, 
                          input$power2.fp == 2 & input[['val_coef2_fp-coef']] == 1, 
                          input[['val_coef1_fp-coef']] == -1, 
@@ -1162,7 +1162,7 @@ function(input, output, session){
       titles <- input$exercise_nsp
       newval <- switch(titles, 
                        'Advanced' = c(
-                         input$tabsetmethods == 'nsplines' & input$variable == 'Height ~ Age' & input$add_y.bs & input$sample.size == '100%' & input$gender == 'Both', 
+                         input$tabsetmethods == 'nsplines' & input$variable == 'Height ~ Age' & input$add_y_bs & input$sample.size == '100%' & input$gender == 'Both', 
                          input$nknots.nsp == 2 & between(input$nsp_pos1_inner, 11.8, 12.2) & between(input$nsp_pos2_inner, 14.8, 15.2) & 
                            between(input$boundary1.nsp, 3.8, 4.2) & between(input$boundary2.nsp, 17.8, 18.2), 
                          input$adjust_intercept.nsp > 0, 

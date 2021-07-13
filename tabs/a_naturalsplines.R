@@ -35,7 +35,7 @@ naturalsplines <- tabPanel("Natural Splines", value = "nsplines",br(),
                     column(3, offset=0,
                            div(
                              span('Response'),
-                             materialSwitch(inputId = "add_y.nsp", label = "", right = FALSE, value=TRUE)
+                             materialSwitch(inputId = "add_y_nsp", label = "", right = FALSE, value=TRUE)
                            )
                     ),
                     column(3, offset=0,
@@ -78,7 +78,7 @@ mainPanel(width = 12,
               actionButton('start_exercise_nsp', 'Start'),
               uiOutput("next_exercise_nsp")
         ),
-         wellPanel(h4("Goodness of fit"), statsUI("stats_nsp")),
+         conditionalPanel('input.add_y_nsp | input.add_loess_nsp | input.add_optfit_nsp', wellPanel(h4("Goodness of fit"), statsUI("stats_nsp"))),
          codeUI("code_nsp")
            ))
   )

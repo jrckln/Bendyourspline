@@ -36,7 +36,7 @@ bsplines <- tabPanel("B-Splines", value = "bsplines",br(),
                     column(3, offset=0,
                            div(
                              span('Response'),
-                             materialSwitch(inputId = "add_y.bs", label = "", right = FALSE, value=TRUE)
+                             materialSwitch(inputId = "add_y_bs", label = "", right = FALSE, value=TRUE)
                            )
                     ),
                     column(3, offset=0,
@@ -79,7 +79,7 @@ mainPanel(width = 12,
               #actionButton('start_exercise_bs', 'Start'),
               #uiOutput("next_exercise_bs")
         #),
-              wellPanel(h4("Goodness of fit"), statsUI("stats_bs")),
+              conditionalPanel('input.add_y_bs | input.add_loess_bs | input.add_optfit_bs', wellPanel(h4("Goodness of fit"), statsUI("stats_bs"))),
               codeUI("code_bs")
          ))
          )
