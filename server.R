@@ -80,7 +80,7 @@ function(input, output, session){
     
     #create basic plot for response: 
     basic_plot <- eventReactive(c(input$add_y_fp, input$add_y_bs, input$add_y_nsp,
-                                  input$variable, input$seed, input$gender, input$sample.size), {
+                                  input$variable, input$seed, input$gender, input$sample.size, input$tabsetmethods), {
        #get current tab: 
        cur_tab = input$tabsetmethods
        data <- getdata()
