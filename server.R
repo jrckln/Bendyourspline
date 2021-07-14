@@ -435,9 +435,10 @@ function(input, output, session){
                       removeUI(
                         selector = paste0('#', inserted.coef.bs[length(inserted.coef.bs)])
                       )
-                      coef_vals_bs[[inserted.coef.bs[[length(inserted.coef.bs)]]]] <- NULL
+                      coef_vals_bs[[inserted.coef.bs[[length(inserted.coef.bs)]]]] <<- NULL
                       inserted.coef.bs <<- inserted.coef.bs[-length(inserted.coef.bs)]
                     }
+                    
             }else if(length(inserted.coef.bs)<num){
                 toinsert <- (length(inserted.coef.bs)+1):num
                 id <- paste0('bs_coef', toinsert)
@@ -461,7 +462,6 @@ function(input, output, session){
               inserted.coef.bs <<- c(inserted.coef.bs, id[i])
             }
         }
-
     }, priority = 100)
     
     getpos.bs <- reactive({
@@ -483,6 +483,7 @@ function(input, output, session){
     getcoef.bs <- reactive({
       req(input$nknots.bs, input$degree.bs)
       req(length(coef_vals_bs) == (input$degree.bs + input$nknots.bs))
+      
       num <- input$degree.bs + input$nknots.bs
       #get values of coefficients:
       ind <- paste0("bs_coef", 1:num)
