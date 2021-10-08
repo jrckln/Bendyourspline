@@ -1,4 +1,4 @@
-naturalsplines <- tabPanel("Natural Splines", value = "nsplines",br(),
+naturalsplines <- tabPanel("Natural Splines", br(),
                     tags$head(
                       tags$style(HTML(paste(paste0("[for=nsp_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}")), collapse = " ")), 
                       tags$style(HTML(paste0(".label-primary[for=add_optfit_nsp] {background: ", optfitcol,";}"))), 
