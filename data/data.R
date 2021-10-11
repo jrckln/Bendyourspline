@@ -17,6 +17,32 @@ fp.scale <- function(x){
   )
 }
 
+getshape <- function(sequence, index){
+  n <- length(sequence)
+  firstq <- n*0.25
+  thirdq <- n*0.75
+  
+  seqorder <- sequence[order(index)]
+  minind <- which.min(seqorder)
+  minval <- seqorder[minind]
+  maxind <- which.max(seqorder)
+  maxval <- seqorder[maxind]
+  
+  if(
+    (firstq) <= minind & minind <= (thirdq) & 
+    identical(seqorder[1:minind], sort(seqorder[1:minind], decreasing = TRUE)) & 
+    identical(seqorder[(minind+1):n], sort(seqorder[(minind+1):n], decreasing = FALSE))){
+    return("cup")
+  } else if (
+    (firstq) <= maxind & maxind <= (thirdq) & 
+    identical(seqorder[1:maxind], sort(seqorder[1:maxind], decreasing = FALSE)) & 
+    identical(seqorder[(maxind+1):n], sort(seqorder[(maxind+1):n], decreasing = TRUE))){
+    return("cap")
+  }else {
+    return("no shape found")
+  }
+}
+
 var_coefs <- function(DF, y, intercept){
   X <-cbind(1, DF$fp1, DF$fp2)
   XtX <- t(X)%*%X
