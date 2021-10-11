@@ -1013,6 +1013,8 @@ function(input, output, session){
     #for fractional polynomials: 
     observe({
       req(input$start_exercise_fp>0)
+      DF <- FPdata()
+      fp <- as.numeric(input$intercept.fp)+DF$fp
       titles <- input$exercise_fp
       newval <- switch(titles, 
                        Basic = c(
@@ -1024,8 +1026,8 @@ function(input, output, session){
                          input[['val_coef2_fp-coef']] >= -(input[['val_coef1_fp-coef']]/(40/100))/2 - 0.05 & input[['val_coef2_fp-coef']] <= -(input[['val_coef1_fp-coef']]/(40/100))/2 + 0.05, 
                          TRUE, 
                          input$power2.fp == 2 & input$power1.fp == 2, 
-                         TRUE, 
-                         TRUE
+                         input$power2.fp == 2 & input$power1.fp == 2 & getshape(fp, DF$x)=="cup", 
+                         input$power2.fp == 2 & input$power1.fp == 2 & getshape(fp, DF$x)=="cap"
                        )
         
       )

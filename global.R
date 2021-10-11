@@ -24,13 +24,6 @@ library(cicerone)
 library(ggplot2)
 library(magrittr)
 
-
-source("data/data.R")
-source("data/exercises.R")
-#load modules:
-tab_files <- list.files(path = "modules", full.names = T, recursive = T)
-suppressMessages(lapply(tab_files, source))
-
 #colors for plotly
 #col <- c(colors3[c(1, 2, 4, 5)], colors4[c(11,2, 9)])
 col <- c("#e6194B", "#ffe119", "#3cb44b", "#4363d8", "#f032e6", "#f58231", "#bfef45", "#42d4f4", "#911eb4", "#a9a9a9", 
@@ -40,6 +33,13 @@ optfitcol <- "#dcbeff"
 #loesscol <-  col[length(col)-1]
 spinnercol <- "#800000"
 loesscol <- "#000075"
+
+source("data/data.R")
+source("data/exercises.R")
+#load modules:
+tab_files <- list.files(path = "modules", full.names = T, recursive = T)
+suppressMessages(lapply(tab_files, source))
+
 
 #load ressources:
 #name future files according to hierarchy: Navbarpage prefix b; Methods prefix a for order
