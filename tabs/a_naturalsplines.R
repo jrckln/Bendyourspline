@@ -34,13 +34,13 @@ naturalsplines <- tabPanel("Natural Splines", br(),
                 fluidRow(
                     column(3, offset=0,
                            div(
-                             span('Response'),
+                             span('Data points'),
                              materialSwitch(inputId = "add_y_nsp", label = "", right = FALSE, value=TRUE)
                            )
                     ),
                     column(3, offset=0,
                            div(
-                             span('Loess Smoother'),
+                             span('LOESS Smoother'),
                              materialSwitch(inputId = "add_loess_nsp", label = "", right = FALSE, value=TRUE)
                            )
                     ),

@@ -35,13 +35,13 @@ bsplines <- tabPanel("B-Splines",br(),
                 fluidRow(
                     column(3, offset=0,
                            div(
-                             span('Response'),
+                             span('Data points'),
                              materialSwitch(inputId = "add_y_bs", label = "", right = FALSE, value=TRUE)
                            )
                     ),
                     column(3, offset=0,
                            div(
-                             span('Loess Smoother'),
+                             span('LOESS Smoother'),
                              materialSwitch(inputId = "add_loess_bs", label = "", right = FALSE, value=TRUE)
                            )
                     ),

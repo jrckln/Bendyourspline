@@ -49,13 +49,13 @@ fp <- tabPanel("Fractional Polynomials",br(),
                 fluidRow(
                     column(4, offset=0, 
                            div(
-                             span('Response'),
+                             span('Data points'),
                              materialSwitch(inputId = "add_y_fp", label = "", right = FALSE, value=TRUE)
                            )
                     ), 
                     column(4, offset=0, 
                            div(
-                              span('Loess Smoother'),
+                              span('LOESS Smoother'),
                               materialSwitch(inputId = "add_loess_fp", label = "", right = FALSE, value=TRUE)
                            )
                     ),
