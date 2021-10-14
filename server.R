@@ -221,16 +221,17 @@ function(input, output, session){
         p <- basic_plot()
         
         if(input$add_loess_fp){
-            p <- p + suppressWarnings(geom_smooth(data = DF, aes(x=x, y=y, text = "LOESS smoother"), 
-                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol, size=0.5))
+            p <- p + suppressWarnings(geom_smooth(data = DF, aes(x=x, y=y, text = "LOESS smoother", color = "LOESS smoother"), 
+                                                  method = "loess", formula = "y~x", se=FALSE, size=0.5))
         }
         if(input$add_optfit_fp){
           optcoef <- getoptfit.fp()
           p <- p + suppressWarnings(geom_line(data = DF, aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2, 
-                                 text="Optimal fit based on current settings"), color = optfitcol))
+                                 text="Optimal fit based on current settings", color = "Optimal fit")))
         }
-        p <- p +geom_line(data = DF, aes(x=x, y = intercept+fp)) 
-        ggplotly(p, tooltip="text")
+        p <- p +geom_line(data = DF, aes(x=x, y = intercept+fp, color = "Response")) +
+          scale_color_manual(values=c("LOESS smoother" = loesscol, "Optimal fit" = optfitcol, "Response" = 'black'), name = " ") 
+        ggplotly(p, tooltip="text") %>% layout(legend = list(orientation = 'h'))
     })
     
     output$basis_plot.fp <- renderPlotly({
@@ -528,8 +529,8 @@ function(input, output, session){
         p <- basic_plot()
         
         if(input$add_loess_bs){
-            p <- p + suppressWarnings(geom_smooth(data = data, aes(x=x, y=y, text = "LOESS smoother"),
-                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol, size=0.5))
+            p <- p + suppressWarnings(geom_smooth(data = data, aes(x=x, y=y, text = "LOESS smoother", color = "LOESS smoother"),
+                                                  method = "loess", formula = "y~x", se=FALSE, size=0.5))
         }
         if(input$add_knots_pos.bs){
           knots <- attr(b, "knots")
@@ -545,11 +546,12 @@ function(input, output, session){
         if(input$add_optfit_bs){
           optcoef <- getoptfit.bs()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
-           p <- p + suppressWarnings(geom_line(data = data, aes(x=x, y = optline, text = "Optimal fit based on current knot positions"), color = optfitcol))
+           p <- p + suppressWarnings(geom_line(data = data, aes(x=x, y = optline, text = "Optimal fit based on current knot positions", color = "Optimal fit")))
         }
 
-        p <- p +geom_line(data = data, aes(x=x, y = spline)) 
-        ggplotly(p, tooltip = "text")
+        p <- p +geom_line(data = data, aes(x=x, y = spline, color = "Response")) +
+          scale_color_manual(values=c("LOESS smoother" = loesscol, "Optimal fit" = optfitcol, "Response" = 'black'), name = " ")
+        ggplotly(p, tooltip = "text") %>% layout(legend = list(orientation = 'h'))
     })
     
     observe({
@@ -887,8 +889,8 @@ function(input, output, session){
         p <- basic_plot()
 
         if(input$add_loess_nsp){
-            p <- p + suppressWarnings(geom_smooth(data = data, aes(x=x, y=y, text="LOESS smoother"), 
-                                                  method = "loess", formula = "y~x", se=FALSE, color = loesscol, size=0.5))
+            p <- p + suppressWarnings(geom_smooth(data = data, aes(x=x, y=y, text="LOESS smoother", color = "LOESS smoother"), 
+                                                  method = "loess", formula = "y~x", se=FALSE, size=0.5))
         }
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
@@ -905,11 +907,12 @@ function(input, output, session){
         if(input$add_optfit_nsp){
           optcoef <- getoptfit.nsp()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
-           p <- p + suppressWarnings(geom_line(data = data, aes(x=x, y = optline, text = "Optimal fit based on current knot position"), color = optfitcol))
+           p <- p + suppressWarnings(geom_line(data = data, aes(x=x, y = optline, color = "Optimal fit", text = "Optimal fit based on current knot position")))
         }
 
-        p <- p +geom_line(aes(x=x, y = spline))
-        ggplotly(p, tooltip = "text")
+        p <- p +geom_line(aes(x=x, y = spline, color="Response"))+
+          scale_color_manual(values=c("LOESS smoother" = loesscol, "Optimal fit" = optfitcol, "Response" = 'black'), name = " ")
+        ggplotly(p, tooltip = "text") %>% layout(legend = list(orientation = 'h'))
     })
 
     output$basis_plot.nsp<- renderPlotly({
@@ -1028,6 +1031,15 @@ function(input, output, session){
                          input$power2.fp == 2 & input$power1.fp == 2, 
                          input$power2.fp == 2 & input$power1.fp == 2 & getshape(fp, DF$x)=="cup", 
                          input$power2.fp == 2 & input$power1.fp == 2 & getshape(fp, DF$x)=="cap"
+                       ), 
+                       Advanced = c(
+                         input$tabsetmethods == 'Fractional Polynomials' & input$variable == 'Diastolic blood pressure ~ Age' & input$sample.size == '100%' & input$gender == 'Both', 
+                         input$add_y_fp & input$add_loess_fp & !input$add_optfit_fp, 
+                         input$intercept.fp >= (66-10) & input$intercept.fp <= (66+10), 
+                         calcR2.fp()[1]>=0.08 & input[['val_coef2_fp-coef']] == 0,
+                         input$power2.fp == 2 & calcR2.fp()[1]>=0.15, 
+                         calcR2.fp()[1]>0.15, 
+                         calcR2.fp()[1]>=0.259
                        )
         
       )
@@ -1051,6 +1063,7 @@ function(input, output, session){
       which <- as.character(input$exercise_fp)
         if((counter <= length(exercises[['fp']][[which]])) & (counter > 0)){
           tagList(
+            HTML(paste0('<div id="exercisecounts">', counter, "/", length(exercises[['fp']][[which]]), '</div>')),
             HTML('<p>', paste0(as.character(exercises[['fp']][[which]][counter])), '</p>'), 
             if(validation[counter]){
               tagList(
@@ -1095,8 +1108,8 @@ function(input, output, session){
       req(input$start_exercise_bs>0)
       titles <- input$exercise_bs
       newval <- switch(titles, 
-                       Basic = c(
-                         input$tabsetmethods == 'B-Splines' & input$variable == 'Diastolic blood pressure ~ Age' & input$degree.bs == 3 & input$nknots.bs == 4
+                       '-' = c(
+                         TRUE
                        )
         
       )
@@ -1162,8 +1175,27 @@ function(input, output, session){
     #for Natural splines: 
     observe({
       req(input$start_exercise_nsp>0)
+      
+      data <- getbasis.nsp()
+      b <- data$b
+      pos <- getpos.nsp()
+      coefs <- getcoef.nsp()
+      intercept <- as.numeric(input$intercept.nsp)
+      spline <- rowSums(b %*% coefs)+intercept
+      
       titles <- input$exercise_nsp
       newval <- switch(titles, 
+                       'Basic' = c(
+                         input$tabsetmethods == 'Natural Splines' & !input$add_y_bs & !input$add_loess_bs & !input$add_optfit_bs,
+                         input$nsp_pos1_inner == 0 & input$nsp_pos2_inner == 0 & input$nsp_pos3_inner == 0, 
+                         input$nsp_pos1_inner == 1 & input$nsp_pos2_inner == 0 & input$nsp_pos3_inner == 0, 
+                         TRUE, 
+                         input$nsp_pos1_inner == 1 & input$nsp_pos2_inner == 1 & input$nsp_pos3_inner == 0, 
+                         input$nsp_pos1_inner == 1 & input$nsp_pos2_inner == 1 & input$nsp_pos3_inner == 1,
+                         input$nsp_pos1_inner == -1, 
+                         getshape(spline, data$x)=="cup" & input$nsp_pos1_inner %in% c(-1,-0.5,0, 0.5,1) & input$nsp_pos2_inner %in% c(-1,-0.5,0, 0.5,1) & input$nsp_pos3_inner %in% c(-1,-0.5,0, 0.5,1), 
+                         getshape(spline, data$x)=="cap" & input$nsp_pos1_inner %in% c(-1,-0.5,0, 0.5,1) & input$nsp_pos2_inner %in% c(-1,-0.5,0, 0.5,1) & input$nsp_pos3_inner %in% c(-1,-0.5,0, 0.5,1)
+                       ),
                        'Advanced' = c(
                          input$tabsetmethods == 'Natural Splines' & input$variable == 'Height ~ Age' & input$add_y_bs & input$sample.size == '100%' & input$gender == 'Both', 
                          input$nknots.nsp == 2 & between(input$nsp_pos1_inner, 11.8, 12.2) & between(input$nsp_pos2_inner, 14.8, 15.2) & 

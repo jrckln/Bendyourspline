@@ -441,4 +441,10 @@ canvas {
     text-decoration: none;
 }
 
-
+#exercisecounts {
+    background-color: lightgrey;
+    border-radius: 7px;
+    float: right;
+    margin: 10px;
+    padding: 5px;
+}
