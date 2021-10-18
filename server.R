@@ -1107,11 +1107,24 @@ function(input, output, session){
     observe({
       req(input$start_exercise_bs>0)
       titles <- input$exercise_bs
+      
+      data <- getbasis.bs()
+      b <- data$b
+      pos <- getpos.bs()
+      coefs <- getcoef.bs()
+      intercept <- as.numeric(input$intercept.bs)
+      spline <- rowSums(b %*% coefs)+intercept
+      
       newval <- switch(titles, 
-                       '-' = c(
-                         TRUE
+                       'Basic' = c(
+                         input$tabsetmethods == 'B-Splines' & !input$add_y_bs & !input$add_loess_bs & !input$add_optfit_bs & input$degree.bs == 1,
+                         input$bs_pos1_inner == 1 & input$bs_pos2_inner == 0 & input$bs_pos3_inner == 0, 
+                         TRUE, 
+                         input$bs_pos1_inner == 1 & input$bs_pos2_inner == 1 & input$bs_pos3_inner == 0, 
+                         input$bs_pos1_inner == 0 & input$bs_pos2_inner == 1 & input$bs_pos3_inner == 0, 
+                         input$bs_pos1_inner == 1 & input$bs_pos2_inner == 1 & input$bs_pos3_inner == 1,
+                         getshape(spline, data$x)=="cup" 
                        )
-        
       )
       validation_all$bs <- newval
     })
@@ -1186,7 +1199,7 @@ function(input, output, session){
       titles <- input$exercise_nsp
       newval <- switch(titles, 
                        'Basic' = c(
-                         input$tabsetmethods == 'Natural Splines' & !input$add_y_bs & !input$add_loess_bs & !input$add_optfit_bs,
+                         input$tabsetmethods == 'Natural Splines' & !input$add_y_nsp & !input$add_loess_nsp & !input$add_optfit_nsp,
                          input$nsp_pos1_inner == 0 & input$nsp_pos2_inner == 0 & input$nsp_pos3_inner == 0, 
                          input$nsp_pos1_inner == 1 & input$nsp_pos2_inner == 0 & input$nsp_pos3_inner == 0, 
                          TRUE, 

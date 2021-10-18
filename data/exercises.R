@@ -30,8 +30,15 @@ exercises <- list(
             )
     ),
     'bs' = list(
-        '-'= c(
-            '-'
+        'Basic' = c(
+            paste0('In this exercise, we will fit a simple regression using linear B-Splines to examine the effect of individual spline basis function on the response function. Make sure that data points, ', colorize('optimal fit', optfitcol) , ' and ', colorize('LOESS smoother', loesscol) , ' options are turned off and that degree is set to 1. Initially two knots are used and set to the 33.3th and 66.7th percentiles from the distribution of x. Then, we can adjust 1 (degree) + 2 (number of knots) = 3 coefficients.'),
+            'Initially, two knots are used and set to the 33.3th and 66.7th percentiles from the distribution of x, the coefficients should be 0. Using two knots we have 3 coefficients for the natural spline to adjust.', 
+            paste0('In the panel "Spline Basis functions" the individual basis functions are visualized of which the response function in main panel is created. To weight the ', colorize('first spline basis', col[1]) , ' by 1, set ', colorize('coefficient 1', col[1]) , ' to 1 and see how this affects the response.'),
+            paste0('Set the ', colorize('coefficient 1', col[1]) , ' back to 0 and repeat this step for ', colorize('coefficient 2', col[2]) , ' and for ', colorize('coefficient 3', col[3]) , '.'), 
+            paste0('Now set ', colorize('coefficient 1', col[1]) , ' and ', colorize('coefficient 2', col[2]) , ' to 1, and ', colorize('coefficient 3', col[3]) , ' to 0. This adds up the ', colorize('spline basis 1', col[1]) , ' and ', colorize('spline basis 2', col[2]) , '.'), 
+            paste0('Set ', colorize('coefficient 1', col[1]) , ' back to 0 and ', colorize('coefficient 3', col[3]) , ' to 1. You obtain the sum of ', colorize('spline basis 2', col[2]) , ' and ', colorize('spline basis 3', col[3]) , ' as response function.'), 
+            'Now set all coefficients to 1. The response function is now exactly the sum of the three spline bases.', 
+            'By adjusting the number of knots and the position of knot(s) create a V-shaped response curve.'
         )
     ), 
     'nsp' = list(
