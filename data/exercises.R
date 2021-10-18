@@ -1,5 +1,5 @@
 colorize <- function(word, color){
-    paste0("<b> <span style='color: ", color, "'>", word, "</span> </b>")
+    paste0("<b> <font style='color: ", color, "'>", word, "</font> </b>")
 }
 
 
