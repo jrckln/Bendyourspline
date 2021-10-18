@@ -287,7 +287,7 @@ function(input, output, session){
     })
     
     #reset button
-    observeEvent(c(input$reset_input.fp, input$variable), {
+    observeEvent(c(input$reset_input_fp, input$variable), {
        reset("inputs_fp") #id of tab to reset
     })
     
@@ -622,7 +622,7 @@ function(input, output, session){
     })
     
     #reset button
-    observeEvent(c(input$reset_input.bs, input$variable), {
+    observeEvent(c(input$reset_input_bs, input$variable), {
        reset("inputs_bs") #id of tab to reset
     })
 
@@ -992,7 +992,7 @@ function(input, output, session){
     
 
     #reset button
-    observeEvent(c(input$reset_input.nsp,input$variable), {
+    observeEvent(c(input$reset_input_nsp,input$variable), {
         reset("inputs_nsp") #id of tab to reset
     })
     

@@ -59,7 +59,7 @@ bsplines <- tabPanel("B-Splines",br(),
                     )
                 ),
                 fluidRow(
-                  column(6, offset=0, actionButton("reset_input.bs", "Reset inputs", class = "btn reset_btn")),
+                  column(6, offset=0, actionButton("reset_input_bs", "Reset inputs", class = "btn reset_btn"), bsTooltip(id = "reset_input_bs", title = "You mave have to click twice to reset dynamically inserted inputs.", placement = "bottom", trigger = "hover")),
                   column(6, offset=0, actionButton("set_optfit_bs", "Set optimal fit", class = "btn reset_btn", style="float:right"))
                 )
 ))),

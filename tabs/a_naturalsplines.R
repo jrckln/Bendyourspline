@@ -58,7 +58,7 @@ naturalsplines <- tabPanel("Natural Splines", br(),
                     )
                 ), 
                 fluidRow(
-                  column(6, offset=0, actionButton("reset_input.nsp", "Reset inputs", class = "btn reset_btn")),
+                  column(6, offset=0, actionButton("reset_input_nsp", "Reset inputs", class = "btn reset_btn"), bsTooltip(id = "reset_input_nsp", title = "You mave have to click twice to reset dynamically inserted inputs.", placement = "bottom", trigger = "hover")),
                   column(6, offset=0, actionButton("set_optfit_nsp", "Set optimal fit", class = "btn reset_btn", style="float:right"))
                 )
 ))),
