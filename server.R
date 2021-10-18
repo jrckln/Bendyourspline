@@ -288,7 +288,7 @@ function(input, output, session){
     
     #reset button
     observeEvent(c(input$reset_input.fp, input$variable), {
-       reset("inputs.fp") #id of tab to reset
+       reset("inputs_fp") #id of tab to reset
     })
     
     observe({
@@ -623,7 +623,7 @@ function(input, output, session){
     
     #reset button
     observeEvent(c(input$reset_input.bs, input$variable), {
-       reset("inputs.bs") #id of tab to reset
+       reset("inputs_bs") #id of tab to reset
     })
 
     observe({
@@ -993,7 +993,7 @@ function(input, output, session){
 
     #reset button
     observeEvent(c(input$reset_input.nsp,input$variable), {
-        reset("inputs.nsp") #id of tab to reset
+        reset("inputs_nsp") #id of tab to reset
     })
     
     observe({
@@ -1118,11 +1118,11 @@ function(input, output, session){
       newval <- switch(titles, 
                        'Basic' = c(
                          input$tabsetmethods == 'B-Splines' & !input$add_y_bs & !input$add_loess_bs & !input$add_optfit_bs & input$degree.bs == 1,
-                         input$bs_pos1_inner == 1 & input$bs_pos2_inner == 0 & input$bs_pos3_inner == 0, 
+                         input[['bs_coef1-coef']] == 1 & input[['bs_coef2-coef']] == 0 & input[['bs_coef3-coef']] == 0, 
                          TRUE, 
-                         input$bs_pos1_inner == 1 & input$bs_pos2_inner == 1 & input$bs_pos3_inner == 0, 
-                         input$bs_pos1_inner == 0 & input$bs_pos2_inner == 1 & input$bs_pos3_inner == 0, 
-                         input$bs_pos1_inner == 1 & input$bs_pos2_inner == 1 & input$bs_pos3_inner == 1,
+                         input[['bs_coef1-coef']] == 1 & input[['bs_coef2-coef']] == 1 & input[['bs_coef3-coef']] == 0, 
+                         input[['bs_coef1-coef']] == 0 & input[['bs_coef2-coef']] == 1 & input[['bs_coef3-coef']] == 1, 
+                         input[['bs_coef1-coef']] == 1 & input[['bs_coef2-coef']] == 1 & input[['bs_coef3-coef']] == 1,
                          getshape(spline, data$x)=="cup" 
                        )
       )
@@ -1200,14 +1200,14 @@ function(input, output, session){
       newval <- switch(titles, 
                        'Basic' = c(
                          input$tabsetmethods == 'Natural Splines' & !input$add_y_nsp & !input$add_loess_nsp & !input$add_optfit_nsp,
-                         input$nsp_pos1_inner == 0 & input$nsp_pos2_inner == 0 & input$nsp_pos3_inner == 0, 
-                         input$nsp_pos1_inner == 1 & input$nsp_pos2_inner == 0 & input$nsp_pos3_inner == 0, 
+                         input[['nsp_coef1-coef']] == 0 & input[['nsp_coef2-coef']] == 0 & input[['nsp_coef3-coef']] == 0, 
+                         input[['nsp_coef1-coef']] == 1 & input[['nsp_coef2-coef']] == 0 & input[['nsp_coef3-coef']] == 0, 
                          TRUE, 
-                         input$nsp_pos1_inner == 1 & input$nsp_pos2_inner == 1 & input$nsp_pos3_inner == 0, 
-                         input$nsp_pos1_inner == 1 & input$nsp_pos2_inner == 1 & input$nsp_pos3_inner == 1,
-                         input$nsp_pos1_inner == -1, 
-                         getshape(spline, data$x)=="cup" & input$nsp_pos1_inner %in% c(-1,-0.5,0, 0.5,1) & input$nsp_pos2_inner %in% c(-1,-0.5,0, 0.5,1) & input$nsp_pos3_inner %in% c(-1,-0.5,0, 0.5,1), 
-                         getshape(spline, data$x)=="cap" & input$nsp_pos1_inner %in% c(-1,-0.5,0, 0.5,1) & input$nsp_pos2_inner %in% c(-1,-0.5,0, 0.5,1) & input$nsp_pos3_inner %in% c(-1,-0.5,0, 0.5,1)
+                         input[['nsp_coef1-coef']] == 1 & input[['nsp_coef2-coef']] == 1 & input[['nsp_coef3-coef']] == 0, 
+                         input[['nsp_coef1-coef']] == 1 & input[['nsp_coef2-coef']] == 1 & input[['nsp_coef3-coef']] == 1,
+                         input[['nsp_coef1-coef']] == -1, 
+                         getshape(spline, data$x)=="cup" & input[['nsp_coef1-coef']] %in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef2-coef']] %in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef3-coef']] %in% c(-1,-0.5,0, 0.5,1), 
+                         getshape(spline, data$x)=="cap" & input[['nsp_coef1-coef']] %in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef2-coef']] %in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef3-coef']] %in% c(-1,-0.5,0, 0.5,1)
                        ),
                        'Advanced' = c(
                          input$tabsetmethods == 'Natural Splines' & input$variable == 'Height ~ Age' & input$add_y_bs & input$sample.size == '100%' & input$gender == 'Both', 

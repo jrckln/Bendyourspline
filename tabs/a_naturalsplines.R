@@ -6,7 +6,7 @@ naturalsplines <- tabPanel("Natural Splines", br(),
                     ),
             column(4,
             fluidRow(
-            sidebarPanel(class="input_class", id = "inputs.nsp", width = 12,
+            sidebarPanel(class="input_class", id = "inputs_nsp", width = 12,
                 h4("Input parameters"),  
                 br(), br(),
                 fluidRow(

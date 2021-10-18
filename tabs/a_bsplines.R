@@ -6,7 +6,7 @@ bsplines <- tabPanel("B-Splines",br(),
                     ),
             column(4, 
             fluidRow(
-             sidebarPanel(class="input_class", id = "inputs.bs", width = 12,
+             sidebarPanel(class="input_class", id = "inputs_bs", width = 12,
                 h4("Input parameters"),
                 br(), br(),
                 fluidRow(
