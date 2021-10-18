@@ -222,12 +222,12 @@ function(input, output, session){
         
         if(input$add_loess_fp){
             p <- p + suppressWarnings(geom_smooth(data = DF, aes(x=x, y=y, text = "LOESS smoother", color = "LOESS smoother"), 
-                                                  method = "loess", formula = "y~x", se=FALSE, size=0.5))
+                                                  method = "loess", formula = "y~x", se=FALSE, size=1))
         }
         if(input$add_optfit_fp){
           optcoef <- getoptfit.fp()
           p <- p + suppressWarnings(geom_line(data = DF, aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2, 
-                                 text="Optimal fit based on current settings", color = "Optimal fit")))
+                                 text="Optimal fit based on current settings", color = "Optimal fit"), size = 1))
         }
         p <- p +geom_line(data = DF, aes(x=x, y = intercept+fp, color = "Response")) +
           scale_color_manual(values=c("LOESS smoother" = loesscol, "Optimal fit" = optfitcol, "Response" = 'black'), name = " ") 
@@ -237,8 +237,8 @@ function(input, output, session){
     output$basis_plot.fp <- renderPlotly({
         DF <- FPdata()
         p <- ggplot(data=DF) + 
-            geom_line(aes(x=x, y=fp1), color = col[1]) +
-            geom_line(aes(x=x, y=fp2), color = col[2])+ 
+            geom_line(aes(x=x, y=fp1), color = col[1], size = 1) +
+            geom_line(aes(x=x, y=fp2), color = col[2], size = 1)+ 
             theme_minimal()+ ylab("") + xlab(ifelse(input$add_y_fp, attr(DF, "names_vars")[1], 'x'))
         ggplotly(p)
     })
@@ -446,7 +446,7 @@ function(input, output, session){
                 for(i in 1:length(toinsert)){
                   insertUI(
                     selector = '#placeholder_coef_bs',
-                    ui = sliderplUI(id[i], range_slider = range_bs(), label = paste0('$$\\beta_',length(inserted.coef.bs)+ i, "$$"))
+                    ui = sliderplUI(id[i], range_slider = range_bs())
                   )
                   coef_vals_bs[[id[i]]] <<- sliderpl(id[i])
                   inserted.coef.bs <<- c(inserted.coef.bs, id[i])
@@ -457,7 +457,7 @@ function(input, output, session){
             for(i in 1:num){
               insertUI(
                     selector = '#placeholder_coef_bs',
-                    ui = sliderplUI(id[i], label = paste0('$$\\beta_', i, "$$"))
+                    ui = sliderplUI(id[i])
               )
               coef_vals_bs[[id[i]]] <<- sliderpl(id[i])
               inserted.coef.bs <<- c(inserted.coef.bs, id[i])
@@ -530,7 +530,7 @@ function(input, output, session){
         
         if(input$add_loess_bs){
             p <- p + suppressWarnings(geom_smooth(data = data, aes(x=x, y=y, text = "LOESS smoother", color = "LOESS smoother"),
-                                                  method = "loess", formula = "y~x", se=FALSE, size=0.5))
+                                                  method = "loess", formula = "y~x", se=FALSE, size=1))
         }
         if(input$add_knots_pos.bs){
           knots <- attr(b, "knots")
@@ -546,7 +546,9 @@ function(input, output, session){
         if(input$add_optfit_bs){
           optcoef <- getoptfit.bs()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
-           p <- p + suppressWarnings(geom_line(data = data, aes(x=x, y = optline, text = "Optimal fit based on current knot positions", color = "Optimal fit")))
+           p <- p + suppressWarnings(geom_line(data = data, 
+                                               aes(x=x, y = optline, text = "Optimal fit based on current knot positions", color = "Optimal fit"), 
+                                               size=1))
         }
 
         p <- p +geom_line(data = data, aes(x=x, y = spline, color = "Response")) +
@@ -573,9 +575,8 @@ function(input, output, session){
         interp.values <- set_colnames(predict(b, newx),str_c("S", seq_len(ncol(predict(b, newx)))))
         knot.df <- melt(data.frame(x=all.knots, knot.values), id.vars="x", variable.name="Spline", value.name="y")
         interp.df <- melt(data.frame(x=newx, interp.values),id.vars="x", variable.name="Spline", value.name="y")
-        p <- ggplot(interp.df) +
-            aes(x=x, y=y, color=Spline) +
-            geom_line() +
+        p <- ggplot(interp.df, aes(x=x, y=y, color=Spline)) +
+            geom_line(size=1) +
             scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") +
             xlab(ifelse(input$add_y_bs, names_vars[1], 'x'))+ ylab("")
         if(input$add_knots_pos.nsp){
@@ -890,7 +891,7 @@ function(input, output, session){
 
         if(input$add_loess_nsp){
             p <- p + suppressWarnings(geom_smooth(data = data, aes(x=x, y=y, text="LOESS smoother", color = "LOESS smoother"), 
-                                                  method = "loess", formula = "y~x", se=FALSE, size=0.5))
+                                                  method = "loess", formula = "y~x", se=FALSE, size=1))
         }
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
@@ -907,7 +908,9 @@ function(input, output, session){
         if(input$add_optfit_nsp){
           optcoef <- getoptfit.nsp()
           optline <- as.numeric(cbind(1,b) %*% optcoef)
-           p <- p + suppressWarnings(geom_line(data = data, aes(x=x, y = optline, color = "Optimal fit", text = "Optimal fit based on current knot position")))
+           p <- p + suppressWarnings(geom_line(data = data, 
+                                               aes(x=x, y = optline, color = "Optimal fit", text = "Optimal fit based on current knot position"), 
+                                               size=1))
         }
 
         p <- p +geom_line(aes(x=x, y = spline, color="Response"))+
@@ -928,9 +931,8 @@ function(input, output, session){
         interp.values <- set_colnames(predict(b, newx),str_c("S", seq_len(ncol(predict(b, newx)))))
         knot.df <- melt(data.frame(x=all.knots, knot.values), id.vars="x", variable.name="Spline", value.name="y")
         interp.df <- melt(data.frame(x=newx, interp.values),id.vars="x", variable.name="Spline", value.name="y")
-        p <- ggplot(interp.df) +
-            aes(x=x, y=y, color=Spline) +
-            geom_line() +
+        p <- ggplot(interp.df, aes(x=x, y=y, color=Spline)) +
+            geom_line(size=1) +
             scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") + 
             xlab(ifelse(input$add_y_nsp, data$names_vars[1], 'x'))+
             ylab("")
