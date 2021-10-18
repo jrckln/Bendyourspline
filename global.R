@@ -24,15 +24,12 @@ library(cicerone)
 library(ggplot2)
 library(magrittr)
 
-#colors for plotly
-#col <- c(colors3[c(1, 2, 4, 5)], colors4[c(11,2, 9)])
-col <- c("#e6194B", "#ffe119", "#3cb44b", "#4363d8", "#f032e6", "#f58231", "#bfef45", "#42d4f4", "#911eb4", "#a9a9a9", 
-         "#9A6324", "#808000", "#469990")
-optfitcol <- "#dcbeff" 
+col <- c("#2F4B7C", "#CE2029", "#FFA600","#2FA39B", "#97D8C4", "#F0E825", "#91B5D6", "#6BCFE8", "#F0CF44", "#136F63")
+optfitcol <- "#F0CF44"
 #optfitcol <- col[length(col)]
 #loesscol <-  col[length(col)-1]
 spinnercol <- "#800000"
-loesscol <- "#000075"
+loesscol <- "#136F63"
 
 source("data/data.R")
 source("data/exercises.R")
