@@ -6,7 +6,7 @@ function(input, output, session){
         '
         <p>
         This website is still in the development phase. In case of crashes or unexpected behavior please report at 
-        <a href="https://github.com/ljiricka/Bendyourspline/issues">Github</a>. <br>
+        <a href="https://github.com/ljiricka/Bendyourspline/issues">Github</a>. Simply click on "New Issue" and let us know what you noticed. <br>
         Thank you for your understanding!
         </p>
         '
