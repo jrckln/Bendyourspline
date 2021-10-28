@@ -17,6 +17,7 @@ bootstrapPage(
         position = "fixed-top",
         home,
         methods,
+        explanatory_comments, 
         about
     )
 )
