@@ -1,86 +1,195 @@
-naturalsplines <- tabPanel("Natural Splines", br(),
-                    tags$head(
-                      tags$style(HTML(paste(paste0("[for=nsp_coef", 1:length(col),"-coef]+span>.irs>.irs-single, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar-edge, [for=nsp_coef", 1:length(col), "-coef]+span>.irs-bar {background: ", col, ";}")), collapse = " ")), 
-                      tags$style(HTML(paste0(".label-primary[for=add_optfit_nsp] {background: ", optfitcol,";}"))), 
-                      tags$style(HTML(paste0(".label-primary[for=add_loess_nsp] {background: ", loesscol,";}")))
-                    ),
-            column(4,
-            fluidRow(
-            sidebarPanel(class="input_class", id = "inputs_nsp", width = 12,
-                h4("Input parameters"),  
-                br(), br(),
-                fluidRow(
-                    column(6,
-                        numericInput("nknots.nsp", "Number of internal knots", min = 1, max = 10, value = 2)
-                    ), 
-                    column(6, align="center", 
-                           coef_rangeUI("nsp")
-                    )
-                ), 
-                fluidRow(
-                    column(6, 
-                           wellPanel(uiOutput("boundary_knots.nsp"),
-                           tags$div(id = 'placeholder_pos_nsp')), style="padding: 2px;"), 
-                    column(6, wellPanel(tags$div(id = 'placeholder_coef_nsp'), style="padding: 2px;"))
-                ),
-                fluidRow(
-                  column(12,
-                  wellPanel(
+naturalsplines <- tabPanel(
+  "Natural Splines", br(),
+  modal_help_input_NSP,
+  tags$head(tags$style(HTML(
+    paste(
+      paste0(
+        "[for=nsp_coef",
+        1:length(col),
+        "-coef]+span>.irs>.irs-single, [for=nsp_coef",
+        1:length(col),
+        "-coef]+span>.irs-bar-edge, [for=nsp_coef",
+        1:length(col),
+        "-coef]+span>.irs-bar {background: ",
+        col,
+        ";}"
+      )
+    ), collapse = " "
+  )),
+  tags$style(HTML(
+    paste0(
+      ".label-primary[for=add_optfit_nsp] {background: ",
+      optfitcol,
+      ";}"
+    )
+  )),
+  tags$style(HTML(
+    paste0(
+      ".label-primary[for=add_loess_nsp] {background: ",
+      loesscol,
+      ";}"
+    )
+  ))),
+  sidebarPanel(
+    class = "input_class",
+    id = "inputs_nsp",
+    div(
+      class = 'headerinfo',
+      h4("Input parameters"),
+      tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_input_NSP")
+    ),
+    fluidRow(
+      column(
+        6,
+        numericInput(
+          "nknots.nsp",
+          "Number of internal knots",
+          min = 1,
+          max = 10,
+          value = 2
+        )
+      ),
+      column(
+        6, 
+        align = "center",
+        coef_rangeUI("nsp")
+      )
+    ),
+    fluidRow(
+      column(6,
+             wellPanel(
+               uiOutput("boundary_knots.nsp"),
+               tags$div(id = 'placeholder_pos_nsp')
+             ), style = "padding: 2px;"),
+      column(6, wellPanel(
+        tags$div(id = 'placeholder_coef_nsp'), style = "padding: 2px;"
+      ))
+    ),
+    fluidRow(column(12,
+                    wellPanel(
                       uiOutput("intercept_slider_nsp"),
-                      actionButton(inputId = "adjust_intercept.nsp", label = "Adjust automatically", class='btn reset_btn')
-                  )
-                  )
-                ), 
-                fluidRow(
-                    column(3, offset=0,
-                           div(
-                             span('Data points'),
-                             materialSwitch(inputId = "add_y_nsp", label = "", right = FALSE, value=TRUE)
-                           )
-                    ),
-                    column(3, offset=0,
-                           div(
-                             span('LOESS Smoother'),
-                             materialSwitch(inputId = "add_loess_nsp", label = "", right = FALSE, value=TRUE)
-                           )
-                    ),
-                    column(3, offset=0, 
-                           div(
-                             span('Knot position'),
-                             materialSwitch(inputId = "add_knots_pos.nsp", label = "", right = FALSE, value=TRUE)
-                           )
-                    ),
-                    column(3, offset=0,
-                           div(
-                             span('Optimal fit'),
-                             materialSwitch(inputId = "add_optfit_nsp", label = "", right = FALSE, value=TRUE)
-                           )
-                    )
-                ), 
-                fluidRow(
-                  column(6, offset=0, actionButton("reset_input_nsp", "Reset inputs", class = "btn reset_btn"), bsTooltip(id = "reset_input_nsp", title = "You mave have to click twice to reset dynamically inserted inputs.", placement = "bottom", trigger = "hover")),
-                  column(6, offset=0, actionButton("set_optfit_nsp", "Set optimal fit", class = "btn reset_btn", style="float:right"))
-                )
-))),
-column(8,
-mainPanel(width = 12, 
-  fluidRow(
-    column(8, 
-           jqui_sortable(div(
-           wellPanel(h4("Response function"), withSpinner(plotlyOutput("plot.nsp"), color = spinnercol, size = 1)),
-           wellPanel(h4("Spline basis functions"), withSpinner(plotlyOutput("basis_plot.nsp", height = "200px"), color = spinnercol, size = 1))
-           ))
-           ), 
-    column(4, 
-           jqui_sortable(div(
-               wellPanel(id = 'nsp', h4("Exercise"),
-              selectInput("exercise_nsp", "", names(exercises[['nsp']]), selected="Advanced"),
-              actionButton('start_exercise_nsp', 'Start'),
-              uiOutput("next_exercise_nsp")
-        ),
-         conditionalPanel('input.add_y_nsp | input.add_loess_nsp | input.add_optfit_nsp', wellPanel(h4("Goodness of fit"), statsUI("stats_nsp"))),
-         codeUI("code_nsp")
-           ))
-  )
-) )
-))
+                      actionButton(
+                        inputId = "adjust_intercept.nsp",
+                        label = "Adjust automatically",
+                        class = 'btn reset_btn'
+                      )
+                    ))),
+    fluidRow(
+      column(3, offset = 0,
+             div(
+               span('Data points'),
+               materialSwitch(
+                 inputId = "add_y_nsp",
+                 label = "",
+                 right = FALSE,
+                 value = TRUE
+               )
+             )),
+      column(3, offset = 0,
+             div(
+               span('LOESS Smoother'),
+               materialSwitch(
+                 inputId = "add_loess_nsp",
+                 label = "",
+                 right = FALSE,
+                 value = TRUE
+               )
+             )),
+      column(3, offset = 0,
+             div(
+               span('Knot position'),
+               materialSwitch(
+                 inputId = "add_knots_pos.nsp",
+                 label = "",
+                 right = FALSE,
+                 value = TRUE
+               )
+             )),
+      column(3, offset = 0,
+             div(
+               span('Optimal fit'),
+               materialSwitch(
+                 inputId = "add_optfit_nsp",
+                 label = "",
+                 right = FALSE,
+                 value = TRUE
+               )
+             ))
+    ),
+    fluidRow(
+      column(
+        6,
+        offset = 0,
+        actionButton("reset_input_nsp", "Reset inputs", class = "btn reset_btn"),
+        bsTooltip(
+          id = "reset_input_nsp",
+          title = "You mave have to click twice to reset dynamically inserted inputs.",
+          placement = "bottom",
+          trigger = "hover"
+        )
+      ),
+      column(
+        6,
+        offset = 0,
+        actionButton(
+          "set_optfit_nsp",
+          "Set optimal fit",
+          class = "btn reset_btn",
+          style = "float:right"
+        )
+      )
+    )
+  ),
+  column(8,
+         mainPanel(width = 12,
+                   fluidRow(
+                     column(8,
+                            jqui_sortable(div(
+                              wellPanel(
+                                div(
+                                  class = 'headerinfo',
+                                  h4("Response function"),
+                                  tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_response_function")
+                                ),
+                                withSpinner(plotlyOutput("plot.nsp"), color = spinnercol, size = 1)
+                              ),
+                              wellPanel(
+                                div(
+                                  class = 'headerinfo',
+                                  h4("Spline basis functions"),
+                                  tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_basis_BS_NSP")
+                                ),
+                                withSpinner(
+                                  plotlyOutput("basis_plot.nsp", height = "200px"),
+                                  color = spinnercol,
+                                  size = 1
+                                )
+                              )
+                            ))),
+                     column(4,
+                            jqui_sortable(
+                              div(
+                                wellPanel(
+                                  id = 'nsp',
+                                  div(
+                                    class = 'headerinfo',
+                                    h4("Exercise"),
+                                    tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_exercises")
+                                  ),
+                                  selectInput("exercise_nsp", "", names(exercises[['nsp']]), selected = "Advanced"),
+                                  actionButton('start_exercise_nsp', 'Start'),
+                                  uiOutput("next_exercise_nsp")
+                                ),
+                                wellPanel(
+                                  div(
+                                    class = 'headerinfo',
+                                    h4("Goodness of fit"),
+                                    tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_goodnessfit")
+                                  ),
+                                  statsUI("stats_nsp")
+                                )
+                              ),
+                              codeUI("code_nsp")
+                            ))
+                   )))
+)

@@ -3,8 +3,7 @@ rm(list = ls(), envir = globalenv()) ## to prevent cross over from old runs
 library(pacman)
 
 # requirements <- c('shiny', 'plotly', 'shinyBS', 'shinyWidgets', 'shinyjs', 'splines', 'mfp', 
-#                   'stringr', 'reshape2', 'tidyverse', 'shinyhelper', 'shinycssloaders', 'shinyjqui', 
-#                   'cicerone', 'ggplot2', 'magrittr')
+#                   'stringr', 'reshape2', 'tidyverse', 'shinyhelper', 'shinycssloaders', 'shinyjqui', 'ggplot2', 'magrittr')
 # p_load(char = requirements)
 
 library(shiny)
@@ -20,9 +19,9 @@ library(tidyverse)
 library(shinyhelper)
 library(shinycssloaders)
 library(shinyjqui)
-library(cicerone)
 library(ggplot2)
 library(magrittr)
+library(bsplus)
 
 col <- c("#2F4B7C", "#CE2029", "#FFA600","#2FA39B", "#97D8C4", "#F0E825", "#91B5D6", "#6BCFE8", "#F0CF44", "#136F63")
 optfitcol <- "#F0CF44"
@@ -37,94 +36,88 @@ source("data/exercises.R")
 tab_files <- list.files(path = "modules", full.names = T, recursive = T)
 suppressMessages(lapply(tab_files, source))
 
+modal_help_input_FP <-
+  bs_modal(
+    id = "modal_help_input_FP",
+    title = "Input Parameters - Fractional Polynomials",
+    body = includeMarkdown("www/help_input_FP.md"),
+    size = "medium"
+  )
+
+modal_help_basis_BS_NSP <-
+  bs_modal(
+    id = "modal_help_basis_BS_NSP",
+    title = "Spline basis functions",
+    body = includeMarkdown("www/help_basis_BS_NSP.md"),
+    size = "medium"
+  )
+
+modal_help_basis_FP <-
+  bs_modal(
+    id = "modal_help_basis_FP",
+    title = "Fractional polynomials",
+    body = includeMarkdown("www/help_basis_FP.md"),
+    size = "medium"
+  )
+
+modal_help_exercises <-
+  bs_modal(
+    id = "modal_help_exercises",
+    title = "Exercises",
+    body = includeMarkdown("www/help_exercises.md"),
+    size = "medium"
+  )
+
+modal_help_response_function <- 
+  bs_modal(
+    id = "modal_help_response_function",
+    title = "Response function",
+    body = includeMarkdown("www/help_response_function.md"),
+    size = "medium"
+  )
+
+modal_help_transformation_FP <- 
+  bs_modal(
+    id = "modal_help_transformation_FP",
+    title = "Transformation",
+    body = includeMarkdown("www/help_transformation_FP.md"),
+    size = "medium"
+  )
+
+modal_help_goodnessfit <- 
+  bs_modal(
+    id = "modal_help_goodnessfit",
+    title = "Goodness of fit",
+    body = includeMarkdown("www/help_goodnessfit.md"),
+    size = "medium"
+  )
+
+modal_help_formula_FP <- 
+  bs_modal(
+    id = "modal_help_formula_FP",
+    title = "Formula",
+    body = includeMarkdown("www/help_formula_FP.md"),
+    size = "medium"
+  )
+
+modal_help_input_BS <-
+  bs_modal(
+    id = "modal_help_input_BS",
+    title = "Input Parameters - B-Splines",
+    body = includeMarkdown("www/help_input_BS.md"),
+    size = "medium"
+  )
+
+modal_help_input_NSP <-
+  bs_modal(
+    id = "modal_help_input_NSP",
+    title = "Input Parameters - Natural Splines",
+    body = includeMarkdown("www/help_input_NSP.md"),
+    size = "medium"
+  )
 
 #load ressources:
 #name future files according to hierarchy: Navbarpage prefix b; Methods prefix a for order
 tab_files <- list.files(path = "tabs", full.names = T, recursive = T)
 suppressMessages(lapply(tab_files, source))
-
-
-guide <- Cicerone$
-  new(mathjax = TRUE, opacity = 0.75)$ 
-  step(
-    "collapseData",
-    "Data options",
-    "Specify your variable pair to analyse. Click on header to collapse."
-  )$
-  step(
-    "tabsetmethods",
-    "Methods",
-    "Here you can select a nonlinear modelling technique."
-  )$
-  step(
-    "inputs_fp",
-    "Input Panel",
-    "Specify inputs needed here.",
-    position = "right"
-  )$
-  step(
-    "powers_fp",
-    "Powers",
-    "Use the sliders to change the exponents of the fractional polynomials. For FP1 and FP2 a set with 8 values was proposed: <br>
-     $$S = {-2, -1, -0.5, \\log(x), 0.5, 1, 2, 3}$$. <br>
-     For $$p1 = p2 = p$$ ('repeated powers') it is defined as $$FP2 = \\beta_1 x^p + \\beta_2 x^p \\cdot \\log(x)$$. 
-     This defines 8 FP1 and 36 FP2 models.(https://mfp.imbi.uni-freiburg.de/fp)",
-    position = "right"
-  )$
-  step(
-    "coefficients_fp",
-    "Coefficients",
-    "Use the sliders to change the coefficients $$\\beta_1$$ and $$\\beta_2$$ of the fractional polynomials. Set the first coefficient to zero
-    to obtain FP1.",
-    position = "right"
-  )$
-  step(
-    "val_coef1_fp-minus",
-    "Finesse", 
-    description  = "For a better control of the coefficients use these buttons.",
-    position = "right"
-  )$
-  step(
-    "intercept_fp_all",
-    "Intercept", 
-    description  = "You can either manually adjust the intercept, or let it adjust automatically in which case the sum of the squared residuals is minimized.",
-    position = "right"
-  )$
-  step(
-    "response_fp",
-    "Response function", 
-    description  = "This plot shows the response function computed based on your settings.",
-    position = "bottom"
-  )$
-  step(
-    "basis_fp",
-    "Components", 
-    description  = "This plot shows the individual components of the response function above.",
-    position = "top"
-  )$
-  step(
-    "exercises_fp",
-    "Exercises", 
-    description  = "Click start to begin an interactive exercise.",
-    position = "left"
-  )$
-  step(
-    "transformation_fp",
-    "Transformation", 
-    description  = "Here the preliminary transformation used is given.",
-    position = "left"
-  )$
-  step(
-    "goodness_fit_fp",
-    "Goodness of fit", 
-    description  = "See here for information about the goodness of your current fit.",
-    position = "left"
-  )$
-  step(
-    "formula_fp",
-    "Formula", 
-    description  = " ",
-    position = "left"
-  )
-
 

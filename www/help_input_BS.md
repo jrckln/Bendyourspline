@@ -1,4 +1,6 @@
-## Input Parameters - B-Splines
+---
+title: 'Input Parameters - B-Splines'
+---
 
 Specify inputs here
 

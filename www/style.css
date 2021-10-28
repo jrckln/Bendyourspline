@@ -330,7 +330,6 @@ body > .container-fluid {
 	padding-top: 100px;
 }
 
-
 .tab-pane[data-value='Methods'] h4{
 	font-family: "Roboto Condensed", sans-serif;
 	text-transform: uppercase;
@@ -448,3 +447,26 @@ canvas {
     margin: 10px;
     padding: 5px;
 }
+
+.headerinfo > .coefranges {
+    display: inline-block;
+    left:50%;
+    width:40%;
+}
+
+.headerinfo > h4 {
+    display: inline-block;
+    vertical-align: top;
+    left:0px;
+    width:50%;
+}
+
+.headerinfo > a {
+    float: right;
+}
+
+.headerinfo > .icon {
+    display: inline-block;
+    left:90%;
+    width:10%;}
+

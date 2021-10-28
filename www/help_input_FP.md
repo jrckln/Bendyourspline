@@ -1,17 +1,17 @@
-## Input Parameters - Fractional Polynomials
-
-Specify inputs here
+---
+title: "Input Parameters - Fractional Polynomials"
+---
 
 ### Power 
 
-Use the sliders to change the exponents of the fractional polynomials. For FP1 and FP2 a set with 8 values was proposed: $S=−2,−1,−0.5,\\log(x),0.5,1,2,3$
-For $p1=p2=p$ ('repeated powers') it is defined as $FP2=\\beta_1x^p+\\beta_2x^p⋅\\log(x)$.
+Use the sliders to change the exponents of the fractional polynomials. For FP1 and FP2 a set with 8 values was proposed: $S=−2,−1,−0.5,\log(x),0.5,1,2,3$
+For $p1=p2=p$ ('repeated powers') it is defined as $FP2=\beta_1x^p+\beta_2x^p⋅\log(x)$.
 This defines 8 FP1 and 36 FP2 models.
 See link: (https://mfp.imbi.uni-freiburg.de/fp)
 
 ### Coefficients 
 
-Use the sliders to change the coefficients $\\beta_1$ and $\\beta_2$ of the fractional polynomials. Set the first coefficient to zero to obtain FP1.
+Use the sliders to change the coefficients $\beta_1$ and $\beta_2$ of the fractional polynomials. Set the first coefficient to zero to obtain FP1.
 
 For a better control of the coefficients use the + and - buttons near the sliders. Additionally you can increase the coefficient range at the top of the panel. 
 

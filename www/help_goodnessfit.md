@@ -1,4 +1,6 @@
-## Goodness of fit 
+---
+title: 'Goodness of fit'
+---
 
 Here information about the goodness of your current fit (response) is printed.
 

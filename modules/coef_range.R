@@ -1,7 +1,7 @@
 # Module UI
 coef_rangeUI <- function(id) {
   ns <- NS(id)
-  tagList(
+  div(class = 'coefranges', 
       p("Coefficient range:"),
       actionButton(ns("decrease_range"), icon("minus")), 
       actionButton(ns("increase_range"), icon("plus")) 

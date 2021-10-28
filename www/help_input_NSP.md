@@ -1,4 +1,6 @@
-## Input Parameters - Natural Splines
+---
+title: 'Input Parameters - Natural Splines'
+---
 
 Specify inputs here
 
