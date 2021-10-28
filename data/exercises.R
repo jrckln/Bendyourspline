@@ -53,11 +53,11 @@ exercises <- list(
             'Create a &Cap; -shaped response function by playing with coefficient 1 to coefficient 3 only choosing values from {-1,-0.5,0, 0.5,1}.'
         ),
         'Advanced'= c(
-            'In this exercise, we will fit a simple regression where we try to describe expected height as a function of age using natural splines. Reset the inputs. Select the variable pair Height ~ Age. In advanced settings, set sample size to 100%, sex to "both", and display the height values by adding and clicking at "Response".', 
+            'In this exercise, we will fit a simple regression where we try to describe expected height as a function of age using natural splines. Reset the inputs. Select the variable pair Height ~ Age. In advanced settings, set sample size to 100%, sex to "both", and display the height values by enabling data points option.', 
             'We want to fit a natural spline with 5 segments (i.e. two internal knots and two boundery knots). Set the knot positions to 
              approximately 12 and 15, and the boundary knots to 4 and 18.', 
             'The horizontal black line on the bottom is our current response function. To move the response function to the average height, click "Adjust intercept automatically".', 
-            paste0('Increase the coefficient range to -40 and +40, and set ', colorize('coefficient 1', col[1]) , ',  ', colorize('coefficient 2', col[2]) , ' and ', colorize('coefficient 3', col[3]) , ' such that you receive a shape similar to the ', colorize('optimal fit', optfitcol) , '. Adjust the intercept manually to calibrate the response function. Can you find coefficients such that the adjusted  exceeds 0.65?'), 
+            paste0('Increase the coefficient range to -40 and +40, and set ', colorize('coefficient 1', col[1]) , ',  ', colorize('coefficient 2', col[2]) , ' and ', colorize('coefficient 3', col[3]) , ' such that you receive a shape similar to the ', colorize('optimal fit', optfitcol) , '. Adjust the intercept manually to calibrate the response function. Can you find coefficients such that the adjusted R<sup>2</sup> exceeds 0.65?'), 
             'Reduce the value of knot 1 from 12 to 10. Can you increase the adjusted R<sup>2</sup> by adjusting the coefficients?', 
             'Read off the current value of the intercept and memorize this number. Now click "Adjust intercept automatically". Did the number change or was your previous guess a good one?'
         )
