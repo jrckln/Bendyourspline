@@ -7,12 +7,12 @@ Requirements
 
 The app is implemented using the shiny framework in R. To install all required dependencies, you can use
 
+``` 
 library(pacman)
 p_load(c('shiny', 'plotly', 'shinyBS', 'shinyWidgets', 'shinyjs', 'splines',
     'mfp', 'stringr', 'reshape2', 'tidyverse', 'shinyhelper', 'shinycssloaders',
     'shinyjqui', 'cicerone', 'ggplot2', 'magrittr'))
+``` 
 
-The master version is also deployed online under: https://clinicalbiometrics.shinyapps.io/Bendyourspline/
-
-# Links
+## Links
 https://clinicalbiometrics.shinyapps.io/Bendyourspline/
