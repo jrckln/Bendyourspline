@@ -130,11 +130,17 @@ function(input, output, session){
 
     
     output$formula.fp <- renderUI({
+        data <- getdata()
+        x <- data$x
+        pT <- fp.scale(x)
+        x <- paste0(
+            "\\frac{ \\text{", data$names_vars[1] , "} + ", pT$shift, "}{", pT$scale ,"}"
+        )
+      
         pow1 <- as.numeric(input$power1.fp)
-        
-        trans1 <- paste0("x^{", pow1, "}")
-        if(pow1 == 0) trans1 <- "\\log(x)"
-        if(pow1 == 1) trans1 <- "x"
+        trans1 <- paste0('\\left(',x,"\\right) ^{", pow1, "}")
+        if(pow1 == 0) trans1 <- paste0("\\log \\left(",x,"\\right)")
+        if(pow1 == 1) trans1 <- x
         coef1 <- as.numeric(coef1.fp())
         if(coef1 >= 0) {
           coef1 <- paste0(" + ", coef1)
@@ -145,10 +151,11 @@ function(input, output, session){
         fp_fun <- paste(round(as.numeric(input$intercept.fp),2), coef1, "\\cdot", trans1)
         
         pow2 <- as.numeric(input$power2.fp)
-        trans2 <- paste0("x^{", pow2, "}")
-        if(pow2 == 0) trans2 <- "\\log(x)"
-        if(pow2 == 1) trans2 <- "x"
-        if(pow1 == pow2) trans2 <- paste(trans2, "\\cdot \\log(x)")
+        trans2 <-paste0('\\left(',x,"\\right) ^{", pow2, "}")
+
+        if(pow2 == 0) trans2 <- paste0("\\log \\left(",x,"\\right)")
+        if(pow2 == 1) trans2 <- x
+        if(pow1 == pow2) trans2 <- paste0(trans2, "\\cdot \\log \\left(",x,"\\right)")
         coef2 <- as.numeric(coef2.fp())
         if(coef2 >= 0) {
           coef2 <- paste0(" + ", coef2)
@@ -162,23 +169,14 @@ function(input, output, session){
         ))
     })
     
-    output$transformation.fp <- renderUI({
-        data <- getdata()
-        x <- data$x
-        pT <- fp.scale(x)
-        withMathJax(paste0(
-            "$$ x =  \\frac{ \\text{", data$names_vars[1] , "} + ", pT$shift, "}{", pT$scale ,"}$$"
-        ))
-    })
-    
     observeEvent(input$adjust_intercept.fp, {
         req(input$intercept.fp)
-        data <- FPdata()
+        data <- getbasis.fp()
         intercept <- opt.intercept(fitted=data$fp, data=data$y, interval=c(0, max(data$y)))$minimum
         updateSliderInput(session, 'intercept.fp', value = intercept)
     })
     
-    FPdata <- reactive({
+    getbasis.fp <- reactive({
         data <- getdata()
         
         x <- data$x
@@ -213,11 +211,17 @@ function(input, output, session){
         DF
     })
     
+    getoptfit.fp <- reactive({
+      DF <- getbasis.fp()
+      optfit <- mfp(y~fp(transformed, df = 4, scale = FALSE), data = DF)
+      optfit
+    })
+    
     output$plot.fp <- renderPlotly({
         req(input$intercept.fp)
         intercept <- as.numeric(input$intercept.fp)
         
-        DF <- FPdata()
+        DF <- getbasis.fp()
         p <- basic_plot()
         
         if(input$add_loess_fp){
@@ -225,9 +229,9 @@ function(input, output, session){
                                                   method = "loess", formula = "y~x", se=FALSE, size=1))
         }
         if(input$add_optfit_fp){
-          optcoef <- getoptfit.fp()
-          p <- p + suppressWarnings(geom_line(data = DF, aes(x=x, y = optcoef[1]+ optcoef[2]*fp1 + optcoef[3]*fp2, 
-                                 text="Optimal fit based on current settings", color = "Optimal fit"), size = 1))
+          optfit <- getoptfit.fp()
+          p <- p + suppressWarnings(geom_line(data = DF, aes(x=x, y = optfit$fitted, 
+                                 text="Optimal fit based on mfp()", color = "Optimal fit"), size = 1))
         }
         p <- p +geom_line(data = DF, aes(x=x, y = intercept+fp, color = "Response")) +
           scale_color_manual(values=c("LOESS smoother" = loesscol, "Optimal fit" = optfitcol, "Response" = 'black'), name = " ") 
@@ -235,7 +239,7 @@ function(input, output, session){
     })
     
     output$basis_plot.fp <- renderPlotly({
-        DF <- FPdata()
+        DF <- getbasis.fp()
         p <- ggplot(data=DF) + 
             geom_line(aes(x=x, y=fp1), color = col[1], size = 1) +
             geom_line(aes(x=x, y=fp2), color = col[2], size = 1)+ 
@@ -244,20 +248,25 @@ function(input, output, session){
     })
     
     calcR2.fp <- reactive({
-        DF <- FPdata()
+        DF <- getbasis.fp()
+        optfit <- getoptfit.fp()
+        optcoefs <- optfit$coefficients
+        
+        #current response: 
         fp <- as.numeric(input$intercept.fp)+DF$fp
-        fit <- mfp(y~fp(transformed, df=4, scale=F), data = DF)
-        rss <- sum((DF[,"y"]- fit$fitted)^2)
+        #optimized function:
+        fitted <- optfit$fitted
+        #residual sum of squares:
+        rss <- sum((DF[,"y"]- fitted)^2)
+        ssres <- sum((DF$y-fp)^2)
+        #total sum of squares:
         sstot <- sum((DF$y-mean(DF$y))^2)
-        fittedR2 <- 1-rss/sstot
-        ssres <- sum((DF$y-fp)^2)  #residual sum of squares
+        #max. adjusted R2: 
+        maxR2 <- 1-rss/sstot
+        #R2 of current fit: 
         R2 <- 1-ssres/sstot
-        maxR2 <-fittedR2
         
-        prederr <- sd(DF$y-fp)
-        
-        p <- ifelse(coef1.fp() == 0& coef2.fp() == 0, 0, ifelse(any(coef1.fp() == 0, coef2.fp() == 0),1,2))
-        c(R2, 1-(1-R2)*(nrow(DF)-1)/(nrow(DF)-1-4), 1-(1-maxR2)*(nrow(DF)-1)/(nrow(DF)-1-4), prederr)
+        c(1-(1-R2)*(nrow(DF)-1)/(nrow(DF)-1-4), 1-(1-maxR2)*(nrow(DF)-1)/(nrow(DF)-1-4))
     })
     
     observe({
@@ -265,21 +274,22 @@ function(input, output, session){
       stats("stats_fp", vals)
     }, priority = -100)
     
-    getoptfit.fp <- reactive({
-      DF <- FPdata()
-      optfit <- lm(y ~ fp1+fp2, data=DF)
-      optfit$coefficients
-    })
-    
     #set opt fit: 
     observeEvent(input$set_optfit_fp, {
-      optfit <- as.numeric(round(getoptfit.fp(), 2))
+      DF <- getbasis.fp()
+      optfit <-  getoptfit.fp()
+      powers <- as.numeric(optfit$powers[1,])
+      optfit <- as.numeric(round(optfit$coefficients, 2))
       intercept <- round(optfit[1], 1)
       optfit <- optfit[2:length(optfit)]
-      #update intercept: 
+
       absmax <- max(abs(optfit))
       coef_range_new <- ceiling(absmax/10)*10
       updateSliderInput(session, 'intercept.fp', value = intercept) 
+      
+      updateSliderTextInput(session, "power1.fp", selected = powers[1])
+      updateSliderTextInput(session, "power2.fp", selected = powers[2])
+      
       updateSliderInput(session, "val_coef1_fp-coef", min = (-1)*coef_range_new, max = coef_range_new, 
                         value = optfit[1])
       updateSliderInput(session, "val_coef2_fp-coef", min = (-1)*coef_range_new, max = coef_range_new, 
@@ -288,7 +298,7 @@ function(input, output, session){
     
     #reset button
     observeEvent(c(input$reset_input_fp, input$variable), {
-       reset("inputs_fp") #id of tab to reset
+       reset("inputs_fp") 
     })
     
     observe({
@@ -1018,7 +1028,7 @@ function(input, output, session){
     #for fractional polynomials: 
     observe({
       req(input$start_exercise_fp>0)
-      DF <- FPdata()
+      DF <- getbasis.fp()
       fp <- as.numeric(input$intercept.fp)+DF$fp
       titles <- input$exercise_fp
       newval <- switch(titles, 

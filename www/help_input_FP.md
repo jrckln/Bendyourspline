@@ -30,11 +30,11 @@ The LOESS Smoother creates a non-linear smooth curve through the data points wit
 
 ### Optimal fit 
 
-This option plots the optimal fit in the 'Response function' panel. For the optimal fit, the coefficients (and the intercept) are optimised given the currently defined powers of the fractional polynomials. 
+This option plots the optimal fit in the 'Response function' panel. The optimal fit is obtained from ```mfp::mfp()```.
 
 ### Set optimal fit
 
-This button sets the response function to the optimal fit. It updates the coefficient sliders and the intercept slider to the optimised values given the currently defined powers of the fractional polynomials.
+This button sets the response function to the optimal fit. It updates the power sliders, coefficient sliders and the intercept slider to the optimised values obtained from ```mfp::mfp()```.
 
 ### Reset inputs 
 
