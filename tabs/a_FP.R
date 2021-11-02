@@ -165,7 +165,7 @@ fp <- tabPanel(
                         h4("Response function"),
                         tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_response_function")
                       ),
-                      withSpinner(plotlyOutput("plot.fp"), color = spinnercol, size = 1)
+                      withSpinner(plotOutput("plot.fp"), color = spinnercol, size = 1)
                     ),
                     wellPanel(
                       id = 'basis_fp',
@@ -175,7 +175,7 @@ fp <- tabPanel(
                         tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_basis_FP")
                       ),
                       withSpinner(
-                        plotlyOutput("basis_plot.fp", height = "200px"),
+                        plotOutput("basis_plot.fp", height = "200px"),
                         color = spinnercol,
                         size = 1
                       )

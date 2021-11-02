@@ -151,7 +151,7 @@ naturalsplines <- tabPanel(
                                   h4("Response function"),
                                   tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_response_function")
                                 ),
-                                withSpinner(plotlyOutput("plot.nsp"), color = spinnercol, size = 1)
+                                withSpinner(plotOutput("plot.nsp"), color = spinnercol, size = 1)
                               ),
                               wellPanel(
                                 div(
@@ -160,7 +160,7 @@ naturalsplines <- tabPanel(
                                   tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_basis_BS_NSP")
                                 ),
                                 withSpinner(
-                                  plotlyOutput("basis_plot.nsp", height = "200px"),
+                                  plotOutput("basis_plot.nsp", height = "200px"),
                                   color = spinnercol,
                                   size = 1
                                 )

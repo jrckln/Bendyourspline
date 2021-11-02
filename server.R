@@ -217,7 +217,7 @@ function(input, output, session){
       optfit
     })
     
-    output$plot.fp <- renderPlotly({
+    output$plot.fp <- renderPlot({
         req(input$intercept.fp)
         intercept <- as.numeric(input$intercept.fp)
         
@@ -226,25 +226,27 @@ function(input, output, session){
         
         if(input$add_loess_fp){
             p <- p + suppressWarnings(geom_smooth(data = DF, aes(x=x, y=y, text = "LOESS smoother", color = "LOESS smoother"), 
-                                                  method = "loess", formula = "y~x", se=FALSE, size=1))
+                                                  method = "loess", formula = "y~x", se=FALSE, size=1.5))
         }
         if(input$add_optfit_fp){
           optfit <- getoptfit.fp()
           p <- p + suppressWarnings(geom_line(data = DF, aes(x=x, y = optfit$fitted, 
-                                 text="Optimal fit based on mfp()", color = "Optimal fit"), size = 1))
+                                 text="Optimal fit based on mfp()", color = "Optimal fit"), size = 1.5))
         }
-        p <- p +geom_line(data = DF, aes(x=x, y = intercept+fp, color = "Response")) +
+        p <- p +geom_line(data = DF, aes(x=x, y = intercept+fp, color = "Response"), size = 1) +
           scale_color_manual(values=c("LOESS smoother" = loesscol, "Optimal fit" = optfitcol, "Response" = 'black'), name = " ") 
-        ggplotly(p, tooltip="text") %>% layout(legend = list(orientation = 'h'))
+        #ggplotly(p, tooltip="text") %>% layout(legend = list(orientation = 'h'))
+        p + theme(legend.position = "bottom", text = element_text(size = 15))
     })
     
-    output$basis_plot.fp <- renderPlotly({
+    output$basis_plot.fp <- renderPlot({
         DF <- getbasis.fp()
         p <- ggplot(data=DF) + 
-            geom_line(aes(x=x, y=fp1), color = col[1], size = 1) +
-            geom_line(aes(x=x, y=fp2), color = col[2], size = 1)+ 
+            geom_line(aes(x=x, y=fp1), color = col[1], size = 1.5) +
+            geom_line(aes(x=x, y=fp2), color = col[2], size = 1.5)+ 
             theme_minimal()+ ylab("") + xlab(ifelse(input$add_y_fp, attr(DF, "names_vars")[1], 'x'))
-        ggplotly(p)
+        #ggplotly(p)
+        p + theme(text = element_text(size = 15))
     })
     
     calcR2.fp <- reactive({
@@ -525,7 +527,7 @@ function(input, output, session){
       optfit$coefficients
     })
     
-    output$plot.bs <- renderPlotly({
+    output$plot.bs <- renderPlot({
         req(input$nknots.bs, input$intercept.bs)
         data <- getbasis.bs()
         b <- data$b
@@ -540,7 +542,7 @@ function(input, output, session){
         
         if(input$add_loess_bs){
             p <- p + suppressWarnings(geom_smooth(data = data, aes(x=x, y=y, text = "LOESS smoother", color = "LOESS smoother"),
-                                                  method = "loess", formula = "y~x", se=FALSE, size=1))
+                                                  method = "loess", formula = "y~x", se=FALSE, size=1.5))
         }
         if(input$add_knots_pos.bs){
           knots <- attr(b, "knots")
@@ -558,12 +560,13 @@ function(input, output, session){
           optline <- as.numeric(cbind(1,b) %*% optcoef)
            p <- p + suppressWarnings(geom_line(data = data, 
                                                aes(x=x, y = optline, text = "Optimal fit based on current knot positions", color = "Optimal fit"), 
-                                               size=1))
+                                               size=1.5))
         }
 
-        p <- p +geom_line(data = data, aes(x=x, y = spline, color = "Response")) +
+        p <- p +geom_line(data = data, aes(x=x, y = spline, color = "Response"), size = 1) +
           scale_color_manual(values=c("LOESS smoother" = loesscol, "Optimal fit" = optfitcol, "Response" = 'black'), name = " ")
-        ggplotly(p, tooltip = "text") %>% layout(legend = list(orientation = 'h'))
+        #ggplotly(p, tooltip = "text") %>% layout(legend = list(orientation = 'h'))
+        p + theme(legend.position = "bottom", text = element_text(size = 15))
     })
     
     observe({
@@ -571,7 +574,7 @@ function(input, output, session){
       stats("stats_bs", vals)
     }, priority = -100)
 
-    output$basis_plot.bs<- renderPlotly({
+    output$basis_plot.bs<- renderPlot({
         req(input$nknots.bs)
         data <- getbasis.bs()
         names_vars <- data$names_vars
@@ -586,13 +589,14 @@ function(input, output, session){
         knot.df <- melt(data.frame(x=all.knots, knot.values), id.vars="x", variable.name="Spline", value.name="y")
         interp.df <- melt(data.frame(x=newx, interp.values),id.vars="x", variable.name="Spline", value.name="y")
         p <- ggplot(interp.df, aes(x=x, y=y, color=Spline)) +
-            geom_line(size=1) +
+            geom_line(size=1.5) +
             scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") +
             xlab(ifelse(input$add_y_bs, names_vars[1], 'x'))+ ylab("")
         if(input$add_knots_pos.nsp){
           p <- p + geom_vline(xintercept=all.knots, color = "#D3D3D3")
         }
-        ggplotly(p)
+        #ggplotly(p)
+        p + theme(text = element_text(size = 15))
     })
 
     calcR2.bs <- reactive({
@@ -886,7 +890,7 @@ function(input, output, session){
       optfit$coefficients
     })
 
-    output$plot.nsp <- renderPlotly({
+    output$plot.nsp <- renderPlot({
         req(input$nknots.nsp, input$boundary1.nsp, input$boundary2.nsp)
         data <- getbasis.nsp()
         boundaries <-c(input$boundary1.nsp, input$boundary2.nsp)
@@ -903,7 +907,7 @@ function(input, output, session){
 
         if(input$add_loess_nsp){
             p <- p + suppressWarnings(geom_smooth(data = data, aes(x=x, y=y, text="LOESS smoother", color = "LOESS smoother"), 
-                                                  method = "loess", formula = "y~x", se=FALSE, size=1))
+                                                  method = "loess", formula = "y~x", se=FALSE, size=1.5))
         }
         if(input$add_knots_pos.nsp){
             knots <- attr(b, "knots")
@@ -922,15 +926,16 @@ function(input, output, session){
           optline <- as.numeric(cbind(1,b) %*% optcoef)
            p <- p + suppressWarnings(geom_line(data = data, 
                                                aes(x=x, y = optline, color = "Optimal fit", text = "Optimal fit based on current knot position"), 
-                                               size=1))
+                                               size=1.5))
         }
 
-        p <- p +geom_line(aes(x=x, y = spline, color="Response"))+
+        p <- p +geom_line(aes(x=x, y = spline, color="Response"), size = 1)+
           scale_color_manual(values=c("LOESS smoother" = loesscol, "Optimal fit" = optfitcol, "Response" = 'black'), name = " ")
-        ggplotly(p, tooltip = "text") %>% layout(legend = list(orientation = 'h'))
+        #ggplotly(p, tooltip = "text") %>% layout(legend = list(orientation = 'h'))
+        p + theme(legend.position = "bottom", text = element_text(size = 15))
     })
 
-    output$basis_plot.nsp<- renderPlotly({
+    output$basis_plot.nsp<- renderPlot({
         req(input$nknots.nsp, input$boundary1.nsp, input$boundary2.nsp)
         data <- getbasis.nsp()
         bounds <- c(min(data$x), max(data$x))
@@ -957,7 +962,8 @@ function(input, output, session){
             p <- p + geom_vline(xintercept=boundaries[1], color = "#D3D3D3")+
               geom_vline(xintercept=boundaries[2], color = "#D3D3D3")
         }
-        ggplotly(p)
+        #ggplotly(p)
+        p + theme(text = element_text(size = 15))
     })
 
     calcR2.nsp <- reactive({

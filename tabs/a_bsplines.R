@@ -155,7 +155,7 @@ bsplines <- tabPanel(
                                             h4("Response function"),
                                             tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_response_function")
                                         ),
-                                        withSpinner(plotlyOutput("plot.bs"), color = spinnercol, size = 1)
+                                        withSpinner(plotOutput("plot.bs"), color = spinnercol, size = 1)
                                     ),
                                     wellPanel(
                                         div(
@@ -164,7 +164,7 @@ bsplines <- tabPanel(
                                             tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_basis_BS_NSP")
                                         ),
                                         withSpinner(
-                                            plotlyOutput("basis_plot.bs", height = "200px"),
+                                            plotOutput("basis_plot.bs", height = "200px"),
                                             color = spinnercol,
                                             size = 1
                                         )
