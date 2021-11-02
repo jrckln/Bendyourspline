@@ -197,15 +197,6 @@ fp <- tabPanel(
                       uiOutput("next_exercise_fp")
                     ),
                     wellPanel(
-                      id = 'transformation_fp',
-                      div(
-                        class = 'headerinfo',
-                        h4("Transformation: "), 
-                        tags$a(icon('info-circle'), href = '#') %>% bs_attach_modal(id_modal = "modal_help_transformation_FP")
-                      ),
-                      uiOutput("transformation.fp")
-                    ),
-                    wellPanel(
                       id = 'goodness_fit_fp', 
                       div(
                         class = 'headerinfo', 
