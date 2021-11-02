@@ -318,7 +318,7 @@ footer > .container {
 }
 
 .btn {
-	border-style: none;
+	border-style: solid;
 }
 
 body > .container-fluid {
