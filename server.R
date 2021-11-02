@@ -603,18 +603,20 @@ function(input, output, session){
         coefs <- getcoef.bs()
         degree <- input$degree.bs
         spline <- rowSums(b %*% coefs)+as.numeric(input$intercept.bs)
-        model <- lm(as.formula(paste0("y ~ bs(x, df=", degree+length(coefs),")")), data=data)
-        fitted <- model$fitted
-        p <- model$rank
+        
+        optfit <- getoptfit.bs()
+        fitted <- rowSums(b %*% optfit[2:length(optfit)])+optfit[1]
+        
         sstot <- sum((data$y-mean(data$y))^2) #total sum of squares
         ssres <- sum((data$y-spline)^2)  #residual sum of squares
         ssres_fitted <- sum((data$y-fitted)^2)  #residual sum of squares fitted
         R2 <- 1-ssres/sstot
         maxR2 <- 1-ssres_fitted/sstot
         
-        prederr <- sd(data$y-spline)
         
-        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), 1-(1-maxR2)*(nrow(data)-1)/(nrow(data)-1-p), prederr)
+        p <- ncol(b)
+        
+        c(1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), 1-(1-maxR2)*(nrow(data)-1)/(nrow(data)-1-p))
         })
     
     #set opt fit: 
@@ -965,26 +967,19 @@ function(input, output, session){
         coefs <- getcoef.nsp()
         spline <- rowSums(b %*% coefs)+ as.numeric(input$intercept.nsp)
         data <- data.frame("x"=data$x, "y"=data$y)
+
+        optfit <- getoptfit.nsp()
+        fitted <- rowSums(b %*% optfit[2:length(optfit)])+optfit[1]
         
-        # #Problem occurs when changing variables: data is changed before boundaries are updated -> higher boundaries than data on the right and vice versa
-        # boundaries <- sort(c(max(min(data$x), input$boundary1.nsp), min(max(data$x), input$boundary2.nsp)))
-        # cat(file = stderr(), "boundaries: ", boundaries, "\n")
-        # cat(file = stderr(), "mn and max: ", min(data$x), max(data$x), "\n")
-        
-        #TODO: make dependent of boundary knots
-        model <- lm(as.formula(paste0("y ~ ns(x, df=", ncol(b),")")), data=data) #",Boundary.knots=c(", boundaries[1], ",", boundaries[2] ,
-        
-        fitted <- model$fitted
-        p <- model$rank
         sstot <- sum((data$y-mean(data$y))^2) #total sum of squares
         ssres <- sum((data$y-spline)^2)  #residual sum of squares
         ssres_fitted <- sum((data$y-fitted)^2)  #residual sum of squares fitted
         R2 <- 1-ssres/sstot
         maxR2 <- 1-ssres_fitted/sstot
         
-        prederr <- sd(data$y-spline)
+        p <- ncol(b)
         
-        c(R2, 1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), 1-(1-maxR2)*(nrow(data)-1)/(nrow(data)-1-p), prederr)
+        c(1-(1-R2)*(nrow(data)-1)/(nrow(data)-1-p), 1-(1-maxR2)*(nrow(data)-1)/(nrow(data)-1-p))
     })
     
     #set opt fit: 
