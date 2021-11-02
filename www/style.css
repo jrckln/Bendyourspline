@@ -475,6 +475,11 @@ canvas {
   padding: 100px;
 }
 
+#link_methods {
+    color: gray;
+    font: 400 28px/1.8 "Segoe UI", sans-serif;
+}
+
 
 
 
