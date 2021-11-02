@@ -14,12 +14,7 @@ knitr::knit('www/explanatory_comments.rmd', quiet = TRUE, output = 'www/explanat
     div.gray { color:darkgray; }
 </style>
 
-```{r packages, echo = FALSE, warning = FALSE, message = FALSE}
-library(mfp)
-library(ggplot2)
-library(splines)
-library(ggpubr)
-```
+
 
 
 # Visualisation of non-linear modelling
@@ -50,20 +45,14 @@ Put mathematically, $\partial E(Y) / \partial x = \partial (\beta_0 + \beta_1 x)
 
 In medical applications, the linearity assumption is frequently violated. To illustrate this possibility, let us consider a data set with age and body-mass-index (BMI) of 9377 NHANES participants. Below, is a plot of BMI values against age with the mean BMI values computed at each age (blue line). Additionally, the model assuming a linear association is added in red.
 
-```{r age_bmi_1_plot, echo = FALSE, warning =  FALSE}
-explanation_data <- readRDS(file = "../data/explanation_data.rds")
-
-ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method="lm", formula=y ~ cut(x, breaks=seq(19.9, 80.1))) + geom_smooth(method="lm", formula=y ~ x, colour = "red")
-```
+![plot of chunk age_bmi_1_plot](figure/age_bmi_1_plot-1.png)
 <br><br>
 
 The association between BMI and age is obviously not linear. The question is are differences in BMI between adjacent age groups due to a trend in the population or just due to random variation. 
 
 A popular nonparametric method to ‘smooth’ the blue curve by ‘local regression’ is the method of ‘locally estimated scatterplot smoothing’ (LOESS) (green line). In our case, it gives:
 
-```{r age_bmi_2_plot, echo = FALSE, warning =  FALSE}
-ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks=seq(19.9, 80.1))) + geom_smooth(method = "lm", formula = y ~ x, colour = "red") + geom_smooth(method = "loess", formula = y ~ x, colour = "green") 
-```
+![plot of chunk age_bmi_2_plot](figure/age_bmi_2_plot-1.png)
 <br><br>
 
 In estimating the LOESS line, R automates some of the decisions, e.g., how complex the underlying model should be and how 'wiggly' the resulting curve may be. These decisions are not transparent and therefore, the use of LOESS is more or less restricted to graphical, explorative analyses where trends should be discovered. 
@@ -121,16 +110,37 @@ This procedure preserves the overall (i.e. familywise) type I error probability 
 
 The approach is implemented in the R package `mfp`, in which it can be combined with variable selection and used with continuous, binary or time-to-event outcome variables. Using this R package to model the association of BMI on age in our example gives the following fit:
 
-```{r mfp_results, echo = FALSE, warning = FALSE}
-fpfit <- mfp(bmi ~ fp(age), family = "gaussian", data = explanation_data)
-summary(fpfit)
+
+```
+## 
+## Call:
+## glm(formula = bmi ~ log((age/100)) + I((age/100)^3), family = "gaussian", 
+##     data = explanation_data)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -14.981   -3.939   -0.693    3.107   47.821  
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)     34.2969     0.3911   87.69   <2e-16 ***
+## log((age/100))   5.3436     0.3296   16.21   <2e-16 ***
+## I((age/100)^3) -10.9008     0.8387  -13.00   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for gaussian family taken to be 32.72564)
+## 
+##     Null deviance: 315682  on 9376  degrees of freedom
+## Residual deviance: 306770  on 9374  degrees of freedom
+## AIC: 59324
+## 
+## Number of Fisher Scoring iterations: 2
 ```
 
 The pretransformation of age includes a division by 100. The powers 0 and 3 are selected leading to the FP2 functions $log((age/100)) + (age/100)^3$. The fitted model looks like this:
 
-```{r mfp_fit, echo = FALSE, warning =  FALSE}
-ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.5, 80.5))) + geom_smooth(method = "lm", formula = y ~ log(x/100) + I((x/100)^3), colour = "orange")
-```
+![plot of chunk mfp_fit](figure/mfp_fit-1.png)
 
 For more information on fractional polynomials we refer to the [multivariable fractional polynomials website](<http://mfp.imbi.uni-freiburg.de/fp>).
 
@@ -152,25 +162,10 @@ A B-spline of order $n$ is a piecewise polynomial function of degree $n-1$ in a 
 
 For example, linear B-splines with three base functions (i.e., `degree=1` and `df=3`) as functions of age look like this 
 
-```{r illu_bsplines_linear, echo = FALSE, warning =  FALSE}
-a <- sort(explanation_data$age)
-df <- 3
-bspl <- bs(a, degree = 1, df = df)
-
-plot(a, bspl[, 1], type = "l", xlab = "age", ylab = "Base functions", ylim = c(0, 1.1 + df/9))
-for(i in 2:df) lines(a, bspl[, i], lty = i)
-legend("topleft", lty = 1:df, legend = paste("Base function", 1:df), inset = 0.02, bty = "n")
-title(main="B-splines of degree 1")
-```
+![plot of chunk illu_bsplines_linear](figure/illu_bsplines_linear-1.png)
 
 In contrast cubic B-splines with three base functions (i.e., `degree=3` and `df=3`) as functions of age look like this:
-```{r illu_bsplines_cubic, echo = FALSE, warning =  FALSE}
-bspc <- bs(a, degree = 3, df = df)
-plot(a, bspc[, 1], type = "l", xlab = "age", ylab = "Base functions", ylim = c(0, 1.1 + df/9))
-for(i in 2:df) lines(a, bspc[, i], lty = i)
-legend("topleft", lty = 1:df, legend = paste("Base function", 1:df), inset = 0.02, bty = "n")
-title(main="B-splines of degree 3")
-```
+![plot of chunk illu_bsplines_cubic](figure/illu_bsplines_cubic-1.png)
 
 The individual spline bases have no simple interpretation and can only be used together as a set of independent variables representing variable $x$ (here age) in a regression model. In our example, by representing age in several transformations, we can estimate a nonlinear association of BMI with age.
 
@@ -178,39 +173,19 @@ Note, different choices of the number of degrees of freedom and the degree will 
 
 Let's see splines in action. We refit the model with BMI and age, now using B-splines to model age. Applying linear B-splines with three base functions (`degree=1` and `df=3`) creates the following fit:
 
-```{r bplines_fit1, echo = FALSE, warning =  FALSE}
-# Linear B-splines with df = 3
-ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method="lm", formula=y ~ cut(x, breaks = seq(19.9, 80.1))) + geom_smooth(method="lm", formula = y ~ bs(x, degree = 1, df = 3), colour = "red") 
-```
+![plot of chunk bplines_fit1](figure/bplines_fit1-1.png)
 
 A smoother function can be obtained by using cubic B-splines with three base functions (`degree=3` and `df=3`):
 
-```{r bplines_fit2, echo = FALSE, warning =  FALSE}
-# Cubic B-splines with df = 3
-ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.9, 80.1))) + geom_smooth(method = "lm", formula = y ~ bs(x, degree = 3, df = 3), colour = "red") 
-```
+![plot of chunk bplines_fit2](figure/bplines_fit2-1.png)
 
 Increasing the number of degrees of freedom leads to a more 'wiggly" fit. The plots below show linear B-splines with 5, 10, 15, and 20 base functions:
 
-```{r bplines_fit3, echo = FALSE, warning =  FALSE}
-pbspl1 <- ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.9, 80.1))) + geom_smooth(method = "lm", formula = y ~ bs(x, degree = 1, df = 5), colour = "red") + annotate(geom = "text", x = 65.5, y = 25.6, label = "df = 5")
-pbspl2 <- ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.9, 80.1))) + geom_smooth(method = "lm", formula = y ~ bs(x, degree = 1, df = 10), colour = "red") + annotate(geom = "text", x = 65.5, y = 25.6, label = "df = 10")
-pbspl3 <- ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.9, 80.1))) + geom_smooth(method = "lm", formula = y ~ bs(x, degree = 1, df = 15), colour = "red") + annotate(geom = "text", x = 65.5, y = 25.6, label = "df = 15")
-pbspl4 <- ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.9, 80.1))) + geom_smooth(method = "lm", formula = y ~ bs(x, degree = 1, df = 20), colour = "red") + annotate(geom = "text", x = 65.5, y = 25.6, label = "df = 20")
-
-ggarrange(pbspl1, pbspl2, pbspl3, pbspl4, ncol = 2, nrow = 2)
-```
+![plot of chunk bplines_fit3](figure/bplines_fit3-1.png)
 
 The plots below show cubic B-splines with 5, 10, 15, and 20 base functions:
 
-```{r bplines_fit4, echo = FALSE, warning =  FALSE}
-pbspc1 <- ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.9, 80.1))) + geom_smooth(method = "lm", formula = y ~ bs(x, degree = 3, df = 5), colour = "red") + annotate(geom = "text", x = 65.5, y = 25.6, label = "df = 5")
-pbspc2 <- ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.9, 80.1))) + geom_smooth(method = "lm", formula = y ~ bs(x, degree = 3, df = 10), colour = "red") + annotate(geom = "text", x = 65.5, y = 25.6, label = "df = 10")
-pbspc3 <- ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.9, 80.1))) + geom_smooth(method = "lm", formula = y ~ bs(x, degree = 3, df = 15), colour = "red") + annotate(geom = "text", x = 65.5, y = 25.6, label = "df = 15")
-pbspc4 <- ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.9, 80.1))) + geom_smooth(method = "lm", formula = y ~ bs(x, degree = 3, df = 20), colour = "red") + annotate(geom = "text", x = 65.5, y = 25.6, label = "df = 20")
-
-ggarrange(pbspc1, pbspc2, pbspc3, pbspc4, ncol = 2, nrow = 2)
-```
+![plot of chunk bplines_fit4](figure/bplines_fit4-1.png)
 <br><br>
 
 ##### 2.2.2. Restricted (natural) cubic splines
@@ -224,25 +199,15 @@ Restricted cubic splines (also known as natural splines) are cubic transformatio
 5 | 0.05  0.275  0.5  0.725  0.95 |
 
 With three degrees of freedom (= three transformations) their basis functions would look as follows:
-```{r illu_rcs, echo = FALSE, warning =  FALSE}
-nspl <- ns(a, df = df)
-plot(a, nspl[, 1], type = "l", xlab = "age", ylab = "Base functions", ylim = c(-0.5, 0.9 + df/9))
-for(i in 2:df) lines(a, nspl[, i], lty = i)
-legend("topleft", lty = 1:df, legend = paste("Base function", 1:df), inset = 0.02, bty = "n")
-title(main = "Natural (restricted cubic) splines")
-```
+![plot of chunk illu_rcs](figure/illu_rcs-1.png)
 
 Applying natural splines to model BMI on age results in a fit, which is 'more linear' in the tails.
 
-```{r rcs_fit1, echo = FALSE, warning =  FALSE}
-ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.5, 80.5))) + geom_smooth(method = "lm", formula = y ~ ns(x,  df = 3), colour = "green") 
-```
+![plot of chunk rcs_fit1](figure/rcs_fit1-1.png)
 
 For comparison, natural splines with 5 transformations.
 
-```{r rcs_fit2, echo = FALSE, warning =  FALSE}
-ggplot(explanation_data, aes(age, bmi)) + geom_smooth(method = "lm", formula = y ~ cut(x, breaks = seq(19.5, 80.5))) + geom_smooth(method = "lm", formula = y ~ ns(x,  df = 5), colour = "green")
-```
+![plot of chunk rcs_fit2](figure/rcs_fit2-1.png)
 
 B-splines and restricted (natural) cubic splines are implemented in the R package `splines`.
 

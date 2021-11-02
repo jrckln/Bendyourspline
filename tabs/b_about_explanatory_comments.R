@@ -4,5 +4,5 @@ about <- tabPanel("About", value="about", id='about',
 
 explanatory_comments <- tabPanel("Explanatory comments", value="explanatory_comments", id='explanatory_comments',
                                  br(), br(),
-            includeHTML("www/explanatory_comments.html")
+            includeMarkdown("www/explanatory_comments.md")
 )

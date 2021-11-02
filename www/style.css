@@ -470,3 +470,11 @@ canvas {
     left:90%;
     width:10%;
 }
+
+[data-value="explanatory_comments"] {
+  padding: 100px;
+}
+
+
+
+
