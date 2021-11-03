@@ -76,14 +76,6 @@ modal_help_response_function <-
     size = "medium"
   )
 
-modal_help_transformation_FP <- 
-  bs_modal(
-    id = "modal_help_transformation_FP",
-    title = "Transformation",
-    body = includeMarkdown("www/help_transformation_FP.md"),
-    size = "medium"
-  )
-
 modal_help_goodnessfit <- 
   bs_modal(
     id = "modal_help_goodnessfit",

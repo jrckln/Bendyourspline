@@ -3,7 +3,6 @@ fp <- tabPanel(
   br(),
   modal_help_input_FP,
   modal_help_basis_FP,
-  modal_help_transformation_FP, 
   modal_help_formula_FP, 
   tags$head(tags$style(HTML(
     paste(

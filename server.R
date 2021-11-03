@@ -950,7 +950,7 @@ function(input, output, session){
         knot.df <- melt(data.frame(x=all.knots, knot.values), id.vars="x", variable.name="Spline", value.name="y")
         interp.df <- melt(data.frame(x=newx, interp.values),id.vars="x", variable.name="Spline", value.name="y")
         p <- ggplot(interp.df, aes(x=x, y=y, color=Spline)) +
-            geom_line(size=1) +
+            geom_line(size=1.5) +
             scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") + 
             xlab(ifelse(input$add_y_nsp, data$names_vars[1], 'x'))+
             ylab("")

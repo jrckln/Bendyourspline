@@ -13,5 +13,5 @@ The adjusted R<sup>2</sup> is the proportion of variation in the dependent varia
 This number gives the maximal adjusted R<sup>2</sup> that can be reached with the chosen variable pair and 
 
 * the powers for fractional polynomials 
-* the degree and number of knots for B-splines
-* the number of knots for natural splines
+* the degree and number and position of knots for B-splines
+* the number and position of knots for natural splines

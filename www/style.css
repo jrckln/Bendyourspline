@@ -2,6 +2,10 @@ body p{
   font: 400 16px/1.8 "Segoe UI", sans-serif;
 }
 
+body li{
+  font: 400 16px/1.8 "Segoe UI", sans-serif;
+}
+
 label {
   font: 400 16px/1.8 "Segoe UI", sans-serif;
 }
