@@ -1,0 +1,6 @@
+<header class="w3-container w3-xlarge w3-padding-24">
+    <a href="#" class="w3-left w3-button w3-white">{{ site.title }}</a>
+    {% for item in site.data.navigation %}
+	<a href="{{ item.path }}" class="w3-right w3-button w3-white">{{ item.title }}</a>
+    {% endfor %}
+</header>
