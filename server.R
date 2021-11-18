@@ -53,7 +53,7 @@ function(input, output, session){
         var <- as.character(input$variable)
         var_list <- data_list[[var]]
         filtered <- getdata()
-        obs <- ifelse(input$sample.size == '100%', 
+        obs <- ifelse(input$sample.size == '100%' & input$gender == "Both", 
                       paste0('all observations (', nrow(var_list$data), ')'),
                       paste0(length(filtered$x), " out of ", nrow(var_list$data), ' observations'))
         filt <- ifelse(input$gender == "Both", "", paste0(', filtered for gender: ', input$gender))
