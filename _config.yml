@@ -1,7 +1,8 @@
 title: Bend your (sp)line
 email: lena.jiricka@meduniwien.ac.at
 description: A visualisation of non-linear modelling techniques.
-url: https://jrckln.github.io/Bendyourspline/
+baseurl: /Bendyourspline
+url: https://jrckln.github.io/
 repository: https://github.com/jrckln/Bendyourspline
 
 # Build settings
