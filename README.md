@@ -6,6 +6,6 @@ In case of crashes or unexpected behavior please report the issue in this reposi
 
 ## Links
 
-Manual: https://ljiricka.github.io/Bendyourspline/ 
+Manual: https://jrckln.github.io/Bendyourspline/ 
 
 In action: https://clinicalbiometrics.shinyapps.io/Bendyourspline/
