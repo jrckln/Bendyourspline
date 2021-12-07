@@ -4,9 +4,6 @@ title: About
 permalink: /about/
 ---
 
-
-The aim of this project is to show how nonlinear associations can be estimated with a statistical model using only simple extensions of the basic linear model. The shinyapp allows for comparisons between fractional polynomials, b-splines and natural splines. 
-
 ### Persons responsible for this project
 Christine Wallisch, Daniela Dunkler, Georg Heinze (all from [Section for Clinical Biometrics, Center for Medical Statistics, Informatics and Intelligent Systems, Medical University of Vienna](https://cemsiis.meduniwien.ac.at/en/kb/)) for [TG2 of the STRATOS initative](https://www.stratos-tg2.org/)
 
