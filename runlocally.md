@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Run local
+title: Run locally
 permalink: /runlocal/
 ---
 
