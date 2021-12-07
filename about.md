@@ -6,7 +6,7 @@ permalink: /about/
 
 
 ## Details
-The aim of this project is to show how nonlinear associations can be estimated with a statistical model using only simple extensions of the basic linear model. The shiny app allows for comparisons between fractional polynomials, b-splines and natural splines. 
+The aim of this project is to show how nonlinear associations can be estimated with a statistical model using only simple extensions of the basic linear model. The shinyapp allows for comparisons between fractional polynomials, b-splines and natural splines. 
 
 ### Persons responsible for this project
 Christine Wallisch, Daniela Dunkler, Georg Heinze (all from [Section for Clinical Biometrics, Center for Medical Statistics, Informatics and Intelligent Systems, Medical University of Vienna](cemsiis.meduniwien.ac.at/en/kb)) for [TG2 of the STRATOS initative](https://www.stratos-tg2.org/)
@@ -33,7 +33,7 @@ georg.heinze@meduniwien.ac.at <br>
 
 STRATOS Initiative 
 
-contact @ stratos-initiative.org <br>
+contact@stratos-initiative.org <br>
 [https://www.stratos-tg2.org](https://www.stratos-tg2.org) <br>
 [https://stratos-initiative.org](https://stratos-initiative.org)
 
