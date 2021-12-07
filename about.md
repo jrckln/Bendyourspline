@@ -5,7 +5,6 @@ permalink: /about/
 ---
 
 
-## Details
 The aim of this project is to show how nonlinear associations can be estimated with a statistical model using only simple extensions of the basic linear model. The shinyapp allows for comparisons between fractional polynomials, b-splines and natural splines. 
 
 ### Persons responsible for this project
