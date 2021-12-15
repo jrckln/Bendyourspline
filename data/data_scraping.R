@@ -83,5 +83,19 @@ height_age <- list(
 #save(height_age, file = 'data/HeightAge.RData')
 data_list[[height_age$name]] <- height_age
 
+# No data: 
+x <- 1:100
+y <- rep_len(c(-1,1), length.out = length(x))
+data <- data.frame(x,y,'gender'="female")
+
+nodata <- list(
+    'x' = 'x', 'y'= 'y', 
+    'data' = data, 
+    'x_unit' = '-', 'y_unit'= '-', 
+    'name' = 'No data',
+    'x_name' = 'x', 'y_name' = 'y'
+)
+#save(height_age, file = 'data/HeightAge.RData')
+data_list[[nodata$name]] <- nodata
 
 save(data_list, file="data/data_list.RData")

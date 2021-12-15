@@ -43,16 +43,18 @@ methods <-
                     column(3, uiOutput("information_vars")),
                     column(
                         2,
-                        materialSwitch(
-                            inputId = "adv_settings",
-                            value = FALSE,
-                            label = "Advanced settings"
+                        conditionalPanel("input.variable != 'No data'",
+                            materialSwitch(
+                                inputId = "adv_settings",
+                                value = FALSE,
+                                label = "Advanced settings"
+                            )
                         )
                     ),
                     column(
                         5,
                         conditionalPanel(
-                            "input.adv_settings",
+                            "input.adv_settings & input.variable != 'No data'",
                             column(
                                 4,
                                 popify(
@@ -91,6 +93,7 @@ methods <-
             tabsetPanel(id = "tabsetmethods",
                         fp,
                         bsplines,
-                        naturalsplines)
+                        naturalsplines
+                        )
         ))
     )

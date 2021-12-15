@@ -30,11 +30,6 @@ function(input, output, session){
     codeServer("code_bs", filename=c("www/codes/code_bs.R", "www/codes/code_data.R"))
     codeServer("code_nsp", filename=c("www/codes/code_nsp.R", "www/codes/code_data.R"))
     
-    #starting tour guide
-    observeEvent(input$help, {
-          guide$init()$start()
-    })
-    
     #hide tour button if not on methods tabs
     observeEvent(input$navbar, {
        choice = input$navbar
@@ -51,15 +46,19 @@ function(input, output, session){
     
     output$information_vars <- renderUI({
         var <- as.character(input$variable)
-        var_list <- data_list[[var]]
-        filtered <- getdata()
-        obs <- ifelse(input$sample.size == '100%' & input$gender == "Both", 
-                      paste0('all observations (', nrow(var_list$data), ')'),
-                      paste0(length(filtered$x), " out of ", nrow(var_list$data), ' observations'))
-        filt <- ifelse(input$gender == "Both", "", paste0(', filtered for gender: ', input$gender))
-        HTML(paste0('<p> Showing ', obs, filt, ' of variable ', var_list$x_name, ' in ', var_list$x_unit, 
-                    ' with ', var_list$y_name, ' in ', var_list$y_unit, ' as response. </p>'
-                    ))
+        if(var == "No data"){
+          return(HTML(''))
+        } else {
+          var_list <- data_list[[var]]
+          filtered <- getdata()
+          obs <- ifelse(input$sample.size == '100%' & input$gender == "Both", 
+                        paste0('all observations (', nrow(var_list$data), ')'),
+                        paste0(length(filtered$x), " out of ", nrow(var_list$data), ' observations'))
+          filt <- ifelse(input$gender == "Both", "", paste0(', filtered for gender: ', input$gender))
+          HTML(paste0('<p> Showing ', obs, filt, ' of variable ', var_list$x_name, ' in ', var_list$x_unit, 
+                      ' with ', var_list$y_name, ' in ', var_list$y_unit, ' as response. </p>'
+                      ))
+        }
     })
 
     getdata <- reactive({
@@ -68,7 +67,8 @@ function(input, output, session){
       var_list <- data_list[[var]]
       var_list$data <- var_list$data[var_list$data[,"gender"] %in% gender[[input$gender]],]
       set.seed(input$seed)
-      n <- floor(sample.sizes[input$sample.size]*nrow(var_list$data))
+      samplesize <- if(var == "No data") "100%" else input$sample.size
+      n <- floor(sample.sizes[samplesize]*nrow(var_list$data))
       ind <- sample(1:nrow(var_list$data), n)
       var_list$data <- var_list$data[ind,]
       x <- var_list$data[,var_list$x]
