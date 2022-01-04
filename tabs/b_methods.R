@@ -2,6 +2,20 @@ methods <-
     tabPanel(
         "Methods",
         shinyjs::useShinyjs(),
+        tags$head(tags$style(HTML(
+            paste0(
+                ".material-switch>label:before[for=addoptfit] {background: ",
+                optfitcol,
+                ";}"
+            )
+        ),
+        HTML(
+            paste0(
+                ".label-primary[for=addloess] {background: ",
+                loesscol,
+                ";}"
+            )
+        ))),
         modal_help_exercises,
         modal_help_goodnessfit,
         modal_help_response_function,
@@ -25,75 +39,81 @@ methods <-
             </div>
                  '
         ),
-        bsCollapse(
-            id = "collapseData",
-            open = "Data Options",
-            bsCollapsePanel(
-                "Data Options",
-                fluidRow(
-                    column(
-                        2,
-                        div(
-                            style = "font-size: 13px; padding: 10px 0px; margin:0%",
-                            selectInput("variable", "Choose a variable pair:", names(data_list)) #%>%
-                            #helper(type = "markdown", title= "Data information",
-                            #       content = "../www/VariablePairs")
-                        )
-                    ),
-                    column(3, uiOutput("information_vars")),
-                    column(
-                        2,
-                        conditionalPanel("input.variable != 'No data'",
-                            materialSwitch(
-                                inputId = "adv_settings",
-                                value = FALSE,
-                                label = "Advanced settings"
-                            )
-                        )
-                    ),
-                    column(
-                        5,
-                        conditionalPanel(
-                            "input.adv_settings & input.variable != 'No data'",
-                            column(
-                                4,
-                                popify(
-                                    numericInput("seed", "Set seed:", value = 14),
-                                    "Seed",
-                                    "Initializes random number generator for drawing random samples"
-                                )
-                            ),
-                            column(
-                                4,
-                                selectInput(
-                                    "sample.size",
-                                    "Choose a sample size:",
-                                    names(sample.sizes),
-                                    selected = "20%"
-                                )
-                            ),
-                            column(
-                                4,
-                                radioGroupButtons(
-                                    inputId = "gender",
-                                    label = "Sex:",
-                                    choices = names(gender),
-                                    status = "primary",
-                                    selected = "Both"
-                                )
-                            ),
+        
+        fluidRow(column(
+            width = 4,
+            tabsetPanel(id = "inputsindividual",
+                        fp,
+                        bsplines,
+                        naturalsplines),
+            wellPanel(
+                conditionalPanel(
+                    "input.variable != 'No data'",
+                    wellPanel(
+                        id = "intercept_all",
+                        uiOutput("interceptslider"),
+                        actionButton(
+                            inputId = "adjustintercept",
+                            label = "Adjust automatically",
+                            class = 'btn reset_btn'
                         )
                     )
                 ),
-                style = "primary"
+                fluidRow(
+                    conditionalPanel(
+                        "input.variable != 'No data'",
+                        column(3, offset = 0,
+                               div(
+                                   span('Data points'),
+                                   materialSwitch(
+                                       inputId = "addy",
+                                       label = "",
+                                       value = FALSE
+                                   )
+                               )),
+                        column(3, offset = 0,
+                               div(
+                                   span('LOESS Smoother'),
+                                   materialSwitch(
+                                       inputId = "addloess",
+                                       label = "",
+                                       value = FALSE
+                                   )
+                               )),
+                        column(3, offset = 0,
+                               div(
+                                   span('Optimal fit'),
+                                   materialSwitch(
+                                       inputId = "addoptfit",
+                                       label = "",
+                                       value = FALSE
+                                   )
+                               )),
+                        column(
+                            3,
+                            offset = 0,
+                            actionButton(
+                                "setoptfit",
+                                "Set optimal fit",
+                                class = "btn reset_btn",
+                                style = "float:right"
+                            )
+                        )
+                    )
+                ),
+                
+                fluidRow(
+                    actionButton("resetinput", "Reset inputs", class = "btn reset_btn")
+                    ,
+                    bsTooltip(
+                        id = "resetinput",
+                        title = "You mave have to click twice to reset dynamically inserted inputs.",
+                        placement = "bottom",
+                        trigger = "hover"
+                    )
+                ),
+                id = "inputall"
             )
         ),
-        fluidRow(column(
-            width = 12,
-            tabsetPanel(id = "tabsetmethods",
-                        fp,
-                        bsplines,
-                        naturalsplines
-                        )
-        ))
+        out)
     )

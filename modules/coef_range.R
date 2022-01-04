@@ -16,7 +16,7 @@ coef_range <- function(id) {
       range.coefs <- reactiveVal(1)
       observeEvent(input$increase_range, {
         if(range.coefs() == 1){
-          new <- range.coefs() + 9
+          new <- 10
         } else {
           new <- range.coefs() + 10
         }
@@ -24,9 +24,11 @@ coef_range <- function(id) {
       })
       observeEvent(input$decrease_range, {
         if(range.coefs() == 10){
-          new <- range.coefs() - 9
+          new <- 1
         } else if(range.coefs() != 1){
           new <- range.coefs() - 10
+        } else {
+          new <- 1
         }
         range.coefs(new)
       })

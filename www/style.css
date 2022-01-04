@@ -1,3 +1,14 @@
+#inputall {
+    margin-top: -30px;
+    border-top: none;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+#inputs_fp, #inputs_bs, #inputs_nsp {
+    margin-top: 20px;
+}
+
 body p{
   font: 400 16px/1.8 "Segoe UI", sans-serif;
 }
@@ -354,17 +365,11 @@ body > .container-fluid {
     border-style: solid;
 }
 
-span>.irs>.irs-single, span>.irs-bar-edge, span>.irs-bar {background: #D3D3D3;} 
-.label-primary {background: #D3D3D3;}
-
 #information_vars {
     margin-top: 20px;
 }
 
-
-
-
-
+span>.irs>.irs-single, span>.irs-bar-edge, span>.irs-bar {background: #D3D3D3;} 
 
 .checkmark__circle {
   stroke-dasharray: 166;
