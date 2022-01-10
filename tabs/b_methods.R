@@ -2,18 +2,16 @@ methods <-
     tabPanel(
         "Methods",
         shinyjs::useShinyjs(),
-        tags$head(tags$style(HTML(
+        tags$head(tags$style(type = 'text/css', 
             paste0(
-                ".material-switch>label:before[for=addoptfit] {background: ",
+                ".label-default[for='addoptfit'] {background-color: ",
                 optfitcol,
+                ";}", 
+                ".label-default[for='addloess'] {background-color: ",
+                loesscol,
                 ";}"
             )
-        ),
-        HTML(
-            paste0(".label-primary[for=addloess] {background: ",
-                   loesscol,
-                   ";}")
-        ))),
+        )),
         modal_help_exercises,
         modal_help_goodnessfit,
         modal_help_response_function,
