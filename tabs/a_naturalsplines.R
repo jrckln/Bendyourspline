@@ -43,15 +43,18 @@ naturalsplines <- tabPanel(
     ),
     fluidRow(column(6,
                     wellPanel(
+                      span('Boundary knot positions'), 
                       uiOutput("boundary_knots.nsp"),
+                      span('Internal knot positions'), 
                       tags$div(id = 'placeholder_pos_nsp'), 
                       materialSwitch(inputId = "showknots_nsp",
-                            label = "",
+                            label = "Show knots",
                             right = FALSE,
                             value = FALSE
                             )
                     )),
              column(6, wellPanel(
+               span('Coefficients'), 
                tags$div(id = 'placeholder_coef_nsp')
              )))
   )

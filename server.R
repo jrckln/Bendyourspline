@@ -87,8 +87,22 @@ function(input, output, session){
           p <- p + geom_line(data = data, aes(x=x, y = optfit,
                                               color = "Optimal fit")
                              )
-        }
-       if(input$addy & input$variable != "No data"){
+       }
+       if(any(input$showknots_bs, input$showknots_nsp)){
+        pos <- switch(
+          input$inputsindividual, 
+          "B-Splines" = getpos.bs(), 
+          "Natural Splines" = getpos.nsp() 
+        )
+        
+        posx <- quantile(data$x, pos/100)
+        y_coord <- max(data$y)
+        
+        p <- p + geom_vline(aes(xintercept=posx), color = "#D3D3D3") +
+              annotate(geom = "text", x = posx, y = y_coord, label = paste("Q ", pos), hjust = "left", color = "#D3D3D3")
+       }
+       
+       if(input$addy){
           p <- p + geom_point(data = data, aes(x=x, y=y), color = col)+
                 ylab(names_vars[2]) + 
                 xlab(names_vars[1])
@@ -429,7 +443,7 @@ function(input, output, session){
                 for(i in 1:length(toinsert)){
                     insertUI(
                         selector = '#placeholder_pos_bs',
-                        ui = tags$div(sliderInput(paste0(id[i], '-slider'), label = paste0("Position of knot ",toinsert[i]),
+                        ui = tags$div(sliderInput(paste0(id[i], '-slider'), label = '',
                                                   value=default.pos.knots.bs[toinsert[i]], step=0.1,
                                                   min=min(data$x), max=max(data$x), ticks = FALSE), 
                                       id=id[i])
@@ -457,7 +471,7 @@ function(input, output, session){
             for(i in 1:length(toinsert)){
                 insertUI(
                     selector = '#placeholder_pos_bs',
-                    ui = tags$div(sliderInput(paste0(id[i], '-slider'), label = paste0("Position of knot ", i),
+                    ui = tags$div(sliderInput(paste0(id[i], '-slider'), label = '',
                                               value=default.pos.knots.bs[i], step=0.1,
                                               min=min(data$x), max=max(data$x), ticks = FALSE), 
                                   id=id[i])
@@ -551,30 +565,6 @@ function(input, output, session){
       return(coef)
     })
     
-    output$basis_plot.bs<- renderPlot({ #TODO
-        req(input$nknots.bs)
-        data <- getbasis.bs()
-        names_vars <- data$names_vars
-        b <- data$b
-        data <- cbind(data$x, data$y)
-        degree <- input$degree.bs
-        all.knots <- sort(c(attr(b,"Boundary.knots") ,attr(b, "knots")))
-        bounds <- range(all.knots)
-        knot.values <- set_colnames(predict(b, all.knots),str_c("S", seq_len(ncol(predict(b, all.knots)))))
-        newx <- seq(bounds[1], bounds[2], length.out = 100+1)
-        interp.values <- set_colnames(predict(b, newx),str_c("S", seq_len(ncol(predict(b, newx)))))
-        knot.df <- melt(data.frame(x=all.knots, knot.values), id.vars="x", variable.name="Spline", value.name="y")
-        interp.df <- melt(data.frame(x=newx, interp.values),id.vars="x", variable.name="Spline", value.name="y")
-        p <- ggplot(interp.df, aes(x=x, y=y, color=Spline)) +
-            geom_line(size=1.5) +
-            scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") +
-            xlab(ifelse(input$add_y_bs, names_vars[1], 'x'))+ ylab("")
-        if(input$add_knots_pos.nsp){
-          p <- p + geom_vline(xintercept=all.knots, color = "#D3D3D3")
-        }
-        p
-    })
-    
     
     #############################################
     #######      Natural-splines    #############
@@ -603,9 +593,9 @@ function(input, output, session){
       maxx <- round(max(data$x), 3)
       minx <- round(min(data$x), 3)
       tagList(
-      sliderInput("boundary1.nsp", "Position of Boundary knot 1", min=minx, max=pos[1]-0.1, 
+      sliderInput("boundary1.nsp", '', min=minx, max=pos[1]-0.1, 
                   value=minx, step=0.1, ticks = FALSE),
-      sliderInput("boundary2.nsp", "Position of Boundary knot 2", min=pos[length(pos)]+0.1, 
+      sliderInput("boundary2.nsp", '', min=pos[length(pos)]+0.1, 
                   max=maxx, value=maxx, step=0.1, ticks = FALSE)
       )
     })
@@ -663,7 +653,7 @@ function(input, output, session){
                 for(i in 1:length(toinsert)){
                     insertUI(
                         selector = '#placeholder_pos_nsp',
-                        ui = tags$div(sliderInput(paste0(id[i], "-slider"), label = paste0("Position of knot ", toinsert[i]),
+                        ui = tags$div(sliderInput(paste0(id[i], "-slider"), label = '',
                                                   value=default.pos.knots.nsp[toinsert[i]], step=0.1,
                                                   min=minx, max=maxx, ticks = FALSE), id=id[i])
                     )
@@ -680,7 +670,7 @@ function(input, output, session){
             for(i in 1:length(toinsert)){
                 insertUI(
                     selector = '#placeholder_pos_nsp',
-                    ui = tags$div(sliderInput(paste0(id[i], "-slider"), label = paste0("Position of knot ", i),
+                    ui = tags$div(sliderInput(paste0(id[i], "-slider"), label = '',
                                               value=default.pos.knots.nsp[i], step=0.1,
                                               min=min(data$x), max=max(data$x), ticks = FALSE), id=id[i])
                 )
@@ -766,37 +756,6 @@ function(input, output, session){
       return(coef)
     })
     
-  
-    output$basis_plot.nsp<- renderPlot({ #TODO
-        req(input$nknots.nsp, input$boundary1.nsp, input$boundary2.nsp)
-        data <- getbasis.nsp()
-        bounds <- c(min(data$x), max(data$x))
-        pos <- getpos.nsp()
-        b <- data$b
-        all.knots <- sort(c(bounds ,attr(b, "knots")))
-        bounds <- range(all.knots)
-        knot.values <- set_colnames(predict(b, all.knots),str_c("S", seq_len(ncol(predict(b, all.knots)))))
-        newx <- seq(bounds[1], bounds[2], length.out = 100+1)
-        interp.values <- set_colnames(predict(b, newx),str_c("S", seq_len(ncol(predict(b, newx)))))
-        knot.df <- melt(data.frame(x=all.knots, knot.values), id.vars="x", variable.name="Spline", value.name="y")
-        interp.df <- melt(data.frame(x=newx, interp.values),id.vars="x", variable.name="Spline", value.name="y")
-        p <- ggplot(interp.df, aes(x=x, y=y, color=Spline)) +
-            geom_line(size=1.5) +
-            scale_color_manual(values = col) + theme_minimal() + theme(legend.position = "none") + 
-            xlab(ifelse(input$add_y_nsp, data$names_vars[1], 'x'))+
-            ylab("")
-        if(input$add_knots_pos.nsp){
-            knots <- attr(b, "knots")
-            boundaries <- attr(b, "Boundary.knots")
-            for(i in knots){
-                p <- p + geom_vline(xintercept=i, color = "#D3D3D3")
-            }
-            p <- p + geom_vline(xintercept=boundaries[1], color = "#D3D3D3")+
-              geom_vline(xintercept=boundaries[2], color = "#D3D3D3")
-        }
-        #ggplotly(p)
-        p + theme(text = element_text(size = 15))
-    })
     
     #############################################
     #######      Exercises          #############

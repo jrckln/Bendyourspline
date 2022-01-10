@@ -10,11 +10,9 @@ methods <-
             )
         ),
         HTML(
-            paste0(
-                ".label-primary[for=addloess] {background: ",
-                loesscol,
-                ";}"
-            )
+            paste0(".label-primary[for=addloess] {background: ",
+                   loesscol,
+                   ";}")
         ))),
         modal_help_exercises,
         modal_help_goodnessfit,
@@ -59,39 +57,34 @@ methods <-
                         )
                     )
                 ),
-                fluidRow(
-                    conditionalPanel(
-                        "input.variable != 'No data'",
-                        column(3, offset = 0,
-                               div(
-                                   span('Data points'),
-                                   materialSwitch(
-                                       inputId = "addy",
-                                       label = "",
-                                       value = FALSE
-                                   )
-                               )),
-                        column(3, offset = 0,
-                               div(
-                                   span('LOESS Smoother'),
-                                   materialSwitch(
-                                       inputId = "addloess",
-                                       label = "",
-                                       value = FALSE
-                                   )
-                               )),
-                        column(3, offset = 0,
-                               div(
-                                   span('Optimal fit'),
-                                   materialSwitch(
-                                       inputId = "addoptfit",
-                                       label = "",
-                                       value = FALSE
-                                   )
-                               )),
-                        column(
-                            3,
-                            offset = 0,
+                fluidRow(conditionalPanel(
+                    "input.variable != 'No data'",
+                    div(id = 'options',
+                        div(style = 'width: 20%;',
+                            span('Data points'),
+                            materialSwitch(
+                                inputId = "addy",
+                                label = "",
+                                value = FALSE
+                            )
+                        ),
+                        div(style = 'width: 20%;',
+                            span('LOESS Smoother'),
+                            materialSwitch(
+                                inputId = "addloess",
+                                label = "",
+                                value = FALSE
+                            )
+                        ),
+                        div(style = 'width: 20%;',
+                            span('Optimal fit'),
+                            materialSwitch(
+                                inputId = "addoptfit",
+                                label = "",
+                                value = FALSE
+                            )
+                        ),
+                        div(style = 'width: 20%;',
                             actionButton(
                                 "setoptfit",
                                 "Set optimal fit",
@@ -100,7 +93,7 @@ methods <-
                             )
                         )
                     )
-                ),
+                )),
                 
                 fluidRow(
                     actionButton("resetinput", "Reset inputs", class = "btn reset_btn")

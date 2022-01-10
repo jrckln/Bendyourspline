@@ -18,7 +18,7 @@ body li{
 }
 
 label {
-  font: 400 16px/1.8 "Segoe UI", sans-serif;
+  font: 400 14px/1.8 "Segoe UI", sans-serif;
 }
 
 span, button {
@@ -112,24 +112,18 @@ i > .boxstats {
 	border-bottom-style: none;
 }
 
-#placeholder_coef_bs .form-group.shiny-input-container{
+#placeholder_coef_bs .form-group.shiny-input-container, 
+#placeholder_coef_nsp .form-group.shiny-input-container, 
+#placeholder_coef_fp .form-group.shiny-input-container{
                                         display: inline-block;
 										padding: 0px;
                                         }
-#placeholder_coef_nsp .form-group.shiny-input-container{
-                                        display: inline-block;
-										padding: 0px;
-                                        }
+.material-switch {
+    padding-right: 0px;
+}
 										
-#val_coef1_fp .form-group.shiny-input-container{
-                                        display: inline-block;
-										padding: 0px;
-                                        }
-#val_coef2_fp .form-group.shiny-input-container{
-                                        display: inline-block;
-										padding: 0px;
-                                        }
-										
+
+
 .home {
   position: relative;
   background-color: #FFFFFF;
@@ -489,6 +483,13 @@ canvas {
     font: 400 28px/1.8 "Segoe UI", sans-serif;
 }
 
+#options {
+    display:table;width: 100%;margin:20px auto; 
+}
+
+#options > div{
+    text-align: bottom; display:table-cell; vertical-align: middle;
+}
 
 
 

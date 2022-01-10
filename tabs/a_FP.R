@@ -77,8 +77,12 @@ fp <- tabPanel(
         8,
         offset = 0,
         wellPanel(id = "coefficients_fp",
-                  sliderplUI("fp_coef1"),
-                  sliderplUI("fp_coef2"))
+                  div(id = "placeholder_coef_fp",
+                    sliderplUI("fp_coef1"),
+                    sliderplUI("fp_coef2")
+                  )
+        )
+                  
       )
     )
   )
