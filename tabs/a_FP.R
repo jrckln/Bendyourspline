@@ -44,7 +44,7 @@ fp <- tabPanel(
     ),
     fluidRow(
             column(4, align = "center", offset = 8,
-                   coef_rangeUI("bs"))
+                   coef_rangeUI("fp"))
     ), 
     fluidRow(column(
       4,
