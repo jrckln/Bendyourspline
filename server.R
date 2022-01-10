@@ -275,9 +275,11 @@ function(input, output, session){
       stats("stats", vals)
     }, priority = -100)
   
-    #reset button #TODO
-    observeEvent(c(input$reset_input_fp, input$variable), {
-       reset("inputs_fp") 
+    #reset button
+    observeEvent(c(input$resetinput, input$variable), {
+      reset("inputs_fp") 
+      reset("inputs_bs") 
+      reset("inputs_nsp") 
     })
     
     coef_range_fp <- coef_range('fp')
@@ -313,6 +315,14 @@ function(input, output, session){
         for(i in ind){
           updateSliderInput(session, i, min = (-1)*range(), max = range())
         }
+      }
+    })
+    
+    observeEvent(input$variable, {
+      if(input$variable == 'No data'){
+        updateMaterialSwitch(session, 'addy', value = FALSE)
+        updateMaterialSwitch(session, 'addloess', value = FALSE)
+        updateMaterialSwitch(session, 'addoptfit', value = FALSE)
       }
     })
     
