@@ -39,10 +39,13 @@ fp <- tabPanel(
     div(
       class = 'headerinfo',
       h4("Input parameters"),
-      coef_rangeUI("fp"),
       tags$a(icon('info-circle'), href = '#') %>%
         bs_attach_modal(id_modal = "modal_help_input_FP")
     ),
+    fluidRow(
+            column(4, align = "center", offset = 8,
+                   coef_rangeUI("bs"))
+    ), 
     fluidRow(column(
       4,
       div(style = "padding: 10px 0px; margin:0%",

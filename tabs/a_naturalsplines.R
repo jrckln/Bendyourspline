@@ -28,7 +28,7 @@ naturalsplines <- tabPanel(
     ),
     fluidRow(
       column(
-        6,
+        4,
         numericInput(
           "nknots.nsp",
           "Number of internal knots",
@@ -37,7 +37,7 @@ naturalsplines <- tabPanel(
           value = 2
         )
       ),
-      column(6,
+      column(4, offset = 4,
              align = "center",
              coef_rangeUI("nsp"))
     ),
