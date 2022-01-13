@@ -2,17 +2,15 @@ colorize <- function(word, color){
     paste0("<b> <font style='color: ", color, "'>", word, "</font> </b>")
 }
 
-
 exercises <- list(
-    'fp' = list(
+    'Fractional Polynomials' = list(
         "Basic"= 
             c(
-            paste0('The aim of this exercise is to understand the impact of individual FP powers on the modeled response function. Reset the inputs. Use BMI ~ Age as variable pair. Make sure that data points, ', colorize('optimal fit', optfitcol) , ' and ', colorize('LOESS smoother', loesscol) , ' options are turned off.'),
+            paste0('The aim of this exercise is to understand the impact of individual FP powers on the modeled response function. Reset the inputs. Use "No data" as variable pair.'),
             paste0('Move the slider of ', colorize('coefficient 1', col[1]) , ' to 1 and see how the response curve reacts!'), 
             paste0('Set the second power to 2 and move the ', colorize('associated coefficient', col[2]) ,' to 1!'), 
             paste0('Now move ', colorize('coefficient 1', col[1]) , ' to -1!'), 
             paste0('Now set ', colorize('coefficient 1', col[1]) , ' to +1 and ', colorize('coefficient 2', col[2]) , ' to -1!'), 
-            'How can you adjust the curve to get the peak of the response function at approximately 40 years?', 
             'Now change the second power to 3, then to 1, 0, -1 etc. See how this affects the response curve.', 
             'Set both powers to 2. The two powers are now set to equal numbers, which defines a <b> repeated power </b>, and in 
             this case the second term is also multiplied with log(x). (Check the formula)', 

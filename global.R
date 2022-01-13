@@ -1,11 +1,5 @@
 rm(list = ls(), envir = globalenv()) ## to prevent cross over from old runs
 
-library(pacman)
-
-# requirements <- c('shiny', 'plotly', 'shinyBS', 'shinyWidgets', 'shinyjs', 'splines', 'mfp', 
-#                   'stringr', 'reshape2', 'tidyverse', 'shinyhelper', 'shinycssloaders', 'shinyjqui', 'ggplot2', 'magrittr')
-# p_load(char = requirements)
-
 library(shiny)
 library(plotly)
 library(shinyBS)
@@ -25,8 +19,6 @@ library(bsplus)
 
 col <- c("#2F4B7C", "#CE2029", "#FFA600","#2FA39B", "#97D8C4", "#F0E825", "#91B5D6", "#6BCFE8", "#F0CF44", "#136F63")
 optfitcol <- "#F0CF44"
-#optfitcol <- col[length(col)]
-#loesscol <-  col[length(col)-1]
 spinnercol <- "#800000"
 loesscol <- "#136F63"
 

@@ -38,6 +38,7 @@ methods <-
         
         fluidRow(column(
             width = 4,
+            dataoptions,
             tabsetPanel(id = "inputsindividual",
                         fp,
                         bsplines,

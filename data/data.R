@@ -18,6 +18,7 @@ fp.scale <- function(x){
 }
 
 getshape <- function(sequence, index){
+  if(missing(index)) index <- 1:length(sequence)
   n <- length(sequence)
   firstq <- n*0.25
   thirdq <- n*0.75

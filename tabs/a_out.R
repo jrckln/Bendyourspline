@@ -1,74 +1,7 @@
 out <- column(
     8,
-    
     column(
         8,
-        bsCollapse(
-            id = "collapseData",
-            bsCollapsePanel(
-                "Data Options",
-                fluidRow(
-                    column(
-                        2,
-                        div(
-                            style = "font-size: 13px; padding: 10px 0px; margin:0%",
-                            selectInput(
-                                "variable",
-                                "Choose a variable pair:",
-                                names(data_list),
-                                selected = 'No data'
-                            )
-                        )
-                    ),
-                    column(3, uiOutput("information_vars")),
-                    column(
-                        2,
-                        conditionalPanel(
-                            "input.variable != 'No data'",
-                            materialSwitch(
-                                inputId = "adv_settings",
-                                value = FALSE,
-                                label = "Advanced settings"
-                            )
-                        )
-                    ),
-                    column(
-                        5,
-                        conditionalPanel(
-                            "input.adv_settings & input.variable != 'No data'",
-                            column(
-                                4,
-                                popify(
-                                    numericInput("seed", "Set seed:", value = 14),
-                                    "Seed",
-                                    "Initializes random number generator for drawing random samples"
-                                )
-                            ),
-                            column(
-                                4,
-                                selectInput(
-                                    "sample.size",
-                                    "Choose a sample size:",
-                                    names(sample.sizes),
-                                    selected = "20%"
-                                )
-                            ),
-                            column(
-                                4,
-                                radioGroupButtons(
-                                    inputId = "gender",
-                                    label = "Sex:",
-                                    choices = names(gender),
-                                    status = "primary",
-                                    selected = "Both"
-                                )
-                            ),
-                        )
-                    )
-                ),
-                style = "primary"
-            )
-        ),
         div(
             wellPanel(
                 id = 'response',
@@ -108,9 +41,8 @@ out <- column(
                 tags$a(icon('info-circle'), href = '#') %>%
                     bs_attach_modal(id_modal = "modal_help_exercises")
             ),
-            selectInput("exercise_fp", "", names(exercises[['fp']]), selected = "Basic"),
-            actionButton('start_exercise_fp', 'Start'),
-            uiOutput("next_exercise_fp")
+            uiOutput('exerciseselection'),
+            uiOutput("exerciseout")
         ),
         conditionalPanel(
             "input.variable != 'No data'",
