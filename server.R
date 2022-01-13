@@ -445,45 +445,42 @@ function(input, output, session){
             }else if(length(inserted.pos.bs)< num){
                 #determine default knot positions: Artificially add two knots so that these two artificial knots 
                 #are the boundary knots which are then removed (to put the other in the middle). 
-                default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = input$nknots.bs + 2)[-c(1, input$nknots.bs + 2)]
+                default.pos.knots.bs <- seq.int(from = 0, to = 100, length.out = input$nknots.bs + 2)[-c(1, input$nknots.bs + 2)]
                 data <- getdata()
-                default.pos.knots.bs <- round(quantile(data$x, default.pos.knots.bs), 3)
                 toinsert <- (length(inserted.pos.bs)+1):num # which to insert
                 id <- paste0('bs_pos', toinsert)
                 for(i in 1:length(toinsert)){
                     insertUI(
                         selector = '#placeholder_pos_bs',
                         ui = tags$div(sliderInput(paste0(id[i], '-slider'), label = '',
-                                                  value=default.pos.knots.bs[toinsert[i]], step=0.1,
-                                                  min=min(data$x), max=max(data$x), ticks = FALSE), 
+                                                  value=default.pos.knots.bs[toinsert[i]], step=1,
+                                                  min=0, max=100, ticks = FALSE), 
                                       id=id[i])
                     )
                     inserted.pos.bs <<- c(inserted.pos.bs, id[i])
                 }
             } else if(length(inserted.pos.bs)== num){ #case: variable change
                 # update default knot positions according to values of new variable
-                default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = num + 2)[-c(1, num + 2)]
+                default.pos.knots.bs <- seq.int(from = 0, to = 100, length.out = num + 2)[-c(1, num + 2)]
                 data <- getdata()
-                default.pos.knots.bs <- round(quantile(data$x, default.pos.knots.bs), 3)
                 toupdate <- 1:num #update all available sliders
                 id <- paste0('bs_pos', toupdate)
                 for(i in 1:length(toupdate)){
-                  updateSliderInput(session, paste0(id[i], '-slider'), min=min(data$x), max=max(data$x),
+                  updateSliderInput(session, paste0(id[i], '-slider'), min=0, max=100,
                                     value = as.numeric(default.pos.knots.bs[toupdate[i]]))
                 }
             }
         }else{ #case of initialisation:
-            default.pos.knots.bs <- seq.int(from = 0, to = 1, length.out = input$nknots.bs + 2)[-c(1, input$nknots.bs + 2)]
+            default.pos.knots.bs <- seq.int(from = 0, to = 100, length.out = input$nknots.bs + 2)[-c(1, input$nknots.bs + 2)]
             data <- getdata()
-            default.pos.knots.bs <- round(quantile(data$x, default.pos.knots.bs), 3)
             toinsert <- 1:num
             id <- paste0('bs_pos', toinsert)
             for(i in 1:length(toinsert)){
                 insertUI(
                     selector = '#placeholder_pos_bs',
                     ui = tags$div(sliderInput(paste0(id[i], '-slider'), label = '',
-                                              value=default.pos.knots.bs[i], step=0.1,
-                                              min=min(data$x), max=max(data$x), ticks = FALSE), 
+                                              value=default.pos.knots.bs[i], step=1,
+                                              min=0, max=100, ticks = FALSE), 
                                   id=id[i])
                 )
                 inserted.pos.bs <<- c(inserted.pos.bs, id[i])
@@ -595,21 +592,6 @@ function(input, output, session){
       return(data)
     })
     
-    output$boundary_knots.nsp <- renderUI({
-      req(input$nknots.nsp)
-      data <- getdata()
-      pos <- seq.int(from = 0,to = 1,length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
-      pos <- round(quantile(data$x, pos), 3)
-      maxx <- round(max(data$x), 3)
-      minx <- round(min(data$x), 3)
-      tagList(
-      sliderInput("boundary1.nsp", '', min=minx, max=pos[1]-0.1, 
-                  value=minx, step=0.1, ticks = FALSE),
-      sliderInput("boundary2.nsp", '', min=pos[length(pos)]+0.1, 
-                  max=maxx, value=maxx, step=0.1, ticks = FALSE)
-      )
-    })
-    
     #update max and min val of boundary knots slider according to second and second to last knot position
     observeEvent({c(input[[paste0("nsp_pos1-slider")]], input[[paste0("nsp_pos",input$nknots.nsp,"-slider")]])},{
       pos <- getpos.nsp()
@@ -617,21 +599,6 @@ function(input, output, session){
       updateSliderInput(session, "boundary2.nsp", min = pos[length(pos)]+0.1)
     })
     
-    observeEvent(input$variable, {
-      data <- getdata()
-      minx <- round(min(data$x), 3)
-      maxx <- round(max(data$x), 3)
-      default.pos.knots.nsp <- seq.int(from = 0,to = 1,length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
-      default.pos.knots.nsp <- round(quantile(data$x, default.pos.knots.nsp), 3)
-      toupdate <- 1:input$nknots.nsp
-      id <- paste0('nsp_pos', toupdate)
-      for(i in 1:length(toupdate)){
-        updateSliderInput(session, paste0(id[i], "-slider"), min=minx, max=maxx,
-                         value = as.numeric(default.pos.knots.nsp[toupdate[i]]))
-      }
-      updateSliderInput(session, "boundary1.nsp", value = minx, min = minx, max= default.pos.knots.nsp[1]-0.1) 
-      updateSliderInput(session, "boundary2.nsp", value = maxx, min = default.pos.knots.nsp[length(default.pos.knots.nsp)]+0.1, max= maxx)
-    }, priority = 90)
     
     # Internal Knot positions
     observeEvent(c(input$nknots.nsp, input$variable), {
@@ -652,37 +619,33 @@ function(input, output, session){
                 }
             }else if(length(inserted.pos.nsp) < num){
                 data <- getdata()
-                minx <- min(data$x)
-                maxx <- max(data$x)
-                default.pos.knots.nsp <- seq.int(from = (input$boundary1.nsp-minx)/(maxx-minx),
-                                                 to = (input$boundary2.nsp-minx)/(maxx-minx),
+                default.pos.knots.nsp <- seq.int(from = 0,
+                                                 to = 100,
                                                  length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
-                default.pos.knots.nsp <- round(quantile(data$x, default.pos.knots.nsp), 3)
                 toinsert <- (length(inserted.pos.nsp)+1):input$nknots.nsp
                 id <- paste0('nsp_pos', toinsert)
                 for(i in 1:length(toinsert)){
                     insertUI(
                         selector = '#placeholder_pos_nsp',
                         ui = tags$div(sliderInput(paste0(id[i], "-slider"), label = '',
-                                                  value=default.pos.knots.nsp[toinsert[i]], step=0.1,
-                                                  min=minx, max=maxx, ticks = FALSE), id=id[i])
+                                                  value=default.pos.knots.nsp[toinsert[i]], step=1,
+                                                  min=0, max=100, ticks = FALSE), id=id[i])
                     )
                     inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
                 }
             }
         }else{ #case of initialisation
-            default.pos.knots.nsp <- seq.int(from = 0, to = 1,
+            default.pos.knots.nsp <- seq.int(from = 0, to = 100,
                                              length.out = input$nknots.nsp + 2)[-c(1, input$nknots.nsp + 2)]
             data <- getdata()
-            default.pos.knots.nsp <- round(quantile(data$x, default.pos.knots.nsp), 3)
             toinsert <- 1:num
             id <- paste0('nsp_pos', toinsert)
             for(i in 1:length(toinsert)){
                 insertUI(
                     selector = '#placeholder_pos_nsp',
                     ui = tags$div(sliderInput(paste0(id[i], "-slider"), label = '',
-                                              value=default.pos.knots.nsp[i], step=0.1,
-                                              min=min(data$x), max=max(data$x), ticks = FALSE), id=id[i])
+                                              value=default.pos.knots.nsp[i], step=1,
+                                              min=0, max=100, ticks = FALSE), id=id[i])
                 )
                 inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
             }
