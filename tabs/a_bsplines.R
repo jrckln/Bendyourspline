@@ -50,7 +50,7 @@ bsplines <- tabPanel(
                    coef_rangeUI("bs"))
         ),
         fluidRow(column(6, wellPanel(
-            span('Knot positions'), 
+            span('Knot positions (quantiles)'), 
             tags$div(id = 'placeholder_pos_bs'), 
              materialSwitch(inputId = "showknots_bs",
                             label = "Show knots",
