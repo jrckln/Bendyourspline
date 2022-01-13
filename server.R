@@ -249,7 +249,7 @@ function(input, output, session){
     
     calcR2 <- reactive({
         y <- getdata()$y
-        response <- getresponse()
+        response <- input$intercept + getresponse()
         optfit <- getoptfit()$fitted
         
         sstot <- sum((y-mean(y))^2) #total sum of squares
