@@ -410,6 +410,7 @@ function(input, output, session){
       data <- getdata()
       degree <- input$degree.bs
       pos <- getpos.bs()
+      pos <- quantile(data$x, pos/100)
       b <- bs(data$x, degree=degree, knots=pos)
       colnames(b) <- paste0("spline", 1:ncol(b))
       data <- data.frame("x" = data$x, 
@@ -585,7 +586,9 @@ function(input, output, session){
       req(input$boundary1.nsp, input$boundary2.nsp)
       data <- getdata()
       pos <- getpos.nsp()
-      b <- ns(data$x, knots = pos, Boundary.knots = c(input$boundary1.nsp, input$boundary2.nsp))
+      pos <- quantile(data$x, pos/100)
+      boundaries <- quantile(data$x, c(input$boundary1.nsp, input$boundary2.nsp)/100)
+      b <- ns(data$x, knots = pos, Boundary.knots = boundaries)
       colnames(b) <- paste0("spline", 1:ncol(b))
       data <- data.frame("x" = data$x, "y" = data$y)
       data <- cbind(data,b)
