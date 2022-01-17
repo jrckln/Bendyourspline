@@ -27,8 +27,7 @@ exercises <- list(
             'Can you find a combination, which reaches the maximum possible adjusted R<sup>2</sup> of 0.26?'
             ),
         'Advanced II' = c(
-          paste0('In this exercise, we will fit a simple regression where we try to describe expected body mass index (BMI) as a function of age using B-splines. Reset the inputs. Select the variable pair Bmi ~ Age. In advanced settings, set sample size to 10%, sex to "male", the seed to 100, and display the values by enabling data points option.'),
-            paste0('Enable ', colorize('LOESS smoother', loesscol) , ', and move the current response function to the average BMI by clicking "Adjust intercept automatically".'),
+          paste0('In this exercise, we will fit a simple regression where we try to describe expected body mass index (BMI) as a function of age using fractional polynomials. Reset the inputs. Select the variable pair Bmi ~ Age. In advanced settings, set sample size to 10%, sex to "male", the seed to 100, and display the values by enabling data points option.'),            paste0('Enable ', colorize('LOESS smoother', loesscol) , ', and move the current response function to the average BMI by clicking "Adjust intercept automatically".'),
           paste0(
             'Leave the first and the second power at 1. This means that age is log-transformed for the second fractional polynomial, the current formula is displayed in the output box "FORMULA". Increase the coefficient range to -40 and +40, and set ',
             colorize('coefficient 1', col[1]) ,
