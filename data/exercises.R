@@ -17,7 +17,7 @@ exercises <- list(
             'With the powers at 2 and 2, try to adjust the coefficients such that you obtain an approximately U-shaped response function!',
             'Keeping the powers as they are, try to invert this &Cup; into a &Cap; only with the coefficient sliders!'
             ), 
-        "Advanced" = c(
+        "Advanced I" = c(
             'In this exercise, we will try to fit a simple nonlinear regression line to describe expected diastolic blood pressure as a function of age. Reset the inputs. Select the variable pair Diastolic blood pressure ~ Age. In the advanced settings of data options, set sample size to "100%" and sex to "Both".', 
             paste0('Make sure that data points and ', colorize('LOESS smoother', loesscol) , ' options are turned on and the ', colorize('optimal fit', optfitcol) , ' option is turned off. The ', colorize('LOESS smoother', loesscol) , ' is a non-parametric function, which produces a smooth function fitting the data. However, it is not easily representable by a mathematical formula. In the plot, the variables exhibit a &Cap; -shaped association.'),
             paste0('The horizontal black line on the bottom is our current response function. Try to move it up to where the ', colorize('LOESS smoother', loesscol) , ' is. Move the slider of  the intercept such that the response is close to the ', colorize('LOESS smoother', loesscol) , ''), 
@@ -25,7 +25,25 @@ exercises <- list(
             paste0('Obviously, there is curvature in the ', colorize('LOESS smoother', loesscol) , ', which cannot be nicely modelled with a linear response function as obtained in the previous step. Now, set the second power to 2. You can now increase the curvature by moving the slider of ', colorize('coefficient 2', col[2]) , ' into the negative range. Hint: enlarge the coefficient range ("Coefficient range: +"). There is also a feature to compute an optimal intercept automatically by clicking "Adjust Intercept automatically". Try to obtain an adjusted R<sup>2</sup> of at least 0.15 by varying both coefficients and the intercept.'),
             'Now play with the first power to change the curvature to better fit the data. When changing the power, you might have to adjust the sliders of the coefficients and the intercept to obtain a better adjusted R<sup>2</sup>.', 
             'Can you find a combination, which reaches the maximum possible adjusted R<sup>2</sup> of 0.26?'
-            )
+            ),
+        'Advanced II' = c(
+          paste0(
+            'In this exercise, we will fit a simple regression where we try to describe expected body mass index (BMI) as a function of age using B-splines. Reset the inputs. Select the variable pair Bmi ~ Age. In advanced settings, set sample size to 10%, sex to "male", the seed to 100, and display the values by enabling data points option.',
+            paste0('Enable ', colorize('LOESS smoother', loesscol) , ', and move the current response function to the average BMI by clicking "Adjust intercept automatically".'),
+          paste0(
+            'Leave the first and the second power at 1. This means that age is log-transformed for the second fractional polynomial, the current formula is displayed in the output box "FORMULA". Increase the coefficient range to -40 and +40, and set ',
+            colorize('coefficient 1', col[1]) ,
+            ' and ',
+            colorize('coefficient 2', col[2]) ,
+            ' such that you receive a shape similar to the ',
+            colorize('LOESS smoother', loesscol) ,
+            '. Adjust the intercept manually to calibrate the response function. Can you find coefficients such that the adjusted R<sup>2</sup> exceeds 0.30?'
+          ),
+          paste0('Is it possible to receive a similar shape like the LOESS smoother? Enable ', colorize('optimal fit', optfitcol) , '. Is your solution close to the optimal fit?'),
+          'Click on "set optimal fit" to display the coefficients of the optimal fit. Now, change the seed in data options to 80 and see if this fit is still good when a new sample is drawn.',
+          'Click on "set optimal fit" again. Did the power change or did the coefficients change markedly?',
+          'Can you detect differences in the optimal fit of women and men (vary sex in data options)?.'
+        )
     ),
   'bs' = list(
     'Basic' = c(
