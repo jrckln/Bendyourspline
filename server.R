@@ -299,7 +299,7 @@ function(input, output, session){
         input$inputsindividual,
         "Fractional Polynomials" = coef_range_fp(),
         "B-Splines" = coef_range_bs(),
-        "Natural Splines" = coef_range_bs()
+        "Natural Splines" = coef_range_nsp()
       )
       tmp
     })
@@ -605,8 +605,8 @@ function(input, output, session){
     #update max and min val of boundary knots slider according to second and second to last knot position
     observeEvent({c(input[[paste0("nsp_pos1-slider")]], input[[paste0("nsp_pos",input$nknots.nsp,"-slider")]])},{
       pos <- getpos.nsp()
-      updateSliderInput(session, "boundary1.nsp", max=pos[1]-0.1)
-      updateSliderInput(session, "boundary2.nsp", min = pos[length(pos)]+0.1)
+      updateSliderInput(session, "boundary1.nsp", max=round(pos[1], 0))
+      updateSliderInput(session, "boundary2.nsp", min = round(pos[length(pos)], 0))
     })
     
     
