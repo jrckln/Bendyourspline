@@ -17,7 +17,7 @@ out <- column(
                 )
             ),
             wellPanel(
-                id = 'basis_fp',
+                id = 'basis',
                 div(
                     class = "headerinfo",
                     h4("Basis functions"),
@@ -58,9 +58,9 @@ out <- column(
             )
         ),
         conditionalPanel(
-            "input.inputindividual == 'Fractional Polynomials'",
+            "input.inputsindividual == 'Fractional Polynomials'",
             wellPanel(
-                id = 'formula_fp',
+                id = 'formula',
                 div(
                     class = 'headerinfo',
                     h4("Formula: "),
