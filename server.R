@@ -639,7 +639,7 @@ function(input, output, session){
                         selector = '#placeholder_pos_nsp',
                         ui = tags$div(sliderInput(paste0(id[i], "-slider"), label = '',
                                                   value=default.pos.knots.nsp[toinsert[i]], step=1,
-                                                  min=0, max=100, ticks = FALSE), id=id[i])
+                                                  min=input$boundary1.nsp, max=input$boundary2.nsp, ticks = FALSE), id=id[i])
                     )
                     inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
                 }
@@ -655,7 +655,7 @@ function(input, output, session){
                     selector = '#placeholder_pos_nsp',
                     ui = tags$div(sliderInput(paste0(id[i], "-slider"), label = '',
                                               value=default.pos.knots.nsp[i], step=1,
-                                              min=0, max=100, ticks = FALSE), id=id[i])
+                                              min=input$boundary1.nsp, max=input$boundary2.nsp, ticks = FALSE), id=id[i])
                 )
                 inserted.pos.nsp <<- c(inserted.pos.nsp, id[i])
             }
@@ -725,7 +725,6 @@ function(input, output, session){
 
     getcoef.nsp <- reactive({
       req(input$nknots.nsp)
-      req(length(coef_vals_nsp) == (1 + input$nknots.nsp))
       num <- 1 + input$nknots.nsp
       #get values of coefficients:
       ind <- paste0("nsp_coef", 1:num)
