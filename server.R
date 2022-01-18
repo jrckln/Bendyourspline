@@ -16,7 +16,7 @@ function(input, output, session){
     )
   
     # Show the model on start up ...
-    showModal(query_modal)
+    #showModal(query_modal)
     
     observe_helpers(help_dir = "help_mds")
   
@@ -49,23 +49,27 @@ function(input, output, session){
                       ))
         }
     })
-
+    
+    rangesdata <- reactiveValues()
+    
     getdata <- reactive({
       req(input$seed)
       var <- input$variable
       var_list <- data_list[[var]]
+      rangesdata$x <- c(min(var_list$data[,var_list$x]), max(var_list$data[,var_list$x]))
+      rangesdata$y <- c(min(var_list$data[, var_list$y]), max(var_list$data[, var_list$y]))
       var_list$data <- var_list$data[var_list$data[,"gender"] %in% gender[[input$gender]],]
       set.seed(input$seed)
       samplesize <- if(var == "No data") "100%" else input$sample.size
       n <- floor(sample.sizes[samplesize]*nrow(var_list$data))
       ind <- sample(1:nrow(var_list$data), n)
       var_list$data <- var_list$data[ind,]
-      x <- var_list$data[,var_list$x]
-      data <- list("x" = x, 
+      data <- list("x" = var_list$data[,var_list$x], 
                     "y" = var_list$data[, var_list$y], 
                    "names_vars" = c(var_list$x, var_list$y))
       return(data)
     })
+    
     
     output$responseplot <- renderPlot({
        cur_tab = input$inputsindividual
@@ -122,11 +126,11 @@ function(input, output, session){
     
     #intercept: 
     output$interceptslider <- renderUI({
-      data <- getdata()
+      maxy <- rangesdata$y[2]
       sliderInput("intercept",
                   label="Intercept",
                   min = 0, 
-                  max = 2.5*round(max(data$y),0), 
+                  max = 2.5*round(maxy,0), 
                   value = 0, 
                   step = 0.1)
     })
