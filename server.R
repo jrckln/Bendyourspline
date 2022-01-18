@@ -555,7 +555,7 @@ function(input, output, session){
         for(i in names){
           pos <- c(pos, input[[i]])
         }
-        pos <- pos[!is.na(pos)]
+        pos <- sort(pos[!is.na(pos)])
         if(length(pos)!=input$nknots.bs){
           return(numeric(input$nknots.bs))
         } else {
@@ -715,7 +715,7 @@ function(input, output, session){
         for(i in names){
             pos <- c(pos, input[[i]])
         }
-        pos <- pos[!is.na(pos)]
+        pos <- sort(pos[!is.na(pos)])
         if(length(pos) != input$nknots.nsp){
           return(numeric(input$nknots.nsp))
         } else {
