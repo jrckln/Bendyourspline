@@ -98,6 +98,9 @@ function(input, output, session){
           "B-Splines" = getpos.bs(), 
           "Natural Splines" = getpos.nsp() 
         )
+        if(input$inputsindividual == 'Natural Splines'){
+            pos <- c(pos, input$boundary1.nsp, input$boundary2.nsp)
+        }
         
         posx <- quantile(data$x, pos/100)
         y_coord <- max(data$y)
