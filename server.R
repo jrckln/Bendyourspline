@@ -559,7 +559,7 @@ function(input, output, session){
         if(length(pos)!=input$nknots.bs){
           return(numeric(input$nknots.bs))
         } else {
-          return(pos)
+          return(round(pos, 2))
         }
     })
 
@@ -719,7 +719,7 @@ function(input, output, session){
         if(length(pos) != input$nknots.nsp){
           return(numeric(input$nknots.nsp))
         } else {
-          return(pos)
+          return(round(pos,2))
         }
     })
 
