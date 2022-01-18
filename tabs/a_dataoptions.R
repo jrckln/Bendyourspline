@@ -27,7 +27,7 @@ dataoptions <- bsCollapse(
                         )
                     ),
                     column(
-                        5,
+                        12,
                         conditionalPanel(
                             "input.adv_settings & input.variable != 'No data'",
                             column(
