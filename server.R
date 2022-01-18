@@ -739,6 +739,17 @@ function(input, output, session){
       return(coef)
     })
     
+    bindEvent(
+      observe({
+          num <- 1 + input$nknots.nsp
+          ind <- paste0("nsp_pos", 1:num, '-slider')
+          for(i in ind){
+              updateSliderInput(session, i, min=input$boundary1.nsp, max=input$boundary2.nsp)
+          }
+      }),
+      c(input$boundary1.nsp, input$boundary2.nsp)
+    )
+    
     
     #############################################
     #######      Exercises          #############
