@@ -1,7 +1,6 @@
 rm(list = ls(), envir = globalenv()) ## to prevent cross over from old runs
 
 library(shiny)
-library(plotly)
 library(shinyBS)
 library(shinyWidgets)
 library(shinyjs)

@@ -14,6 +14,17 @@ knitr::knit('www/explanatory_comments.rmd', quiet = TRUE, output = 'www/explanat
     div.gray { color:darkgray; }
 </style>
 
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'],['\\(','\\)']],
+    processClass: "mathjax",
+    ignoreClass: "no-mathjax"
+  }
+});
+</script>
+
+
 
 
 
@@ -25,11 +36,11 @@ knitr::knit('www/explanatory_comments.rmd', quiet = TRUE, output = 'www/explanat
 
 Recall the definition of a linear regression model $$y = \beta_0 + \beta_1 x + \epsilon,$$ 
 
-where $y$ is the outcome, $\beta_0$ the intercept, $\beta_1$ the regression coefficient of the explanatory variable $x$ and $\epsilon$ as the error term of the model. The linear regression model is equivalent to $$E(Y) = \beta_0 + \beta_1 x$$ with $E(Y)$ being the expected value of $y$.
+where $y$ is the outcome, $\beta_0$ the intercept, $\beta_1$ the regression coefficient of the explanatory variable $x$ and $\epsilon$ is the error term of the model. The linear regression model is equivalent to $$E(Y) = \beta_0 + \beta_1 x$$ with $E(Y)$ being the expected value of $y$.
 
 <br>
 
-<div class = "blue">The linearity assumption states that with each one-unit difference in $x$, there should be a $\beta_1$ difference in $y$.</div>
+<div class = "blue mathjax">The linearity assumption states that with each one-unit difference in $x$, there should be a $\beta_1$ difference in $y$.</div>
 
 <br>
 
@@ -43,12 +54,12 @@ Put mathematically, $\partial E(Y) / \partial x = \partial (\beta_0 + \beta_1 x)
 
 <br>
 
-In medical applications, the linearity assumption is frequently violated. To illustrate this possibility, let us consider a data set with age and body-mass-index (BMI) of 9377 NHANES participants. Below, is a plot of BMI values against age with the mean BMI values computed at each age (blue line). Additionally, the model assuming a linear association is added in red.
+In medical applications, the linearity assumption is frequently violated. To illustrate this possibility, let us consider a data set with age and body-mass-index (BMI) of 9377 NHANES participants. Below, is a plot of BMI values against age with the mean BMI values computed at each age (blue line). Additionally, the model assuming a linear association is added in red. The grey-shaded areas around the lines represent confidence bounds. 
 
 ![plot of chunk age_bmi_1_plot](figure/age_bmi_1_plot-1.png)
 <br><br>
 
-The association between BMI and age is obviously not linear. The question is are differences in BMI between adjacent age groups due to a trend in the population or just due to random variation. 
+The association between BMI and age is obviously not linear. The question is whether the differences in BMI between adjacent age groups are observed due to a trend in the population or just due to random variation. 
 
 A popular nonparametric method to ‘smooth’ the blue curve by ‘local regression’ is the method of ‘locally estimated scatterplot smoothing’ (LOESS) (green line). In our case, it gives:
 
@@ -59,11 +70,11 @@ In estimating the LOESS line, R automates some of the decisions, e.g., how compl
 
 **For modelling purposes, it is advisable that the analyst takes full control over the complexity of the model.** In this way, the analyst can find the right balance between *flexibility* and *stability* of a model.
 
-* Flexibility of a model makes sure that important features of the data are not overlooked. However, if a model is too flexible, it may follow each little 'hub' or 'bump' and lead to increased variance. See the mean-by-age plot above.
+* Flexibility of a model makes sure that important features of the data are not overlooked. However, if a model is too flexible, it may follow each little 'hub' or 'bump' and lead to increased variance. See the plot above.
 
 * Stability of a model guarantees that the main conclusions from the analysis do not change if the data are slightly changed (e.g., some observations are removed or added). Simpler models, i.e., models with fewer parameters, are usually more stable than more complex models. However, simpler models bear the risk of *misspecification*, meaning that there are systematic trends in the residuals which, if not corrected, lead to misconclusions.
 
-With very large data sets, one can usually reach stability also with a highly flexible modelling approach. In small-to-moderately sized data sets, a data analyst must find the right balance between a flexible and a stable model. Instability can also pose a problem with big data sets, as with the number of observations usually also the number of variables and the number of research questions increases.
+With very large data sets, one can usually reach stability also with a highly flexible modelling approach. In small-to-moderately sized data sets, a data analyst must find the right balance between flexible and stable models. Instability can also pose a problem with big data sets, as with the number of observations usually also the number of variables and the number of research questions increases.
 
 In the example above, we see a lot of sudden differences in expected BMI with age changing by one year. Many of these changes are not plausibly explained by underlying population trends. Therefore, the task of the analyst is to separate *systematic* from *random* variation in BMI according to age.
 
@@ -71,11 +82,14 @@ In the example above, we see a lot of sudden differences in expected BMI with ag
 
 ### 2. Relaxing the linearity assumption
 
-If the association between the explanatory variable $x$ and the outcome $y$ is obviously not linear, one can relax the linearity assumption. The above mentioned model can be extended to accommodate non-linear effects using polynomials. A polynomial of a continuous variable $x$ of degree $k$ is defined as $x, x^2, \ldots, x^k$. If such a polynomial of degree $k$ is used to represent the variable in a regression model, then for each term of the polynomial a separate regression coefficient is estimated. The dependent variable is modeled by $$E(Y) = \beta_0 + \beta_1 x + \beta_2 x^2 + \ldots + \beta_k x^k.$$ 
-$x$ (=$x^1$), $x^2$ to $x^k$ are called base functions of $x$. For a raw polynomial of order $3$ of a variable $x$, the base functions can be computed by, e.g.:
+If the association between the explanatory variable $x$ and the outcome $y$ is obviously not linear, one can relax the linearity assumption. The above mentioned model can be extended to accommodate non-linear effects using polynomials. A polynomial of a continuous variable $x$ of degree $k$ is a linear combination of the terms $x, x^2, \ldots, x^k$. If such a polynomial of degree $k$ is used to represent the variable in a regression model, then for each term of the polynomial a separate regression coefficient is estimated. The dependent variable is modeled by $$E(Y) = \beta_0 + \beta_1 x + \beta_2 x^2 + \ldots + \beta_k x^k.$$ 
+$x$ (=$x^1$), $x^2$ to $x^k$ are called basis functions of $x$. For a raw polynomial of order $3$ of a variable $x$, the basis functions can be computed by, e.g.:
 
 |   Variable value $x$  |  $x^1$  |  $x^2$  |  $x^3$ |
 |:---------------------:|:--------:|:-------:|:--------:|
+|-2 | -2 | 4 | -8 |
+|... | ... | ... | ... |
+|-0.5 | -0.5 | 0.25 | -0.125 |
 |1 | 1 | 1 | 1 |
 |2 | 2 | 4 | 8 |
 |3 | 3 | 9 | 27 
@@ -86,19 +100,19 @@ In R the `poly()` function is a convenient way to compute polynomial terms.
 Even with $k$ chosen as 2 or 3, such a model is flexible enough to relax the linearity assumption, i.e., the assumption that each increase in $x$ is associated with a difference in $y$ of $\beta_1$. Note, the regression model described above is still a linear model, despite that it provides a non-linear function of the explanatory variable $x$.
 
 
-In the last decades, a couple of techniques were developed that allow in very flexible ways to relax the linearity assumption. Among them are **fractional polynomials**, and various types of 'splines', like **natural (restricted cubic) splines** or **B-splines**. The use of these methods allow investigation of non-linear effects of continuous variables. In all these proposals, the continuous variable $x$ is first transformed into a few base functions, and the base functions are then used for modelling. 
+In the last decades, a couple of techniques were developed that allow in very flexible ways to relax the linearity assumption. Among them are **fractional polynomials**, and various types of 'splines', like **natural (restricted cubic) splines** or **B-splines**. The use of these methods allow investigation of non-linear effects of continuous variables. In all these proposals, the continuous variable $x$ is first transformed into a few basis functions, and the basis functions are then used for modelling. 
 
 <br>
 
 #### 2.1. Fractional polynomials
 
-Fractional polynomials select one or two base functions from a predefined catalogue of eight possible transformations, which is:
+Fractional polynomials[^1] select one or two basis functions from a predefined catalogue of eight possible transformations, which is:
 
 $$\{x^{-2}, x^{-1}, x^{-1/2}, log(x), x^{1/2}, x, x^{2}, x^{3}\}.$$ 
 
-The so-called 'powers' ($-2, -1, ..., 3$) in those transformations are selected by using those one or two transformations that yield the best model fit. Models requiring one power are called first-degree (FP1) function and models requiring two powers are second-degree (FP2) functions. If the same power is selected twice (i.e., ‘repeated powers’), e.g. $x^{2}$ is selected twice, the FP2 function is defined as $\beta_1 x^{2} + \beta_2 log(x)$. This defines 8 FP1 and 36 FP2 models. These 44 models are sufficient for most biomedical applications as they include very different types of non-linear functions. 
+The so-called 'powers' ($-2, -1, ..., 3$) in those transformations are selected by using those one or two transformations that yield the best model fit. Models requiring one power are called first-degree (FP1) function and models requiring two powers are second-degree (FP2) functions. If the same power is selected twice (i.e., ‘repeated powers’), e.g. $x^{2}$ is selected twice, the FP2 function is defined as $\beta_1 x^{2} + \beta_2 x^{2} log(x)$. This defines 8 FP1 and 36 FP2 models. These 44 models are sufficient for most biomedical applications as they include very different types of non-linear functions. 
 
-A suitable pretransformation is applied to make the base functions independent, but for pragmatic reasons the pretransformation of $x$ will only shift the values to the positive range (if necessary) and then divide them by a multiple of 10. In this way, the pretransformation stays simple enough to be written down in a report.  
+A suitable pretransformation is applied to make the basis functions independent, but for pragmatic reasons the pretransformation of $x$ will only shift the values to the positive range (if necessary) and then divide them by a multiple of 10. In this way, the pretransformation stays simple enough to be written down in a report.  
 
 To select the best model among those 44 candidates, a closed testing procedure, called the function selection procedure (FSP) has been introduced:
 
@@ -158,39 +172,59 @@ In [Perperoglou A, Sauerbrei W, Abrahamowicz M, Schmid M. BMC Med Res Methodol. 
 
 ##### 2.2.1. Linear B-splines
 
-A B-spline of order $n$ is a piecewise polynomial function of degree $n-1$ in a variable $x$. It is defined over $n+1$ knots $t_{j}$, which must be in non-descending order $t_{j}<t_{j+1}$. B-splines transform the original variable $x$ into base functions which are greater than 0 for specific subranges of $x$ and 0 otherwise. The number of degrees of freedom defines the number of base functions, and the degree defines the type of transformation. Linear B-splines have degree 1. The subranges are defined by the location of knots. These are usually set automatically, but are part of the definition of the spline transformation.
+A linear B-spline is a piecewise polynomial function of degree 1 in a variable $x$ (piecewise linear function). The domain of the independent variable $x$, $[\\min(x), \\max(x)]$, is divided into $k+1$ disjunct intervals. The boundaries of the intervals are called knots and $k$ denotes the number of knots. In each of these intervals a polynomial function of degree $d$ (here: $ d=1$) is defined, which is called basis function and is 0 outside of this interval. In this context, the number of knots and the degree of the polynomials ($k+d$) defines the number of basis functions (degrees of freedom).
+Although knots are part of the definition of a spline, they are usually set automatically by the program.
 
-For example, linear B-splines with three base functions (i.e., `degree=1` and `df=3`) as functions of age look like this 
+For example, a linear B-spline of age with three basis functions (i.e., `degree=1` and `df=3`) and knots at 40 and 60 years looks like this 
 
 ![plot of chunk illu_bsplines_linear](figure/illu_bsplines_linear-1.png)
 
-In contrast cubic B-splines with three base functions (i.e., `degree=3` and `df=3`) as functions of age look like this:
+In contrast cubic B-splines with three basis functions (i.e., `degree=3` and `df=3`) as functions of age look like this:
 ![plot of chunk illu_bsplines_cubic](figure/illu_bsplines_cubic-1.png)
 
-The individual spline bases have no simple interpretation and can only be used together as a set of independent variables representing variable $x$ (here age) in a regression model. In our example, by representing age in several transformations, we can estimate a nonlinear association of BMI with age.
+The individual spline bases have no simple interpretation and can only be used together as a set of independent variables representing variable $x$ (here: age) in a regression model. In our example, we again try to estimate a nonlinear association of BMI with age.
 
 Note, different choices of the number of degrees of freedom and the degree will lead to different model fits. Hence, both parameters have to be carefully selected by the analyst.
 
-Let's see splines in action. We refit the model with BMI and age, now using B-splines to model age. Applying linear B-splines with three base functions (`degree=1` and `df=3`) creates the following fit:
+Let's see splines in action. We refit the model with BMI and age, now using B-splines to model age. Applying linear B-splines with three basis functions (`degree=1` and `df=3`) creates the following fit:
 
 ![plot of chunk bplines_fit1](figure/bplines_fit1-1.png)
 
-A smoother function can be obtained by using cubic B-splines with three base functions (`degree=3` and `df=3`):
+A smoother function can be obtained by using cubic B-splines with three basis functions (`degree=3` and `df=3`):
 
 ![plot of chunk bplines_fit2](figure/bplines_fit2-1.png)
 
-Increasing the number of degrees of freedom leads to a more 'wiggly" fit. The plots below show linear B-splines with 5, 10, 15, and 20 base functions:
+Increasing the number of degrees of freedom leads to a more 'wiggly" fit. The plots below show linear B-splines with 5, 10, 15, and 20 basis functions:
 
 ![plot of chunk bplines_fit3](figure/bplines_fit3-1.png)
 
-The plots below show cubic B-splines with 5, 10, 15, and 20 base functions:
+The plots below show cubic B-splines with 5, 10, 15, and 20 basis functions:
 
 ![plot of chunk bplines_fit4](figure/bplines_fit4-1.png)
+
 <br><br>
 
 ##### 2.2.2. Restricted (natural) cubic splines
 
-Restricted cubic splines (also known as natural splines) are cubic transformations (i.e., third-order polynomials) of the explanatory variable $x$ in the interior of its range (within the outermost knots), and are linear at the edges (outside the outermost knots). Typically, a small number of knots (e.g., 3 to 5) is sufficient to model most data in biomedical applications. Knots are located at various percentiles of $x$. For example, Frank Harrell recommends in his book[^1] the following settings:
+Restricted cubic splines (also known as natural splines) are piecewise cubic functions (i.e., third-order polynomials) of the explanatory variable $x$ in the interior of its range (within the outermost knots), and are linear at the edges (outside the outermost knots). 
+
+
+With three degrees of freedom, the basis functions would look as follows (knots at 40 and 60 years):
+![plot of chunk illu_rcs](figure/illu_rcs-1.png)
+
+Applying natural splines to model BMI on age results in a fit, which is 'more linear' in the tails.
+
+![plot of chunk rcs_fit1](figure/rcs_fit1-1.png)
+
+For comparison, natural splines with 5 spline basis functions.
+
+![plot of chunk rcs_fit2](figure/rcs_fit2-1.png)
+
+B-splines and restricted (natural) cubic splines are implemented in the R package `splines`.
+
+
+<br>
+Typically, a small number of knots (e.g., 3 to 5) is sufficient to model most data in biomedical applications. Knots are located at various percentiles of $x$. For example, Frank Harrell recommends in his book[^2] the following settings:
 
 | number of knots  | percentiles |
 |:----------------:|:------------:|
@@ -198,19 +232,9 @@ Restricted cubic splines (also known as natural splines) are cubic transformatio
 4 | 0.05  0.35  0.65  0.95 |
 5 | 0.05  0.275  0.5  0.725  0.95 |
 
-With three degrees of freedom (= three transformations) their basis functions would look as follows:
-![plot of chunk illu_rcs](figure/illu_rcs-1.png)
 
-Applying natural splines to model BMI on age results in a fit, which is 'more linear' in the tails.
-
-![plot of chunk rcs_fit1](figure/rcs_fit1-1.png)
-
-For comparison, natural splines with 5 transformations.
-
-![plot of chunk rcs_fit2](figure/rcs_fit2-1.png)
-
-B-splines and restricted (natural) cubic splines are implemented in the R package `splines`.
 
 <br>
 
-[^1]: Harrell Jr. FE. Regression modeling strategies. With applications to linear models, logistic regression, and survival analysis. Springer 2015, chapter 2.4.6
+^[1]: Royston P., Sauerbrei W. Model-building. A pragmatic approach to regression analysis based on fractional polynomials for modellin continuous variables. Wiley 2008, chapter 4-6
+^[2]: Harrell Jr. FE. Regression modeling strategies. With applications to linear models, logistic regression, and survival analysis. Springer 2015, chapter 2.4.6
