@@ -1,6 +1,7 @@
 ---
 title: "Visualisation of non-linear modelling"
 author: "Daniela Dunkler, Christine Wallisch"
+output: html_fragment
 ---
 
 <!-- 
