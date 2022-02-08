@@ -6,7 +6,7 @@ function(input, output, session){
         '
         <p>
         This website is still in the development phase. In case of crashes or unexpected behavior please report at
-        <a href="https://github.com/ljiricka/Bendyourspline/issues">Github</a>. Simply click on "New Issue" and let us know what you noticed. <br>
+        <a href="https://github.com/jrckln/Bendyourspline/issues">Github</a>. Simply click on "New Issue" and let us know what you noticed. <br>
         Thank you for your understanding!
         </p>
         '
@@ -60,10 +60,12 @@ function(input, output, session){
       rangesdata$y <- c(min(var_list$data[, var_list$y]), max(var_list$data[, var_list$y]))
       var_list$data <- var_list$data[var_list$data[,"gender"] %in% gender[[input$gender]],]
       set.seed(input$seed)
-      samplesize <- if(var == "No data") "100%" else input$sample.size
-      n <- floor(sample.sizes[samplesize]*nrow(var_list$data))
-      ind <- sample(1:nrow(var_list$data), n)
-      var_list$data <- var_list$data[ind,]
+      if(var != 'No data'){
+          samplesize <- input$sample.size
+          n <- floor(sample.sizes[samplesize]*nrow(var_list$data))
+          ind <- sample(1:nrow(var_list$data), n)
+          var_list$data <- var_list$data[ind,]
+      }
       data <- list("x" = var_list$data[,var_list$x], 
                     "y" = var_list$data[, var_list$y], 
                    "names_vars" = c(var_list$x, var_list$y))
@@ -754,21 +756,20 @@ function(input, output, session){
     #######      Exercises          #############
     #############################################
     
-    output$exerciseselection <- renderUI({
-      selectInput("exerciseselection", "", names(exercises[[input$inputsindividual]]), selected = "Basic")
-    })
-    
     exercisecounter <- reactiveVal(0)
+    startedexercise <- reactiveVal(NA_character_)
     
     output$exerciseout <- renderUI({
-      req(input$exerciseselection)
       countervalue <- exercisecounter()
       if(countervalue==0){
         return(
           actionButton('exercisestart', 'Start')
         )
       } else {
-        currentexercises <- exercises[[input$inputsindividual]][[input$exerciseselection]]
+          if(startedexercise()!=input$inputsindividual){
+               return(HTML(paste0('<p>Please switch to ', startedexercise(), ' Input panel to continue.</p>')))
+          }
+        currentexercises <- exercises[[input$inputsindividual]][['Basic']]
         currentvalidation <- validationall[[input$inputsindividual]]
         if(countervalue <= length(currentexercises)){
           tagList(
@@ -796,7 +797,7 @@ function(input, output, session){
               runjs("InitializeConfetti();")
             }
             runjs("$('#exercise_modal').modal().focus();")
-            exercisecounter(1)
+            exercisecounter(0)
         }
       }
     })
@@ -806,7 +807,10 @@ function(input, output, session){
       input$exercisenext, ignoreInit = TRUE
     )
     bindEvent(
-      observe(exercisecounter(exercisecounter()+1)),
+      observe({
+          startedexercise(input$inputsindividual)
+          exercisecounter(exercisecounter()+1)
+      }),
       input$exercisestart, ignoreInit = TRUE
     )
     
@@ -814,220 +818,67 @@ function(input, output, session){
     
     #for fractional polynomials:
     observe({
-      req(input$exercisestart>0)
-      which <- input$exerciseselection
+      req(input$exercisestart>0, input$inputsindividual == 'Fractional Polynomials')
+      which <- 'Basic'
       response <- getresponse()
-      newval <- switch(which,
-                       Basic = c(
-                         input$inputsindividual == 'Fractional Polynomials' & input$variable == 'No data', 
-                         input[['fp_coef1-slider']] == 1,
-                         input$power2.fp == 2 & input[['fp_coef2-slider']] == 1,
-                         input[['fp_coef1-slider']] == -1,
-                         input[['fp_coef1-slider']] == 1 & input[['fp_coef2-slider']] == -1,
-                         TRUE,
-                         input$power2.fp == 2 & input$power1.fp == 2,
-                         input$power2.fp == 2 & input$power1.fp == 2 & getshape(response)=="cup",
-                         input$power2.fp == 2 & input$power1.fp == 2 & getshape(response)=="cap"
-                       ),
-                       Advanced = c(
-                         input$inputsindividual == 'Fractional Polynomials' & input$variable == 'Diastolic blood pressure ~ Age' & input$sample.size == '100%' & input$gender == 'Both',
-                         input$add_y_fp & input$add_loess_fp & !input$add_optfit_fp,
-                         input$intercept.fp >= (66-10) & input$intercept.fp <= (66+10),
-                         calcR2.fp()[1]>=0.08 & input[['val_coef2_fp-coef']] == 0,
-                         input$power2.fp == 2 & calcR2.fp()[1]>=0.15,
-                         calcR2.fp()[1]>0.15,
-                         calcR2.fp()[1]>=0.259
-                       )
-
-      )
-      validationall[['Fractional Polynomials']] <- newval
+      validationall[['Fractional Polynomials']] <- 
+                c(input$variable == 'No data',
+                  TRUE,
+                  input[['fp_coef1-slider']] == 1,
+                  input$power2.fp == 2 & input[['fp_coef1-slider']] == 1 & input[['fp_coef2-slider']] == 1,
+                  input$power2.fp == 2 & input[['fp_coef1-slider']] == -1 & input[['fp_coef2-slider']] == 1,
+                  input$power2.fp == 2 & input[['fp_coef1-slider']] == 1 & input[['fp_coef2-slider']] == -1,
+                  TRUE, 
+                  input$power2.fp == 2 & input$power1.fp == 2,
+                  input$power2.fp == 2 & input$power1.fp == 2 & getshape(response)=="cup",
+                  input$power2.fp == 2 & input$power1.fp == 2 & getshape(response)=="cap"
+                )
     })
     
+    #for B-Splines: 
+    observe({
+      req(input$exercisestart>0, input$inputsindividual == 'B-Splines')
+      which <- 'Basic'
+      response <- getresponse()
+      validationall[['B-Splines']] <- 
+                c(input$variable == 'No data',
+                  input$degree.bs == 1 & input$nknots.bs == 2 & round(input[['bs_pos1-slider']],0) == 33 & 
+                    round(input[['bs_pos2-slider']],0) == 67 & input[['bs_coef1-slider']] == 0 & input[['bs_coef2-slider']] == 0 & 
+                    input[['bs_coef3-slider']] == 0,
+                  TRUE, 
+                  TRUE, 
+                  TRUE, 
+                  input[['bs_coef1-slider']] == 1 & input[['bs_coef2-slider']] == 1 & input[['bs_coef3-slider']] == 0, 
+                  input[['bs_coef1-slider']] == 0 & input[['bs_coef2-slider']] == 1 & input[['bs_coef3-slider']] == 1,
+                  input[['bs_coef1-slider']] == 1 & input[['bs_coef2-slider']] == 1 & input[['bs_coef3-slider']] == 1,
+                  input$degree.bs == 1 & input$nknots.bs == 2 & getshape(response)=="cup", 
+                  input$degree.bs >= 2
+                )
+    })
     
-    
-    # 
-    # #for BSplines: 
-    # observe({
-    #   req(input$start_exercise_bs>0)
-    #   titles <- input$exercise_bs
-    #   
-    #   data <- getbasis.bs()
-    #   b <- data$b
-    #   pos <- getpos.bs()
-    #   coefs <- getcoef.bs()
-    #   intercept <- as.numeric(input$intercept.bs)
-    #   spline <- rowSums(b %*% coefs)+intercept
-    #   
-    #   newval <- switch(titles, 
-    #                    'Basic' = c(
-    #                      input$inputsindividual == 'B-Splines' & !input$add_y_bs & !input$add_loess_bs & !input$add_optfit_bs & input$degree.bs == 1,
-    #                      input[['bs_coef1-coef']] == 1 & input[['bs_coef2-coef']] == 0 & input[['bs_coef3-coef']] == 0, 
-    #                      TRUE, 
-    #                      input[['bs_coef1-coef']] == 1 & input[['bs_coef2-coef']] == 1 & input[['bs_coef3-coef']] == 0, 
-    #                      input[['bs_coef1-coef']] == 0 & input[['bs_coef2-coef']] == 1 & input[['bs_coef3-coef']] == 1, 
-    #                      input[['bs_coef1-coef']] == 1 & input[['bs_coef2-coef']] == 1 & input[['bs_coef3-coef']] == 1,
-    #                      getshape(spline, data$x)=="cup" 
-    #                    )
-    #   )
-    #   validation_all$bs <- newval
-    # })
-    # 
-    # counter_exercise_bs <- reactiveVal(0)
-    # observe({
-    #    counter <- counter_exercise_bs()
-    #    if(counter == 0){
-    #      runjs("document.getElementById('start_exercise_bs').style.visibility = 'visible';")
-    #    } else {
-    #      runjs("document.getElementById('start_exercise_bs').style.visibility = 'hidden';")
-    #    }
-    # })
-    #     
-    # output$next_exercise_bs <- renderUI({
-    #   req(input$start_exercise_bs, input$exercise_bs)
-    #   counter <- counter_exercise_bs()
-    #   validation <- validation_all$bs
-    #   which <- as.character(input$exercise_bs)
-    #     if((counter <= length(exercises[['bs']][[which]])) & (counter > 0)){
-    #       tagList(
-    #         HTML('<p>', paste0(as.character(exercises[['bs']][[which]][counter])), '</p>'), 
-    #         if(validation[counter]){
-    #           tagList(
-    #           HTML('<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-    #               <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-    #               <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-    #             </svg>
-    #              '), 
-    #           actionButton('next_exercise_btn_bs', 'Next')
-    #           )
-    #         } else {
-    #           HTML('')
-    #         }
-    #       )
-    #     } else if(counter > length(exercises[['bs']][[which]])){
-    #         if(any(input$start_exercise_bs == 1, input$start_exercise_fp == 1)){
-    #           runjs("InitializeConfetti();")
-    #         } else {
-    #           runjs("RestartConfetti();")
-    #         }
-    #         runjs("$('#exercise_modal').modal().focus();")
-    #         counter_exercise_bs(0)
-    #         return('')
-    #     }
-    # })
-    #     
-    # observeEvent(input$next_exercise_btn_bs, {
-    #   if(input$next_exercise_btn_bs > 0) {
-    #     newVal <- counter_exercise_bs() + 1
-    #     counter_exercise_bs(newVal)
-    #   }
-    # })
-    # observeEvent(input$start_exercise_bs, {
-    #   if(input$start_exercise_bs > 0) {
-    #     newVal <- counter_exercise_bs() + 1
-    #     counter_exercise_bs(newVal)
-    #   }
-    # })
-    # 
-    # #for Natural splines: 
-    # observe({
-    #   req(input$start_exercise_nsp>0)
-    #   
-    #   data <- getbasis.nsp()
-    #   b <- data$b
-    #   pos <- getpos.nsp()
-    #   coefs <- getcoef.nsp()
-    #   intercept <- as.numeric(input$intercept.nsp)
-    #   spline <- rowSums(b %*% coefs)+intercept
-    #   
-    #   titles <- input$exercise_nsp
-    #   newval <- switch(titles, 
-    #                    'Basic' = c(
-    #                      input$inputsindividual == 'Natural Splines' & !input$add_y_nsp & !input$add_loess_nsp & !input$add_optfit_nsp,
-    #                      input[['nsp_coef1-coef']] == 0 & input[['nsp_coef2-coef']] == 0 & input[['nsp_coef3-coef']] == 0, 
-    #                      input[['nsp_coef1-coef']] == 1 & input[['nsp_coef2-coef']] == 0 & input[['nsp_coef3-coef']] == 0, 
-    #                      TRUE, 
-    #                      input[['nsp_coef1-coef']] == 1 & input[['nsp_coef2-coef']] == 1 & input[['nsp_coef3-coef']] == 0, 
-    #                      input[['nsp_coef1-coef']] == 1 & input[['nsp_coef2-coef']] == 1 & input[['nsp_coef3-coef']] == 1,
-    #                      input[['nsp_coef1-coef']] == -1, 
-    #                      getshape(spline, data$x)=="cup" & input[['nsp_coef1-coef']] %in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef2-coef']] %in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef3-coef']] %in% c(-1,-0.5,0, 0.5,1), 
-    #                      getshape(spline, data$x)=="cap" & input[['nsp_coef1-coef']] %in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef2-coef']] %in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef3-coef']] %in% c(-1,-0.5,0, 0.5,1)
-    #                    ),
-    #                    'Advanced' = c(
-    #                      input$inputsindividual == 'Natural Splines' & input$variable == 'Height ~ Age' & input$add_y_bs & input$sample.size == '100%' & input$gender == 'Both', 
-    #                      input$nknots.nsp == 2 & between(input$nsp_pos1_inner, 11.8, 12.2) & between(input$nsp_pos2_inner, 14.8, 15.2) & 
-    #                        between(input$boundary1.nsp, 3.8, 4.2) & between(input$boundary2.nsp, 17.8, 18.2), 
-    #                      input$adjust_intercept.nsp > 0, 
-    #                      calcR2.nsp()[1]>0.65, 
-    #                      between(input$nsp_pos1_inner, 9.8, 10.2), 
-    #                      input$adjust_intercept.nsp > 1
-    #                    )
-    #   )
-    #   validation_all$nsp <- newval
-    # })
-    # 
-    # counter_exercise_nsp <- reactiveVal(0)
-    # observe({
-    #    counter <- counter_exercise_nsp()
-    #    if(counter == 0){
-    #      runjs("document.getElementById('start_exercise_nsp').style.visibility = 'visible';")
-    #    } else {
-    #      runjs("document.getElementById('start_exercise_nsp').style.visibility = 'hidden';")
-    #    }
-    # })
-    #     
-    # output$next_exercise_nsp <- renderUI({
-    #   req(input$start_exercise_nsp, input$exercise_nsp)
-    #   counter <- counter_exercise_nsp()
-    #   validation <- validation_all$nsp
-    #   which <- as.character(input$exercise_nsp)
-    #     if((counter <= length(exercises[['nsp']][[which]])) & (counter > 0)){
-    #       tagList(
-    #         HTML('<p>', paste0(as.character(exercises[['nsp']][[which]][counter])), '</p>'), 
-    #         if(validation[counter]){
-    #           tagList(
-    #           HTML('<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-    #               <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-    #               <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-    #             </svg>
-    #              '), 
-    #           actionButton('next_exercise_btn_nsp', 'Next')
-    #           )
-    #         } else {
-    #           HTML('')
-    #         }
-    #       )
-    #     } else if(counter > length(exercises[['nsp']][[which]])){
-    #         if(any(input$start_exercise_nsp == 1, input$start_exercise_fp == 1)){
-    #           runjs("InitializeConfetti();")
-    #         } else {
-    #           runjs("RestartConfetti();")
-    #         }
-    #         runjs("$('#exercise_modal').modal().focus();")
-    #         counter_exercise_nsp(0)
-    #         return('')
-    #     }
-    # })
-    #     
-    # observeEvent(input$next_exercise_btn_nsp, {
-    #   if(input$next_exercise_btn_nsp > 0) {
-    #     newVal <- counter_exercise_nsp() + 1
-    #     counter_exercise_nsp(newVal)
-    #   }
-    # })
-    # observeEvent(input$start_exercise_nsp, {
-    #   if(input$start_exercise_nsp > 0) {
-    #     newVal <- counter_exercise_nsp() + 1
-    #     counter_exercise_nsp(newVal)
-    #   }
-    # })
-    # 
-    # 
-    # 
-    # 
-    # 
-    
-    
-    
+    #for Natural splines:
+    observe({
+      req(input$exercisestart>0, input$inputsindividual == 'Natural Splines')
+      which <- 'Basic'
+      response <- getresponse()
+      validationall[['Natural Splines']] <- 
+                c(input$variable == 'No data',
+                  input$nknots.nsp == 2 & round(input[['nsp_pos1-slider']],0) == 33 & round(input[['nsp_pos2-slider']],0) == 67 & 
+                  input[['nsp_coef1-slider']] == 0 & input[['nsp_coef2-slider']] == 0 & 
+                    input[['nsp_coef3-slider']] == 0,
+                  TRUE, 
+                  TRUE, 
+                  TRUE, 
+                  input[['nsp_coef1-slider']] == 1 & input[['nsp_coef2-slider']] == 1 & input[['nsp_coef3-slider']] == 0, 
+                  input[['nsp_coef1-slider']] == 0 & input[['nsp_coef2-slider']] == 1 & input[['nsp_coef3-slider']] == 1,
+                  input[['nsp_coef1-slider']] == 1 & input[['nsp_coef2-slider']] == 1 & input[['nsp_coef3-slider']] == 1,
+                  input[['nsp_coef1-slider']] == -1& input[['nsp_coef2-slider']] == 0 & input[['nsp_coef3-slider']] == 0, 
+                  input[['nsp_coef1-slider']]%in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef2-slider']]%in% c(-1,-0.5,0, 0.5,1) & 
+                    input[['nsp_coef3-slider']]%in% c(-1,-0.5,0, 0.5,1) & getshape(response)=="cup", 
+                  input[['nsp_coef1-slider']]%in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef2-slider']]%in% c(-1,-0.5,0, 0.5,1) & 
+                    input[['nsp_coef3-slider']]%in% c(-1,-0.5,0, 0.5,1) & getshape(response)=="cap"
+                )
+    })
     
     session$onSessionEnded(stopApp) #automatically stop when closing browser
 }
