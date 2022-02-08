@@ -378,9 +378,9 @@ function(input, output, session){
           coef2 <- coef2
         }
         fp_fun <- paste(fp_fun, coef2, "\\cdot", trans2)
-        withMathJax(paste0(
-            "$$", fp_fun, "$$"
-        ))
+        return(withMathJax(HTML(paste0(
+            "<div class='formula'>$$", fp_fun, "$$</div>"
+        ))))
     })
     
     getbasis.fp <- reactive({

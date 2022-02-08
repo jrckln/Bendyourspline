@@ -60,7 +60,6 @@ out <- column(
         conditionalPanel(
             "input.inputsindividual == 'Fractional Polynomials'",
             wellPanel(
-                id = 'formula',
                 div(
                     class = 'headerinfo',
                     h4("Formula: "),
