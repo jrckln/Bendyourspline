@@ -69,6 +69,6 @@ out <- column(
                 uiOutput("formula.fp")
             )
         ),
-        codeUI("code_fp")
+        codeUI("codemodule")
     )
 )

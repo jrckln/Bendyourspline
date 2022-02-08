@@ -17,18 +17,23 @@ function(input, output, session){
   
     # Show the model on start up ...
     #showModal(query_modal)
-    
-    observe_helpers(help_dir = "help_mds")
   
     observeEvent(input$link_methods, {
       updateNavbarPage(session, "navbar", "Methods")
     })
     
-    #code download module #TODO
-    codeServer("code_fp", filename=c("www/codes/code_fp.R", "www/codes/helpers.R", "www/codes/code_data.R"))
-    codeServer("code_bs", filename=c("www/codes/code_bs.R", "www/codes/code_data.R"))
-    codeServer("code_nsp", filename=c("www/codes/code_nsp.R", "www/codes/code_data.R"))
-  
+    #code download module
+    
+    observe({
+        file <- switch (input$inputsindividual,
+        "Fractional Polynomials" = "www/codes/code_fp.R",
+        "B-Splines" = "www/codes/code_bs.R",
+        "Natural Splines" = "www/codes/code_nsp.R"
+        )
+        codeServer("codemodule", filename=c(file,"www/codes/helpers.R", "www/codes/code_data.R"))
+    })
+        
+        
     #############################################
     #######         Data            #############
     #############################################
