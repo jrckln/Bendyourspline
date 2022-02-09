@@ -11,7 +11,7 @@ function(input, output, session){
         </p>
         '
       ),
-      easyClose = F, 
+      easyClose = FALSE, 
       footer = modalButton("Cancel")
     )
   
@@ -339,12 +339,48 @@ function(input, output, session){
       }
     })
     
+    
+    
+    bindEvent(
+      observe({
+          showModal(
+              modalDialog(
+                  title='Fine tuning of coefficient slider', 
+                  HTML('<p>Adjust step for <button id="" type="button" class="btn btn-default action-button"
+                        style="background: #FFFFFF; display: inline-block;"><i class="fa fa-minus" 
+                       role="presentation" aria-label="minus icon"></i></button> and <button id="" type="button" class="btn btn-default action-button"
+                        style="background: #FFFFFF; display: inline-block;"><i class="fa fa-plus" 
+                       role="presentation" aria-label="minus icon"></i></button> Button for coefficient slider fine-tuning</p>'), 
+                  numericInput('finetuning-slider', '', value = finetuningstep(), min = 0.01, max = 10, step = 0.01),
+                  easyClose = TRUE, 
+                  footer = modalButton("Close")
+              )
+          )
+      }),
+      input$finetuningmenu
+    )
+    
+    finetuningstep <- reactiveVal(0.01)
+
+    bindEvent(
+        observe({
+            req(input[['finetuning-slider']])
+            finetuningstep(input[['finetuning-slider']])
+        }),
+        input[['finetuning-slider']]
+    )
+    
     #############################################
     #######           FP            #############
     #############################################
     
-    coef1.fp <- sliderpl("fp_coef1")
-    coef2.fp <- sliderpl("fp_coef2")
+    coef1.fp <- coef2.fp <-reactiveVal(0)
+    
+    observe({
+        step <- finetuningstep()
+        sliderpl("fp_coef1", step = step)
+        sliderpl("fp_coef2", step = step)
+    })
 
     
     output$formula.fp <- renderUI({
@@ -407,7 +443,7 @@ function(input, output, session){
     })
     
     getcoef.fp <- reactive({
-      c(as.numeric(coef1.fp()), as.numeric(coef2.fp()))
+      c(as.numeric(input[['fp_coef1-slider']]), as.numeric(input[['fp_coef2-slider']]))
     })
     
     

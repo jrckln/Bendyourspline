@@ -20,26 +20,32 @@ sliderplUI <- function(id, range_slider = 1, label = "") {
 }
 
 # Module Server
-sliderpl <- function(id) {
+sliderpl <- function(id, step) {
   moduleServer(
     id,
     function(input, output, session) {
       coef <- reactiveVal(0)
       ns <- session$ns
-      observeEvent(input$slider, {
-          coef(input$slider)
-      })
-      observeEvent(input$minus, {
-                new <- coef() - 0.01
+      bindEvent(
+          observe(coef(input$slider)), 
+          input$slider
+      )
+      bindEvent(
+          observe({
+                new <- coef() - step
                 updateSliderInput(session, "slider", value = new)
                 coef(new)
-             })
-      observeEvent(input$plus, {
-                new <- coef() + 0.01
+          }), 
+          input$minus, ignoreInit = TRUE
+      )
+      bindEvent(
+          observe({
+                new <- coef() + step
                 updateSliderInput(session, "slider", value = new)
                 coef(new)
-            })
-     return(coef)
+          }), 
+          input$plus, ignoreInit = TRUE
+      )
     }
   )
 }

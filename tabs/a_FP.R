@@ -49,12 +49,15 @@ fp <- tabPanel(
     fluidRow(column(
       4,
       div(style = "padding: 10px 0px; margin:0%",
-          HTML("Power:"))
+          HTML("<span>Power:</span>"))
     ),
     column(
       8, offset = 0,
-      div(style = "padding: 10px 0px; margin:0%",
-          HTML("Coefficient:"))
+      div(style = "padding: 10px 0px; margin:0%;",
+          HTML("<span>Coefficient:</span>"), 
+          actionButton('finetuningmenu', "", icon = icon("bars"), style='
+                   background: #FFFFFF; float: right; border: none;')
+          )
     )),
     fluidRow(
       column(
