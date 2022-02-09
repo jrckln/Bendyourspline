@@ -89,15 +89,19 @@ function(input, output, session){
        p <- ggplot()+ 
          geom_line(data = data, aes(x=x, y = getintercept()+response, color = "Response"))
        
+       values <- c('Response'='black')
+       
        if(input$addloess){
             p <- p + geom_smooth(data = data, aes(x=x, y=y,  color = "LOESS smoother"),
                                  method = "loess", formula = "y~x", se=FALSE)
+            values <- c(values, 'LOESS smoother' = loesscol)
        }
        if(input$addoptfit){
           optfit <- getoptfit()$fitted
           p <- p + geom_line(data = data, aes(x=x, y = optfit,
                                               color = "Optimal fit")
                              )
+          values <- c(values, 'Optimal fit' = optfitcol)
        }
        if(any(input$showknots_bs, input$showknots_nsp)){
         pos <- switch(
@@ -126,9 +130,7 @@ function(input, output, session){
        }
        
        p <- p +
-         scale_color_manual(values=c("LOESS smoother" = loesscol, 
-                                     "Optimal fit" = optfitcol, 
-                                     "Response" = 'black'), name = " ", drop = TRUE) + 
+         scale_color_manual(values=values, name = " ", drop = TRUE) +
          theme_minimal() + 
          theme(legend.position = "bottom")
        return(p)
