@@ -139,28 +139,25 @@ function(input, output, session){
     #intercept: 
     output$interceptslider <- renderUI({
       maxy <- rangesdata$y[2]
-      sliderInput("intercept",
-                  label="Intercept",
-                  min = 0, 
-                  max = 2.5*round(maxy,0), 
-                  value = 0, 
-                  step = 0.1)
+      sliderplUI("intercept", range_slider = c(0, 2.5*round(maxy,0)), label = 'Intercept')
     })
+    
+    sliderpl("intercept")
     
     observeEvent(input$adjustintercept, {
         data <- getdata()
         response <- getresponse()
         intercept <- opt.intercept(fitted=response, data=data$y, interval=c(0, max(data$y)))$minimum
-        updateSliderInput(session, 'intercept', value = intercept)
+        updateSliderInput(session, 'intercept-slider', value = intercept)
     })
     
     getintercept <- reactive({
       var <- as.character(input$variable)
       if(var == "No data"){
-        return(0)
+            return(0)
       } else {
-        req(input$intercept)
-        return(input$intercept)
+            req(input[['intercept-slider']])
+            return(input[['intercept-slider']])
       }
     })
     
@@ -221,7 +218,7 @@ function(input, output, session){
       absmax <- max(abs(optcoefs))
       coef_range_new <- ceiling(absmax/10)*10
       
-      updateSliderInput(session, 'intercept', value = intercept) 
+      updateSliderInput(session, 'intercept-slider', value = intercept) 
       
       if(input$inputsindividual == 'Fractional Polynomials'){
         updateSliderTextInput(session, "power1.fp", selected = getoptfit()$powers[1])

@@ -114,10 +114,16 @@ i > .boxstats {
 
 #placeholder_coef_bs .form-group.shiny-input-container, 
 #placeholder_coef_nsp .form-group.shiny-input-container, 
-#placeholder_coef_fp .form-group.shiny-input-container{
+#placeholder_coef_fp .form-group.shiny-input-container, 
+#intercept .form-group.shiny-input-container{
                                         display: inline-block;
 										padding: 0px;
                                         }
+                                        
+
+                                        
+                                        
+                                        
 .material-switch {
     padding-right: 0px;
 }

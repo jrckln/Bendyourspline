@@ -1,12 +1,19 @@
 # Module UI
 sliderplUI <- function(id, range_slider = 1, label = "") {
+    if(length(range_slider)==1){
+        minrange <- (-1)*range_slider
+        maxrange <- range_slider
+    } else {
+        minrange <- range_slider[1]
+        maxrange <- range_slider[2]
+    }
   ns <- NS(id)
   tagList(
     withMathJax(), 
      div(
       actionButton(ns("minus"), "", icon = icon("minus"), style='padding:1%; font-size:80%;
                    vertical-align: -150%;background: #FFFFFF; width: 8%;display: inline-block;'),
-      sliderInput(ns("slider"),label= label,min = (-1)*range_slider, max = range_slider, value = 0, step = 0.01, width= "75%", ticks = FALSE),
+      sliderInput(ns("slider"),label= label,min = minrange, max = maxrange, value = 0, step = 0.01, width= "75%", ticks = FALSE),
       actionButton(ns("plus"), "", icon = icon("plus"), style='padding:1%; font-size:80%; 
                    vertical-align: -150%;background: #FFFFFF; width: 8%;display: inline-block;'), id = id)
   )
