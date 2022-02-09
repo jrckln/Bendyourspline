@@ -43,7 +43,7 @@ fp <- tabPanel(
         bs_attach_modal(id_modal = "modal_help_input_FP")
     ),
     fluidRow(
-            column(4, align = "center", offset = 8,
+            column(12, align = "right",
                    coef_rangeUI("fp"))
     ), 
     fluidRow(column(

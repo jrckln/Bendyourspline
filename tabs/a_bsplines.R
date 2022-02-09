@@ -28,7 +28,7 @@ bsplines <- tabPanel(
                 bs_attach_modal(id_modal = "modal_help_input_BS")
         ),
         fluidRow(
-            column(4,
+            column(3,
                    numericInput(
                        "degree.bs",
                        "Degree",
@@ -46,7 +46,7 @@ bsplines <- tabPanel(
                     value = 2
                 )
             ),
-            column(4, align = "center",
+            column(5, align = "right",
                    coef_rangeUI("bs"))
         ),
         fluidRow(column(6, wellPanel(

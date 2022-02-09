@@ -37,8 +37,8 @@ naturalsplines <- tabPanel(
           value = 2
         )
       ),
-      column(4, offset = 4,
-             align = "center",
+      column(8, offset = 0,
+             align = "right",
              coef_rangeUI("nsp"))
     ),
     fluidRow(column(6,
