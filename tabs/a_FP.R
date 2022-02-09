@@ -42,22 +42,10 @@ fp <- tabPanel(
       tags$a(icon('info-circle'), href = '#') %>%
         bs_attach_modal(id_modal = "modal_help_input_FP")
     ),
-    fluidRow(
-            column(12, align = "right",
-                   coef_rangeUI("fp"))
-    ), 
     fluidRow(column(
       4,
       div(style = "padding: 10px 0px; margin:0%",
           HTML("<span>Power:</span>"))
-    ),
-    column(
-      8, offset = 0,
-      div(style = "padding: 10px 0px; margin:0%;",
-          HTML("<span>Coefficient:</span>"), 
-          actionButton('finetuningmenu', "", icon = icon("bars"), style='
-                   background: #FFFFFF; float: right; border: none;')
-          )
     )),
     fluidRow(
       column(
@@ -83,12 +71,8 @@ fp <- tabPanel(
         8,
         offset = 0,
         wellPanel(id = "coefficients_fp",
-                  div(id = "placeholder_coef_fp",
-                    sliderplUI("fp_coef1"),
-                    sliderplUI("fp_coef2")
-                  )
+                  sliderPLUI('fp', label = 'Coefficients')
         )
-                  
       )
     )
   )

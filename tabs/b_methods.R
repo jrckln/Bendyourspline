@@ -40,15 +40,16 @@ methods <-
             width = 4,
             dataoptions,
             tabsetPanel(id = "inputsindividual",
-                        fp,
-                        bsplines,
-                        naturalsplines),
+                        fp#,
+                        #bsplines,
+                        #naturalsplines
+                        ),
             wellPanel(
                 conditionalPanel(
                     "input.variable != 'No data'",
                     wellPanel(
                         id = "intercept_all",
-                        uiOutput("interceptslider"),
+                        sliderPLUI('interceptslider'),
                         actionButton(
                             inputId = "adjustintercept",
                             label = "Adjust automatically",

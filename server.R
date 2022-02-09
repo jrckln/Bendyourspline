@@ -137,12 +137,7 @@ function(input, output, session){
     })
     
     #intercept: 
-    output$interceptslider <- renderUI({
-      maxy <- rangesdata$y[2]
-      sliderplUI("intercept", range_slider = c(0, 2.5*round(maxy,0)), label = 'Intercept')
-    })
-    
-    sliderpl("intercept")
+    interceptslidervalue <- sliderPL('interceptslider', number = 1)
     
     observeEvent(input$adjustintercept, {
         data <- getdata()
@@ -156,8 +151,7 @@ function(input, output, session){
       if(var == "No data"){
             return(0)
       } else {
-            req(input[['intercept-slider']])
-            return(input[['intercept-slider']])
+            interceptslidervalue$value1
       }
     })
     
@@ -295,42 +289,6 @@ function(input, output, session){
       reset("inputs_nsp") 
     })
     
-    coef_range_fp <- coef_range('fp')
-    coef_range_bs <- coef_range('bs')
-    coef_range_nsp <- coef_range('nsp')
-    
-    #increase/decrease range of coefs
-    range <- reactive({
-      tmp <- switch(
-        input$inputsindividual,
-        "Fractional Polynomials" = coef_range_fp(),
-        "B-Splines" = coef_range_bs(),
-        "Natural Splines" = coef_range_nsp()
-      )
-      tmp
-    })
-    
-    observeEvent(range(), {
-      if(input$inputsindividual == "Fractional Polynomials"){
-        updateSliderInput(session, "fp_coef1-slider", min = (-1)*range(), max = range())
-        updateSliderInput(session, "fp_coef2-slider", min = (-1)*range(), max = range())
-      } else if(input$inputsindividual == "B-Splines"){
-        req(input$nknots.bs)
-        num <- input$degree.bs + input$nknots.bs
-        ind <- paste0("bs_coef", 1:num, "-slider")
-        for(i in ind){
-          updateSliderInput(session, i, min=(-1)*range(), max = range())
-        }
-      } else if(input$inputsindividual == "Natural Splines"){
-        req(input$nknots.nsp)
-        num <- 1 + input$nknots.nsp
-        ind <- paste0("nsp_coef", 1:num, "-slider")
-        for(i in ind){
-          updateSliderInput(session, i, min = (-1)*range(), max = range())
-        }
-      }
-    })
-    
     observeEvent(input$variable, {
       if(input$variable == 'No data'){
         updateMaterialSwitch(session, 'addy', value = FALSE)
@@ -340,48 +298,11 @@ function(input, output, session){
     })
     
     
-    
-    bindEvent(
-      observe({
-          showModal(
-              modalDialog(
-                  title='Fine tuning of coefficient slider', 
-                  HTML('<p>Adjust step for <button id="" type="button" class="btn btn-default action-button"
-                        style="background: #FFFFFF; display: inline-block;"><i class="fa fa-minus" 
-                       role="presentation" aria-label="minus icon"></i></button> and <button id="" type="button" class="btn btn-default action-button"
-                        style="background: #FFFFFF; display: inline-block;"><i class="fa fa-plus" 
-                       role="presentation" aria-label="minus icon"></i></button> Button for coefficient slider fine-tuning</p>'), 
-                  numericInput('finetuning-slider', '', value = finetuningstep(), min = 0.01, max = 10, step = 0.01),
-                  easyClose = TRUE, 
-                  footer = modalButton("Close")
-              )
-          )
-      }),
-      input$finetuningmenu
-    )
-    
-    finetuningstep <- reactiveVal(0.01)
-
-    bindEvent(
-        observe({
-            req(input[['finetuning-slider']])
-            finetuningstep(input[['finetuning-slider']])
-        }),
-        input[['finetuning-slider']]
-    )
-    
     #############################################
     #######           FP            #############
     #############################################
     
-    coef1.fp <- coef2.fp <-reactiveVal(0)
-    
-    observe({
-        step <- finetuningstep()
-        sliderpl("fp_coef1", step = step)
-        sliderpl("fp_coef2", step = step)
-    })
-
+    fpslidervalues <- sliderPL('fp', number = 2)
     
     output$formula.fp <- renderUI({
         data <- getdata()
@@ -443,7 +364,7 @@ function(input, output, session){
     })
     
     getcoef.fp <- reactive({
-      c(as.numeric(input[['fp_coef1-slider']]), as.numeric(input[['fp_coef2-slider']]))
+        c(fpslidervalues$value1(), fpslidervalues$value2())
     })
     
     
