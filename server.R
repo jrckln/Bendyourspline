@@ -137,13 +137,14 @@ function(input, output, session){
     })
     
     #intercept: 
-    interceptslidervalue <- sliderPL('interceptslider', number = 1)
+    interceptslidervalue <- sliderPL('interceptslider', number = 1, label = 'Intercept')
     
     observeEvent(input$adjustintercept, {
         data <- getdata()
         response <- getresponse()
         intercept <- opt.intercept(fitted=response, data=data$y, interval=c(0, max(data$y)))$minimum
-        updateSliderInput(session, 'intercept-slider', value = intercept)
+        #updateNumericInput(session, 'interceptslider-rangemax', value = ceiling(intercept/10)*10)
+        updateSliderInput(session, 'interceptslider-interceptslider1-slider', value = intercept, max=ceiling(intercept/10)*10)
     })
     
     getintercept <- reactive({
@@ -151,7 +152,7 @@ function(input, output, session){
       if(var == "No data"){
             return(0)
       } else {
-            interceptslidervalue$value1
+            interceptslidervalue$value1()
       }
     })
     
@@ -209,10 +210,11 @@ function(input, output, session){
       optcoefs <- getoptfit()$coefficients
       intercept <- round(optcoefs[1], 1)
       optcoefs <- optcoefs[2:length(optcoefs)]
-      absmax <- max(abs(optcoefs))
-      coef_range_new <- ceiling(absmax/10)*10
+      maxcoef <- ceiling(max(optcoefs)/10)*10
+      mincoef <- floor(min(optcoefs)/10)*10
       
-      updateSliderInput(session, 'intercept-slider', value = intercept) 
+      updateNumericInput(session, 'interceptslider-rangemax', value = ceiling(intercept/10)*10)
+      updateSliderInput(session, 'interceptslider-interceptslider1-slider', value = intercept, max = ceiling(intercept/10)*10) 
       
       if(input$inputsindividual == 'Fractional Polynomials'){
         updateSliderTextInput(session, "power1.fp", selected = getoptfit()$powers[1])
@@ -225,10 +227,13 @@ function(input, output, session){
         "B-Splines" = 'bs',
         "Natural Splines" = 'nsp'
       )
+      
+      updateNumericInput(session, paste0(opentab, '-rangemin'), value = mincoef)
+      updateNumericInput(session, paste0(opentab, '-rangemax'), value = maxcoef)
 
       for(i in 1:length(optcoefs)){
-        updateSliderInput(session, paste0(opentab, '_coef',i,'-slider'),
-                          min = (-1)*coef_range_new, max = coef_range_new,
+        updateSliderInput(session, paste0(opentab, '-', opentab,i,'-slider'),
+                          min = mincoef, max = maxcoef,
                           value = optcoefs[i])
       }
     })
@@ -306,6 +311,7 @@ function(input, output, session){
     
     output$formula.fp <- renderUI({
         data <- getdata()
+        coefs <- getcoef.fp()
         x <- data$x
         pT <- fp.scale(x)
         x <- paste0(
@@ -315,7 +321,7 @@ function(input, output, session){
         trans1 <- paste0('\\left(',x,"\\right) ^{", pow1, "}")
         if(pow1 == 0) trans1 <- paste0("\\log \\left(",x,"\\right)")
         if(pow1 == 1) trans1 <- x
-        coef1 <- as.numeric(coef1.fp())
+        coef1 <- as.numeric(coefs[1])
         if(coef1 >= 0) {
           coef1 <- paste0(" + ", coef1)
         } else {
@@ -327,7 +333,7 @@ function(input, output, session){
         if(pow2 == 0) trans2 <- paste0("\\log \\left(",x,"\\right)")
         if(pow2 == 1) trans2 <- x
         if(pow1 == pow2) trans2 <- paste0(trans2, "\\cdot \\log \\left(",x,"\\right)")
-        coef2 <- as.numeric(coef2.fp())
+        coef2 <- as.numeric(coefs[2])
         if(coef2 >= 0) {
           coef2 <- paste0(" + ", coef2)
         } else {

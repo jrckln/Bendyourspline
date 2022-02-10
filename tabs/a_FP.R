@@ -42,16 +42,12 @@ fp <- tabPanel(
       tags$a(icon('info-circle'), href = '#') %>%
         bs_attach_modal(id_modal = "modal_help_input_FP")
     ),
-    fluidRow(column(
-      4,
-      div(style = "padding: 10px 0px; margin:0%",
-          HTML("<span>Power:</span>"))
-    )),
     fluidRow(
       column(
         4,
         offset = 0,
         wellPanel(
+            span('Powers'),
           id = "powers_fp",
           sliderTextInput(
             inputId = "power1.fp",

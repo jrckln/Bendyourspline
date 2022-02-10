@@ -61,20 +61,42 @@ sliderPLUI <- function(id, label) {
     )
 }
 
-sliderPL <- function(id, number=1, labelsindividual) {
+sliderPL <- function(id, number=1, labelsindividual, ranges) {
   if(missing(labelsindividual)) labelsindividual <- rep_len('', number)
+  if(missing(ranges)) ranges <- c(-1,1)
   moduleServer(
     id,
     function(input, output, session) {
         ns <- session$ns
         finetuningstep <- reactiveVal(0.01)
-        finetuningrangemin <-reactiveVal(-1)
-        finetuningrangemax <-reactiveVal(1)
+        finetuningrangemin <-reactiveVal()
+        finetuningrangemax <-reactiveVal()
         slidervalues <- reactiveValues()
-        bindEvent(
-          observe({
-              showModal(
-                  modalDialog(
+        
+        observe({ #in case ranges have been altered from outside
+            values <- unlist(reactiveValuesToList(slidervalues))
+            if(is.null(finetuningrangemin()) & is.null(finetuningrangemax())){
+                min <- Inf
+                max <- -Inf
+                for(x in values){
+                    if(x()< min){
+                        min <- x()
+                    }
+                    if(x()>max){
+                        max <- x()
+                    }
+                }
+                if(min==max & max == 0){
+                    finetuningrangemin(ranges[1])
+                    finetuningrangemax(ranges[2])
+                } else {
+                    finetuningrangemin(min)
+                    finetuningrangemax(max)
+                }
+            }
+        }, priority = 10)
+        
+        finetuningmodal <- reactive(modalDialog(
                       title='Fine tuning of coefficient slider', 
                       HTML('<h3>Step size</h3><br><p>Adjust step for <button id="" type="button" class="btn btn-default action-button"
                             style="background: #FFFFFF; display: inline-block;"><i class="fa fa-minus" 
@@ -82,12 +104,18 @@ sliderPL <- function(id, number=1, labelsindividual) {
                             style="background: #FFFFFF; display: inline-block;"><i class="fa fa-plus" 
                            role="presentation" aria-label="minus icon"></i></button> Button for coefficient slider:</p>'), 
                       numericInput(ns('finetuning'), '', value = finetuningstep(), min = 0.01, max = 10, step = 0.01),
-                      HTML('<h3>Step size</h3><br><p>Adjust minimum and maximum for coefficient slider:</p>'),
+                      HTML('<h3>Range</h3><br><p>Adjust minimum and maximum for coefficient slider:</p>'),
                       numericInput(ns('rangemin'), 'Minimum', value = finetuningrangemin()), 
                       numericInput(ns('rangemax'), 'Maximum', value = finetuningrangemax()),
                       easyClose = TRUE, 
                       footer = modalButton("Close")
-                  )
+                  ))
+        
+        
+        bindEvent(
+          observe({
+              showModal(
+                  finetuningmodal()
               )
           }),
           input$finetuningmenu
@@ -130,7 +158,7 @@ sliderPL <- function(id, number=1, labelsindividual) {
             for(i in 1:number){
                 slidervalues[[paste0('value', i)]] <- tmp[[i]]
             }
-        })
+        }, priority = 20)
         return(slidervalues)
     }
 )}
