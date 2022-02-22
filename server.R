@@ -519,13 +519,6 @@ function(input, output, session){
       return(data)
     })
 
-    # #update max and min val of boundary knots slider according to second and second to last knot position
-    # observeEvent({c(input[[paste0("nsp_pos1-slider")]], input[[paste0("nsp_pos",input$nknots.nsp,"-slider")]])},{
-    #   pos <- getpos.nsp()
-    #   updateSliderInput(session, "boundary1.nsp", max=round(pos[1], 0))
-    #   updateSliderInput(session, "boundary2.nsp", min = round(pos[length(pos)], 0))
-    # })
-
     # Internal Knot positions
     observeEvent(c(input$nknots.nsp, input$variable), {
         validate(
@@ -590,10 +583,10 @@ function(input, output, session){
             pos <- c(pos, input[[i]])
         }
         pos <- sort(pos[!is.na(pos)])
-        if(length(pos) != input$nknots.nsp){
-          return(numeric(input$nknots.nsp))
-        } else {
-          return(round(pos,2))
+         if(length(pos) != input$nknots.nsp){
+           return(numeric(input$nknots.nsp))
+         } else {
+          return(round(sort(pos),2))
         }
     })
 
@@ -607,17 +600,27 @@ function(input, output, session){
       }
       return(coef)
     })
+    
+    #update max and min val of boundary knots slider according to second and second to last knot position
+    bindEvent(
+        observe({
+            pos <- getpos.nsp()
+            updateSliderInput(session, "boundary1.nsp", max=round(pos[1], 0)-1)
+            updateSliderInput(session, "boundary2.nsp", min = round(max(pos), 0)+1)
+        }), 
+        getpos.nsp(), ignoreInit = TRUE
+    )
 
-    # bindEvent(
-    #   observe({
-    #       num <- 1 + input$nknots.nsp
-    #       ind <- paste0("nsp_pos", 1:num, '-slider')
-    #       for(i in ind){
-    #           updateSliderInput(session, i, min=input$boundary1.nsp, max=input$boundary2.nsp)
-    #       }
-    #   }),
-    #   c(input$boundary1.nsp, input$boundary2.nsp)
-    # )
+    bindEvent(
+      observe({
+          num <- 1 + input$nknots.nsp
+          ind <- paste0("nsp_pos", 1:num, '-slider')
+          for(i in ind){
+              updateSliderInput(session, i, min=input$boundary1.nsp+1, max=input$boundary2.nsp-1)
+          }
+      }),
+      c(input$boundary1.nsp, input$boundary2.nsp)
+    )
     
     
     #############################################
