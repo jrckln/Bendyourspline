@@ -291,9 +291,12 @@ function(input, output, session){
   
     #reset button
     observeEvent(c(input$resetinput, input$variable), {
-      reset("inputs_fp") 
+      reset("inputs_fp")
+      fpslider$reset()
       reset("inputs_bs") 
+      bsslider$reset()
       reset("inputs_nsp") 
+      nspslider$reset()
     })
     
     observeEvent(input$variable, {

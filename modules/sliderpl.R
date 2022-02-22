@@ -223,7 +223,15 @@ sliderPL <- function(id, number, labelsindividual, ranges, values) {
                             slider[[as.character(x)]]$setValue(values[x])
                         }
                     )
-                    }
+                    }, 
+                reset = function(){
+                    sapply(
+                        1:number(), 
+                        function(x){
+                            slider[[as.character(x)]]$setValue(0)
+                        }
+                    )
+                }
             )
         )
     }
