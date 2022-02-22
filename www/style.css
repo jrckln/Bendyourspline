@@ -497,5 +497,18 @@ canvas {
     text-align: bottom; display:table-cell; vertical-align: middle;
 }
 
+.plbtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    border: none;
+    background: #FFFFFF; 
+    float: left; 
+    max-height: 20px;
+    max-width: 20px;
+    
+}
+
 
 

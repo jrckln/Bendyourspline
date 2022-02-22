@@ -1,3 +1,15 @@
+plbutton <- function(inputId,
+                     icon = NULL) {
+    value <- shiny::restoreInput(id = inputId, default = NULL)
+    Bttn <- tags$button(
+        id = inputId,
+        type = "button",
+        class = "btn btn-default action-button plbtn",
+        `data-val` = value, list(icon)
+  )
+}
+
+
 individualsliderUI <- function(id, range_slider, label, value = 0) {
     if(length(range_slider)==1){
         minrange <- (-1)*range_slider
@@ -8,10 +20,11 @@ individualsliderUI <- function(id, range_slider, label, value = 0) {
     }
     ns <- NS(id)
     tagList(div(id = id,style='display: flex;align-items:center;',
-      div(actionButton(ns("minus"), "", icon = icon("minus"), style='background: #FFFFFF; float: left; max-height: 20px;max-width: 20px;'), style="flex: 0.05"),
-      div(style="flex: 0.9; padding: 5px;", sliderInput(ns("slider"),label= label,min = minrange, 
-                                                        max = maxrange, value = value, step = 0.01, ticks = FALSE, width = "100%")),
-      div(actionButton(ns("plus"), "", icon = icon("plus"), style='background: #FFFFFF; float: right;'), style="flex: 0.05")
+      div(plbutton(ns('minus'), icon('minus')), style="flex: 0.05"),
+      div(style="flex: 0.9; padding: 5px;", 
+          sliderInput(ns("slider"),label= label,min = minrange, 
+                      max = maxrange, value = value, step = 0.01, ticks = FALSE, width = "100%")),
+      div(plbutton(ns('plus'), icon('plus')), style="flex: 0.05")
     ))
 }
 

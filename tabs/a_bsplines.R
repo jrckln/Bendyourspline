@@ -45,9 +45,7 @@ bsplines <- tabPanel(
                     max = 10,
                     value = 2
                 )
-            ),
-            column(5, align = "right",
-                   coef_rangeUI("bs"))
+            )
         ),
         fluidRow(column(6, wellPanel(
             span('Knot positions (quantiles)'), 
