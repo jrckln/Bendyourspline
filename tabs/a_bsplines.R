@@ -5,11 +5,11 @@ bsplines <- tabPanel(
     tags$head(tags$style(HTML(
         paste(
             paste0(
-                "[for=bs_coef",
+                "[for=bs-bs",
                 1:length(col),
-                "-slider]+span>.irs>.irs-single, [for=bs_coef",
+                "-slider]+span>.irs>.irs-single, [for=bs-bs",
                 1:length(col),
-                "-slider]+span>.irs-bar-edge, [for=bs_coef",
+                "-slider]+span>.irs-bar-edge, [for=bs-bs",
                 1:length(col),
                 "-slider]+span>.irs-bar {background: ",
                 col,

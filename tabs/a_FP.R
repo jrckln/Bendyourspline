@@ -6,11 +6,11 @@ fp <- tabPanel(
   tags$head(tags$style(HTML(
     paste(
       paste0(
-        "[for=fp_coef",
+        "[for=fp-fp",
         1:2,
-        "-slider]+span>.irs>.irs-single, [for=fp_coef",
+        "-slider]+span>.irs>.irs-single, [for=fp-fp",
         1:2,
-        "-slider]+span>.irs-bar-edge, [for=fp_coef",
+        "-slider]+span>.irs-bar-edge, [for=fp-fp",
         1:2,
         "-slider]+span>.irs-bar {background: ",
         col[1:2],

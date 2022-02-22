@@ -270,13 +270,20 @@ i > .boxstats {
 /* Footer */
 
 footer {
-	position: fixed;
+	display: none;
+}
+
+@media (min-width: 992px) {
+  footer {
+    display: block;
+    position: fixed;
 	bottom:0;
 	z-index: 3;
 	width:100%;
 	font-family: "Roboto Condensed", sans-serif;
 	letter-spacing: 3px;
 	background-color: #ffffff;
+  }
 }
 
 footer p{

@@ -4,11 +4,11 @@ naturalsplines <- tabPanel(
   tags$head(tags$style(HTML(
     paste(
       paste0(
-        "[for=nsp_coef",
+        "[for=nsp-nsp",
         1:length(col),
-        "-slider]+span>.irs>.irs-single, [for=nsp_coef",
+        "-slider]+span>.irs>.irs-single, [for=nsp-nsp",
         1:length(col),
-        "-slider]+span>.irs-bar-edge, [for=nsp_coef",
+        "-slider]+span>.irs-bar-edge, [for=nsp-nsp",
         1:length(col),
         "-slider]+span>.irs-bar {background: ",
         col,
