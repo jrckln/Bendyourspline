@@ -57,8 +57,7 @@ naturalsplines <- tabPanel(
                             )
                     )),
              column(6, wellPanel(
-               span('Coefficients'), 
-               tags$div(id = 'placeholder_coef_nsp')
+               sliderPLUI('nsp', label = 'Coefficients')
              )))
   )
 )

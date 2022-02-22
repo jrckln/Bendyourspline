@@ -40,9 +40,9 @@ methods <-
             width = 4,
             dataoptions,
             tabsetPanel(id = "inputsindividual",
-                        fp#,
-                        #bsplines,
-                        #naturalsplines
+                        fp,
+                        bsplines,
+                        naturalsplines
                         ),
             wellPanel(
                 conditionalPanel(

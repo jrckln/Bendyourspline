@@ -1,4 +1,4 @@
-individualsliderUI <- function(id, range_slider, label) {
+individualsliderUI <- function(id, range_slider, label, value = 0) {
     if(length(range_slider)==1){
         minrange <- (-1)*range_slider
         maxrange <- range_slider
@@ -8,27 +8,30 @@ individualsliderUI <- function(id, range_slider, label) {
     }
     ns <- NS(id)
     tagList(div(id = id,style='display: flex;align-items:center;',
-      div(actionButton(ns("minus"), "", icon = icon("minus"), style='background: #FFFFFF; float: left;'), style="flex: 0.05"),
-      div(style="flex: 0.9; padding: 5px;", sliderInput(ns("slider"),label= label,min = minrange, max = maxrange, value = 0, step = 0.01, ticks = FALSE, width = "100%")),
+      div(actionButton(ns("minus"), "", icon = icon("minus"), style='background: #FFFFFF; float: left; max-height: 20px;max-width: 20px;'), style="flex: 0.05"),
+      div(style="flex: 0.9; padding: 5px;", sliderInput(ns("slider"),label= label,min = minrange, 
+                                                        max = maxrange, value = value, step = 0.01, ticks = FALSE, width = "100%")),
       div(actionButton(ns("plus"), "", icon = icon("plus"), style='background: #FFFFFF; float: right;'), style="flex: 0.05")
     ))
 }
 
 
 
-individualslider <- function(id, step = 0.01) {
+individualslider <- function(id) {
   moduleServer(
     id,
     function(input, output, session) {
-      coef <- reactiveVal(0)
       ns <- session$ns
+      coef <- reactiveVal(0)
+      step <- reactiveVal(0.01)
       bindEvent(
           observe(coef(input$slider)), 
           input$slider
       )
+      
       bindEvent(
           observe({
-                new <- coef() - step
+                new <- coef() - step()
                 updateSliderInput(session, "slider", value = new)
                 coef(new)
           }), 
@@ -36,13 +39,26 @@ individualslider <- function(id, step = 0.01) {
       )
       bindEvent(
           observe({
-                new <- coef() + step
+                new <- coef() + step()
                 updateSliderInput(session, "slider", value = new)
                 coef(new)
           }), 
           input$plus, ignoreInit = TRUE
       )
-      return(coef)
+      return(
+          list(
+              value = coef, 
+              setStep = function(newstep){
+                  step(newstep)
+              },
+              setValue = function(newvalue){
+                  updateSliderInput(session, "slider", value = newvalue)
+              }, 
+              setRange = function(min, max){
+                  updateSliderInput(session, "slider", min = min, max = max)
+              }
+          )
+      )
     }
   )
 }
@@ -61,42 +77,21 @@ sliderPLUI <- function(id, label) {
     )
 }
 
-sliderPL <- function(id, number=1, labelsindividual, ranges) {
-  if(missing(labelsindividual)) labelsindividual <- rep_len('', number)
+sliderPL <- function(id, number, labelsindividual, ranges, values) {
+  if(missing(labelsindividual)) labelsindividual <- ''
   if(missing(ranges)) ranges <- c(-1,1)
   moduleServer(
     id,
     function(input, output, session) {
         ns <- session$ns
         finetuningstep <- reactiveVal(0.01)
-        finetuningrangemin <-reactiveVal()
-        finetuningrangemax <-reactiveVal()
+        finetuningrangemin <-reactiveVal(ranges[1])
+        finetuningrangemax <-reactiveVal(ranges[2])
         slidervalues <- reactiveValues()
-        
-        observe({ #in case ranges have been altered from outside
-            values <- unlist(reactiveValuesToList(slidervalues))
-            if(is.null(finetuningrangemin()) & is.null(finetuningrangemax())){
-                min <- Inf
-                max <- -Inf
-                for(x in values){
-                    if(x()< min){
-                        min <- x()
-                    }
-                    if(x()>max){
-                        max <- x()
-                    }
-                }
-                if(min==max & max == 0){
-                    finetuningrangemin(ranges[1])
-                    finetuningrangemax(ranges[2])
-                } else {
-                    finetuningrangemin(min)
-                    finetuningrangemax(max)
-                }
-            }
-        }, priority = 10)
-        
-        finetuningmodal <- reactive(modalDialog(
+        slider <- reactiveValues()
+
+        finetuningmodal <- reactive({
+                modalDialog(
                       title='Fine tuning of coefficient slider', 
                       HTML('<h3>Step size</h3><br><p>Adjust step for <button id="" type="button" class="btn btn-default action-button"
                             style="background: #FFFFFF; display: inline-block;"><i class="fa fa-minus" 
@@ -108,9 +103,8 @@ sliderPL <- function(id, number=1, labelsindividual, ranges) {
                       numericInput(ns('rangemin'), 'Minimum', value = finetuningrangemin()), 
                       numericInput(ns('rangemax'), 'Maximum', value = finetuningrangemax()),
                       easyClose = TRUE, 
-                      footer = modalButton("Close")
-                  ))
-        
+                      footer = modalButton("Cancel")
+                  )})
         
         bindEvent(
           observe({
@@ -120,45 +114,104 @@ sliderPL <- function(id, number=1, labelsindividual, ranges) {
           }),
           input$finetuningmenu
         )
-    
-        observe({
-            req(input$finetuning)
-            finetuningstep(input$finetuning)
-        })
-        observe({
-            req(input$rangemin)
-            finetuningrangemin(input$rangemin)
-        })
-        observe({
-            req(input$rangemax)
-            finetuningrangemax(input$rangemax)
-        })
         
-        output$sliders <- renderUI({
-            min <- finetuningrangemin()
-            max <- finetuningrangemax()
-            sapply(
-                1:number, 
-                function(i){
-                    idindividual <- paste0(id, i)
-                    individualsliderUI(id = ns(idindividual), range_slider = c(min, max), label = labelsindividual[i])
-                }
-            )
-        })
-        
-        observe({
-            step <- finetuningstep()
-            tmp <- sapply(
-                1:number, 
-                function(i){
-                    idindividual <- paste0(id, i)
-                    individualslider(id = idindividual, step = step)
+        bindEvent(
+            observe({
+                #req(input$finetuning)
+                finetuningstep(input$finetuning)
+            }), 
+            input$finetuning, ignoreInit = TRUE
+        )
+        bindEvent(
+            observe({
+                sapply(
+                    1:isolate(number()),
+                    function(i){
+                        idindividual <- paste0(id, i,'-slider')
+                        updateSliderInput(session, inputId = idindividual, min = input$rangemin)
                     }
                 )
-            for(i in 1:number){
-                slidervalues[[paste0('value', i)]] <- tmp[[i]]
+                finetuningrangemin(input$rangemin)
+            }), 
+            input$rangemin, ignoreInit = TRUE
+        )
+        bindEvent(
+            observe({
+                sapply(
+                    1:isolate(number()),
+                    function(i){
+                        idindividual <- paste0(id, i,'-slider')
+                        updateSliderInput(session, inputId = idindividual, max = input$rangemax)
+                    }
+                )
+                finetuningrangemax(input$rangemax)
+            }), 
+            input$rangemax, ignoreInit = TRUE
+        )
+        
+        
+        output$sliders <- renderUI({
+            min <- isolate(finetuningrangemin())
+            max <- isolate(finetuningrangemax())
+                sapply(
+                    1:number(),
+                    function(i){
+                        value <- values[[paste0('value',i)]]()
+                        idindividual <- paste0(id, i)
+                        individualsliderUI(id = ns(idindividual), range_slider = c(min, max), 
+                                           label = labelsindividual, value = value)
+                    }
+                )
+        })
+        
+        observe({
+            tmp <- sapply(simplify = FALSE,
+                1:number(), 
+                function(i){
+                    idindividual <- paste0(id, i)
+                    individualslider(id = idindividual)
+                    }
+                )
+            for(i in 1:number()){
+                slidervalues[[paste0('value', i)]] <- tmp[[i]]$value
+                slider[[as.character(i)]] <- tmp[[i]]
             }
         }, priority = 20)
-        return(slidervalues)
+        
+        bindEvent(
+            observe({
+                sapply(
+                        1:number(), 
+                        function(x){
+                            slider[[as.character(x)]]$setStep(finetuningstep())
+                        }
+                    )
+            }),
+            finetuningstep(), ignoreInit = TRUE
+        )
+        
+        return(
+            list(
+                values = slidervalues, 
+                setRange = function(min, max) {
+                    sapply(
+                        1:number(), 
+                        function(x){
+                            slider[[as.character(x)]]$setRange(min, max)
+                        }
+                    )
+                    finetuningrangemin(min)
+                    finetuningrangemax(max)
+                    }, 
+                setValues = function(values) {
+                    sapply(
+                        1:length(values), 
+                        function(x){
+                            slider[[as.character(x)]]$setValue(values[x])
+                        }
+                    )
+                    }
+            )
+        )
     }
 )}

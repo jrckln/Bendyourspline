@@ -59,8 +59,7 @@ bsplines <- tabPanel(
                             )
         )),
         column(6, wellPanel(
-            span('Coefficients'), 
-            tags$div(id = 'placeholder_coef_bs')
+            sliderPLUI('bs', label = 'Coefficients')
         ))),
         
     )
