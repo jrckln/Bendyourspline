@@ -83,7 +83,7 @@ sliderPLUI <- function(id, label) {
     div(
         div(style = 'margin-bottom: 20px;',
             span(label),
-            actionButton(ns('finetuningmenu'), "", icon = icon("bars"), 
+            actionButton(ns('finetuningmenu'), '',icon('option-horizontal', lib ='glyphicon'),
                          style='background: #FFFFFF; float: right; border: none;'), 
         ), 
         uiOutput(ns('sliders'))

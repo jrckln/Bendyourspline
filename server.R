@@ -689,13 +689,14 @@ function(input, output, session){
       req(input$exercisestart>0, input$inputsindividual == 'Fractional Polynomials')
       which <- 'Basic'
       response <- getresponse()
+      coefs <- getcoef.fp()
       validationall[['Fractional Polynomials']] <- 
                 c(input$variable == 'No data',
                   TRUE,
-                  input[['fp_coef1-slider']] == 1,
-                  input$power2.fp == 2 & input[['fp_coef1-slider']] == 1 & input[['fp_coef2-slider']] == 1,
-                  input$power2.fp == 2 & input[['fp_coef1-slider']] == -1 & input[['fp_coef2-slider']] == 1,
-                  input$power2.fp == 2 & input[['fp_coef1-slider']] == 1 & input[['fp_coef2-slider']] == -1,
+                  coefs[1] == 1,
+                  input$power2.fp == 2 & coefs[1] == 1 & coefs[2] == 1,
+                  input$power2.fp == 2 & coefs[1] == -1 & coefs[2] == 1,
+                  input$power2.fp == 2 & coefs[1] == 1 & coefs[2] == -1,
                   TRUE, 
                   input$power2.fp == 2 & input$power1.fp == 2,
                   input$power2.fp == 2 & input$power1.fp == 2 & getshape(response)=="cup",
@@ -708,17 +709,19 @@ function(input, output, session){
       req(input$exercisestart>0, input$inputsindividual == 'B-Splines')
       which <- 'Basic'
       response <- getresponse()
+      knotpos <- getpos.bs()
+      coefs <- getcoef.bs()
       validationall[['B-Splines']] <- 
                 c(input$variable == 'No data',
-                  input$degree.bs == 1 & input$nknots.bs == 2 & round(input[['bs_pos1-slider']],0) == 33 & 
-                    round(input[['bs_pos2-slider']],0) == 67 & input[['bs_coef1-slider']] == 0 & input[['bs_coef2-slider']] == 0 & 
-                    input[['bs_coef3-slider']] == 0,
+                  input$degree.bs == 1 & input$nknots.bs == 2 & round(knotpos[1],0) == 33 & 
+                    round(knotpos[2],0) == 67 & coefs[1] == 0 & coefs[2] == 0 & 
+                    coefs[3] == 0,
                   TRUE, 
                   TRUE, 
                   TRUE, 
-                  input[['bs_coef1-slider']] == 1 & input[['bs_coef2-slider']] == 1 & input[['bs_coef3-slider']] == 0, 
-                  input[['bs_coef1-slider']] == 0 & input[['bs_coef2-slider']] == 1 & input[['bs_coef3-slider']] == 1,
-                  input[['bs_coef1-slider']] == 1 & input[['bs_coef2-slider']] == 1 & input[['bs_coef3-slider']] == 1,
+                  coefs[1] == 1 & coefs[2] == 1 & coefs[3] == 0, 
+                  coefs[1] == 0 & coefs[2] == 1 & coefs[3] == 1,
+                  coefs[1] == 1 & coefs[2] == 1 & coefs[3] == 1,
                   input$degree.bs == 1 & input$nknots.bs == 2 & getshape(response)=="cup", 
                   input$degree.bs >= 2
                 )
@@ -729,22 +732,23 @@ function(input, output, session){
       req(input$exercisestart>0, input$inputsindividual == 'Natural Splines')
       which <- 'Basic'
       response <- getresponse()
+      knotpos <- getpos.nsp()
+      coefs <- getcoef.nsp()
       validationall[['Natural Splines']] <- 
                 c(input$variable == 'No data',
-                  input$nknots.nsp == 2 & round(input[['nsp_pos1-slider']],0) == 33 & round(input[['nsp_pos2-slider']],0) == 67 & 
-                  input[['nsp_coef1-slider']] == 0 & input[['nsp_coef2-slider']] == 0 & 
-                    input[['nsp_coef3-slider']] == 0,
+                  input$nknots.nsp == 2 & round(knotpos[1],0) == 33 & round(knotpos[2],0) == 67 & 
+                  coefs[1] == 0 & coefs[2] == 0 & coefs[3] == 0,
                   TRUE, 
                   TRUE, 
                   TRUE, 
-                  input[['nsp_coef1-slider']] == 1 & input[['nsp_coef2-slider']] == 1 & input[['nsp_coef3-slider']] == 0, 
-                  input[['nsp_coef1-slider']] == 0 & input[['nsp_coef2-slider']] == 1 & input[['nsp_coef3-slider']] == 1,
-                  input[['nsp_coef1-slider']] == 1 & input[['nsp_coef2-slider']] == 1 & input[['nsp_coef3-slider']] == 1,
-                  input[['nsp_coef1-slider']] == -1& input[['nsp_coef2-slider']] == 0 & input[['nsp_coef3-slider']] == 0, 
-                  input[['nsp_coef1-slider']]%in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef2-slider']]%in% c(-1,-0.5,0, 0.5,1) & 
-                    input[['nsp_coef3-slider']]%in% c(-1,-0.5,0, 0.5,1) & getshape(response)=="cup", 
-                  input[['nsp_coef1-slider']]%in% c(-1,-0.5,0, 0.5,1) & input[['nsp_coef2-slider']]%in% c(-1,-0.5,0, 0.5,1) & 
-                    input[['nsp_coef3-slider']]%in% c(-1,-0.5,0, 0.5,1) & getshape(response)=="cap"
+                  coefs[1] == 1 & coefs[2] == 1 & coefs[3] == 0, 
+                  coefs[1] == 0 & coefs[2] == 1 & coefs[3] == 1,
+                  coefs[1] == 1 & coefs[2] == 1 & coefs[3] == 1,
+                  coefs[1] == -1& coefs[2] == 0 & coefs[3] == 0, 
+                  coefs[1] %in% c(-1,-0.5,0, 0.5,1) & coefs[2] %in% c(-1,-0.5,0, 0.5,1) & 
+                    coefs[3] %in% c(-1,-0.5,0, 0.5,1) & getshape(response)=="cup", 
+                  coefs[1] %in% c(-1,-0.5,0, 0.5,1) & coefs[2] %in% c(-1,-0.5,0, 0.5,1) & 
+                    coefs[3] %in% c(-1,-0.5,0, 0.5,1) & getshape(response)=="cap"
                 )
     })
     
