@@ -610,8 +610,11 @@ function(input, output, session){
     bindEvent(
         observe({
             pos <- getpos.nsp()
-            updateSliderInput(session, "boundary1.nsp", max=round(pos[1], 0)-1)
-            updateSliderInput(session, "boundary2.nsp", min = round(max(pos), 0)+1)
+            if(pos[1]!=0){
+                updateSliderInput(session, "boundary1.nsp", max=round(pos[1], 0)-1)
+                updateSliderInput(session, "boundary2.nsp", min = round(max(pos), 0)+1)
+            }
+            
         }), 
         getpos.nsp(), ignoreInit = TRUE
     )
