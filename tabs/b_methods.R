@@ -16,6 +16,7 @@ methods <-
         modal_help_goodnessfit,
         modal_help_response_function,
         modal_help_basis_BS_NSP,
+        modal_help_input_data,
         HTML(
             '<canvas id="canvas_confetti"></canvas>
             <div id="exercise_modal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">

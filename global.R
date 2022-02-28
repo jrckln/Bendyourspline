@@ -99,6 +99,14 @@ modal_help_input_NSP <-
     size = "medium"
   )
 
+modal_help_input_data <-
+  bs_modal(
+    id = "modal_help_input_data",
+    title = "Input Parameters - Data Options",
+    body = includeMarkdown("www/help_input_data.md"),
+    size = "medium"
+  )
+
 #load ressources:
 #name future files according to hierarchy: Navbarpage prefix b; Methods prefix a for order
 tab_files <- list.files(path = "tabs", full.names = T, recursive = T)

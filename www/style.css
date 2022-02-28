@@ -368,10 +368,6 @@ body > .container-fluid {
     width: 100%;
 }
 
-#collapseData .material-switch{
-    padding-top: 40px;
-}
-
 .reset_btn {
     border-style: solid;
 }
