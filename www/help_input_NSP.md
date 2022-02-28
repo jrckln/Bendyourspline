@@ -13,12 +13,12 @@ At default, the knots are set to the percentiles of the independent variable $x$
 ### Coefficients 
 
 Use the sliders to change the coefficients $1$ to $k+1$ of the spline basis functions. 
-
-For a better control of the coefficients use the + and - buttons near the sliders. Additionally you can increase the coefficient range at the top of the panel. 
+You can adjust the step size and the range of values in "..." at the top-right of the panel. 
 
 ### Intercept 
 
 You can either manually adjust the intercept, or let it adjust automatically in which case the sum of the squared residuals is minimized.
+You can adjust the step size and the range of values in "..." at the top-right of the panel.
 
 ### Data points 
 

@@ -13,11 +13,12 @@ See link: (https://mfp.imbi.uni-freiburg.de/fp)
 
 Use the sliders to change the coefficients $\beta_1$ and $\beta_2$ of the fractional polynomials. Set the first coefficient to zero to obtain FP1.
 
-For a better control of the coefficients use the + and - buttons near the sliders. Additionally you can increase the coefficient range at the top of the panel. 
+You can adjust the step size and the range of values in "..." at the top-right of the panel.
 
 ### Intercept 
 
 You can either manually adjust the intercept, or let it adjust automatically in which case the sum of the squared residuals is minimized.
+You can adjust the step size and the range of values in "..." at the top-right of the panel.
 
 ### Data points 
 
