@@ -25,6 +25,10 @@ span, button {
   font: 400 14px/1.8 "Segoe UI", sans-serif;
 }
 
+.formula span {
+    font: 400 14px/0 "Segoe UI", sans-serif;
+}
+
 .gridstats {
   min-height: 100%;
   display: flex;
