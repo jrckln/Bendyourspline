@@ -116,8 +116,14 @@ sliderPL <- function(id, number, labelsindividual, ranges, values) {
                       numericInput(ns('rangemin'), 'Minimum', value = finetuningrangemin()), 
                       numericInput(ns('rangemax'), 'Maximum', value = finetuningrangemax()),
                       easyClose = TRUE, 
-                      footer = modalButton("Cancel")
+                      footer = 
+                          tagList(modalButton("Cancel"), actionButton(ns('apply'), 'Apply'))
                   )})
+        
+        bindEvent(
+            observe(removeModal()), 
+            input$apply, ignoreInit = TRUE
+        )
         
         bindEvent(
           observe({
@@ -128,12 +134,13 @@ sliderPL <- function(id, number, labelsindividual, ranges, values) {
           input$finetuningmenu
         )
         
+        
+        
         bindEvent(
             observe({
-                #req(input$finetuning)
                 finetuningstep(input$finetuning)
             }), 
-            input$finetuning, ignoreInit = TRUE
+            input$apply, ignoreInit = TRUE
         )
         bindEvent(
             observe({
@@ -146,7 +153,7 @@ sliderPL <- function(id, number, labelsindividual, ranges, values) {
                 )
                 finetuningrangemin(input$rangemin)
             }), 
-            input$rangemin, ignoreInit = TRUE
+            input$apply, ignoreInit = TRUE
         )
         bindEvent(
             observe({
@@ -159,7 +166,7 @@ sliderPL <- function(id, number, labelsindividual, ranges, values) {
                 )
                 finetuningrangemax(input$rangemax)
             }), 
-            input$rangemax, ignoreInit = TRUE
+            input$apply, ignoreInit = TRUE
         )
         
         
