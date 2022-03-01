@@ -144,6 +144,7 @@ sliderPL <- function(id, number, labelsindividual, ranges, values) {
         )
         bindEvent(
             observe({
+                req(number())
                 sapply(
                     1:isolate(number()),
                     function(i){
@@ -157,6 +158,7 @@ sliderPL <- function(id, number, labelsindividual, ranges, values) {
         )
         bindEvent(
             observe({
+                req(number())
                 sapply(
                     1:isolate(number()),
                     function(i){
@@ -171,6 +173,7 @@ sliderPL <- function(id, number, labelsindividual, ranges, values) {
         
         
         output$sliders <- renderUI({
+            req(number())
             min <- isolate(finetuningrangemin())
             max <- isolate(finetuningrangemax())
                 sapply(
@@ -185,6 +188,7 @@ sliderPL <- function(id, number, labelsindividual, ranges, values) {
         })
         
         observe({
+            req(number())
             tmp <- sapply(simplify = FALSE,
                 1:number(), 
                 function(i){
@@ -200,6 +204,7 @@ sliderPL <- function(id, number, labelsindividual, ranges, values) {
         
         bindEvent(
             observe({
+                req(number())
                 sapply(
                         1:number(), 
                         function(x){
