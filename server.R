@@ -79,6 +79,7 @@ function(input, output, session){
     
     
     output$responseplot <- renderPlot({
+       input$addy
        cur_tab = input$inputsindividual
        data <- getdata()
        names_vars <- data$names_vars
@@ -147,8 +148,6 @@ function(input, output, session){
         intercept <- opt.intercept(fitted=response, data=data$y, interval=c(0, max(data$y)))$minimum
         interceptslider$setRange(min = 0, max = ceiling(intercept/10)*10) 
         interceptslider$setValues(values = intercept)
-        
-        #updateSliderInput(session, 'interceptslider-interceptslider1-slider', value = intercept, max=ceiling(intercept/10)*10)
     })
     
     getintercept <- reactive({
@@ -240,7 +239,7 @@ function(input, output, session){
       }
     })
     
-    output$basisplot <- renderPlot({ #TODO
+    output$basisplot <- renderPlot({
       basis <- switch(
         input$inputsindividual,
         "Fractional Polynomials" = getbasis.fp(),
@@ -254,8 +253,8 @@ function(input, output, session){
       }
       p <- p +
         theme_minimal() + 
-        ylab("") #TODO
-        #xlab(ifelse(input$add_y_fp, attr(DF, "names_vars")[1], 'x'))
+        ylab("") +
+        xlab('x')
       return(p)
     })
     
