@@ -661,6 +661,7 @@ function(input, output, session){
                   <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                 </svg>
                  '), 
+              actionButton('exercisequit', 'Quit'), 
               actionButton('exercisenext', 'Next')
               )
             }
@@ -687,6 +688,11 @@ function(input, output, session){
           exercisecounter(exercisecounter()+1)
       }),
       input$exercisestart, ignoreInit = TRUE
+    )
+    
+    bindEvent(
+      observe(exercisecounter(0)),
+      input$exercisequit, ignoreInit = TRUE
     )
     
     validationall <- reactiveValues()
