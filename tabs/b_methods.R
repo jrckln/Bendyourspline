@@ -1,6 +1,24 @@
-methods <- 
-    tabPanel("Methods", shinyjs::useShinyjs(), 
-            HTML('<canvas id="canvas_confetti"></canvas>
+methods <-
+    tabPanel(
+        "Methods",
+        shinyjs::useShinyjs(),
+        tags$head(tags$style(type = 'text/css', 
+            paste0(
+                ".label-default[for='addoptfit'] {background-color: ",
+                optfitcol,
+                ";}", 
+                ".label-default[for='addloess'] {background-color: ",
+                loesscol,
+                ";}"
+            )
+        )),
+        modal_help_exercises,
+        modal_help_goodnessfit,
+        modal_help_response_function,
+        modal_help_basis_BS_NSP,
+        modal_help_input_data,
+        HTML(
+            '<canvas id="canvas_confetti"></canvas>
             <div id="exercise_modal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
                  <div class="modal-dialog">
                     <!-- Modal content -->
@@ -8,7 +26,7 @@ methods <-
                         <div class="modal-header">
                             <h4 class="modal-title">Congratulations!</h4>
                         </div>
-                        <div class="modal-body"> <p> You finished this exercise successfully. Please select another exercise to continue. </p>
+                        <div class="modal-body"> <p> You finished this exercise successfully. Please select another modelling method to continue. </p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" id="stop_modal_confetti" data-dismiss="modal">Dismiss</button>
@@ -16,40 +34,80 @@ methods <-
                     </div>
                 </div>
             </div>
-                 '),
-            bsCollapse(id = "collapseData", open = "Data Options",
-                           bsCollapsePanel("Data Options",
-                                        fluidRow(
-                                            column(2,
-                                                div(style = "font-size: 13px; padding: 10px 0px; margin:0%",
-                                                    selectInput("variable", "Choose a variable pair:",names(data_list)) #%>% 
-                                                        #helper(type = "markdown", title= "Data information",
-                                                        #       content = "../www/VariablePairs")
-                                                )),
-                                            column(3, uiOutput("information_vars")),
-                                            column(2, 
-                                                   materialSwitch(inputId = "adv_settings", value = FALSE, label="Advanced settings")
-                                                   ), 
-                                            column(5,
-                                                   conditionalPanel("input.adv_settings", 
-                                                            column(4,popify(numericInput("seed", "Set seed:", value=14), "Seed", 
-                                                                    "Initializes random number generator for drawing random samples")), 
-                                                            column(4, 
-                                                                selectInput("sample.size", "Choose a sample size:",names(sample.sizes), selected = "20%")),
-                                                            column(4, 
-                                                                    radioGroupButtons(inputId = "gender", label = "Sex:", choices = names(gender),status = "primary", selected = "Both")
-                                                                ), 
-                                                             )
-                                                   )
-                                            ),
-            style = "primary")),
-            fluidRow(
-                column(width = 12,
-                    tabsetPanel(id="tabsetmethods",
-                         fp, 
-                         bsplines, 
-                         naturalsplines
+                 '
+        ),
+        
+        fluidRow(column(
+            width = 4,
+            dataoptions,
+            tabsetPanel(id = "inputsindividual",
+                        fp,
+                        bsplines,
+                        naturalsplines
+                        ),
+            wellPanel(
+                conditionalPanel(
+                    "input.variable != 'No data'",
+                    wellPanel(
+                        id = "intercept_all",
+                        sliderPLUI('interceptslider'),
+                        actionButton(
+                            inputId = "adjustintercept",
+                            label = "Adjust automatically",
+                            class = 'btn reset_btn'
+                        )
                     )
-                      )
+                ),
+                fluidRow(conditionalPanel(
+                    "input.variable != 'No data'",
+                    div(id = 'options',
+                        div(style = 'width: 20%;',
+                            span('Data points'),
+                            materialSwitch(
+                                inputId = "addy",
+                                label = "",
+                                value = FALSE
+                            )
+                        ),
+                        div(style = 'width: 20%;',
+                            span('LOESS Smoother'),
+                            materialSwitch(
+                                inputId = "addloess",
+                                label = "",
+                                value = FALSE
+                            )
+                        ),
+                        div(style = 'width: 20%;',
+                            span('Optimal fit'),
+                            materialSwitch(
+                                inputId = "addoptfit",
+                                label = "",
+                                value = FALSE
+                            )
+                        ),
+                        div(style = 'width: 20%;',
+                            actionButton(
+                                "setoptfit",
+                                "Set optimal fit",
+                                class = "btn reset_btn",
+                                style = "float:right"
+                            )
+                        )
+                    )
+                )),
+                
+                fluidRow(
+                    actionButton("resetinput", "Reset inputs", class = "btn reset_btn")
+                    ,
+                    bsTooltip(
+                        id = "resetinput",
+                        title = "You mave have to click twice to reset dynamically inserted inputs.",
+                        placement = "bottom",
+                        trigger = "hover"
+                    )
+                ),
+                id = "inputall"
             )
+        ),
+        out)
     )

@@ -24,10 +24,10 @@ names(data)[1] <- c('gender')
 
 avgtiss_mbp <- list(
     'x' = 'meanbp', 'y'= 'avtisst', 
-    'data' = data, 
+    'data' = data[data$meanbp >0,] , 
     'x_unit' = 'mmHg', 'y_unit'= 'points', 
     'name' = 'Average TISS ~ Mean blood pressure',
-    'x_name' = 'Mean blood pressure', 'y_name' = 'Average TISS'
+    'x_name' = 'Mean blood pressure', 'y_name' = 'Average TISS (Therapeutic Intervention Scoring System, a method for calculating costs in the intensive care unit)'
 )
 #save(avgtiss_mbp, file = 'data/AverageTISSMeanbloodpressure.RData')
 data_list[[avgtiss_mbp$name]] <- avgtiss_mbp
@@ -83,5 +83,19 @@ height_age <- list(
 #save(height_age, file = 'data/HeightAge.RData')
 data_list[[height_age$name]] <- height_age
 
+# No data: 
+x <- 1:100
+y <- rep_len(c(-1,1), length.out = length(x))
+data <- data.frame(x,y,'gender'="female")
+
+nodata <- list(
+    'x' = 'x', 'y'= 'y', 
+    'data' = data, 
+    'x_unit' = '-', 'y_unit'= '-', 
+    'name' = 'No data',
+    'x_name' = 'x', 'y_name' = 'y'
+)
+#save(height_age, file = 'data/HeightAge.RData')
+data_list[[nodata$name]] <- nodata
 
 save(data_list, file="data/data_list.RData")

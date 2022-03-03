@@ -1,13 +1,32 @@
+#inputall {
+    margin-top: -30px;
+    border-top: none;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+#inputs_fp, #inputs_bs, #inputs_nsp {
+    margin-top: 20px;
+}
+
 body p{
   font: 400 16px/1.8 "Segoe UI", sans-serif;
 }
 
-label {
+body li{
   font: 400 16px/1.8 "Segoe UI", sans-serif;
+}
+
+label {
+  font: 400 14px/1.8 "Segoe UI", sans-serif;
 }
 
 span, button {
   font: 400 14px/1.8 "Segoe UI", sans-serif;
+}
+
+.formula span {
+    font: 400 14px/0 "Segoe UI", sans-serif;
 }
 
 .gridstats {
@@ -97,24 +116,24 @@ i > .boxstats {
 	border-bottom-style: none;
 }
 
-#placeholder_coef_bs .form-group.shiny-input-container{
+#placeholder_coef_bs .form-group.shiny-input-container, 
+#placeholder_coef_nsp .form-group.shiny-input-container, 
+#placeholder_coef_fp .form-group.shiny-input-container, 
+#intercept .form-group.shiny-input-container{
                                         display: inline-block;
 										padding: 0px;
                                         }
-#placeholder_coef_nsp .form-group.shiny-input-container{
-                                        display: inline-block;
-										padding: 0px;
-                                        }
+                                        
+
+                                        
+                                        
+                                        
+.material-switch {
+    padding-right: 0px;
+}
 										
-#val_coef1_fp .form-group.shiny-input-container{
-                                        display: inline-block;
-										padding: 0px;
-                                        }
-#val_coef2_fp .form-group.shiny-input-container{
-                                        display: inline-block;
-										padding: 0px;
-                                        }
-										
+
+
 .home {
   position: relative;
   background-color: #FFFFFF;
@@ -255,13 +274,20 @@ i > .boxstats {
 /* Footer */
 
 footer {
-	position: fixed;
+	display: none;
+}
+
+@media (min-width: 992px) {
+  footer {
+    display: block;
+    position: fixed;
 	bottom:0;
 	z-index: 3;
 	width:100%;
 	font-family: "Roboto Condensed", sans-serif;
 	letter-spacing: 3px;
 	background-color: #ffffff;
+  }
 }
 
 footer p{
@@ -318,7 +344,7 @@ footer > .container {
 }
 
 .btn {
-	border-style: none;
+	border-style: solid;
 }
 
 body > .container-fluid {
@@ -329,7 +355,6 @@ body > .container-fluid {
 	padding: 15px;
 	padding-top: 100px;
 }
-
 
 .tab-pane[data-value='Methods'] h4{
 	font-family: "Roboto Condensed", sans-serif;
@@ -343,25 +368,15 @@ body > .container-fluid {
     width: 100%;
 }
 
-#collapseData .material-switch{
-    padding-top: 40px;
-}
-
 .reset_btn {
     border-style: solid;
 }
-
-span>.irs>.irs-single, span>.irs-bar-edge, span>.irs-bar {background: #D3D3D3;} 
-.label-primary {background: #D3D3D3;}
 
 #information_vars {
     margin-top: 20px;
 }
 
-
-
-
-
+span>.irs>.irs-single, span>.irs-bar-edge, span>.irs-bar {background: #D3D3D3;} 
 
 .checkmark__circle {
   stroke-dasharray: 166;
@@ -448,3 +463,59 @@ canvas {
     margin: 10px;
     padding: 5px;
 }
+
+.headerinfo > .coefranges {
+    display: inline-block;
+    left:50%;
+    width:40%;
+}
+
+.headerinfo > h4 {
+    display: inline-block;
+    vertical-align: top;
+    left:0px;
+    width:50%;
+}
+
+.headerinfo > a {
+    float: right;
+}
+
+.headerinfo > .icon {
+    display: inline-block;
+    left:90%;
+    width:10%;
+}
+
+[data-value="explanatory_comments"] {
+  padding: 100px;
+}
+
+#link_methods {
+    color: gray;
+    font: 400 28px/1.8 "Segoe UI", sans-serif;
+}
+
+#options {
+    display:table;width: 100%;margin:20px auto; 
+}
+
+#options > div{
+    text-align: bottom; display:table-cell; vertical-align: middle;
+}
+
+.plbtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    border: none;
+    background: #FFFFFF; 
+    float: left; 
+    max-height: 20px;
+    max-width: 20px;
+    
+}
+
+
+

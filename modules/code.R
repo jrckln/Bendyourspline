@@ -23,10 +23,13 @@ codeServer <- function(id, filenames_code) {
           easyClose = FALSE,
           fade = TRUE)
       }
-      observeEvent(input$showcode,{
-        modalInner("code", filenames_code[1])
-        showModal(settngsModal())
-      })
+      bindEvent(
+          observe({
+              modalInner("code", filenames_code[1])
+              showModal(settngsModal())
+              }), 
+          input$showcode, ignoreInit = TRUE
+      )
       output$downloadcode <- downloadHandler(
           filename = function() {
             paste0("output-",Sys.Date(), ".zip")

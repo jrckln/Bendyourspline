@@ -18,6 +18,7 @@ fp.scale <- function(x){
 }
 
 getshape <- function(sequence, index){
+  if(missing(index)) index <- 1:length(sequence)
   n <- length(sequence)
   firstq <- n*0.25
   thirdq <- n*0.75
@@ -28,17 +29,23 @@ getshape <- function(sequence, index){
   maxind <- which.max(seqorder)
   maxval <- seqorder[maxind]
   
-  if(
-    (firstq) <= minind & minind <= (thirdq) & 
-    identical(seqorder[1:minind], sort(seqorder[1:minind], decreasing = TRUE)) & 
-    identical(seqorder[(minind+1):n], sort(seqorder[(minind+1):n], decreasing = FALSE))){
-    return("cup")
-  } else if (
-    (firstq) <= maxind & maxind <= (thirdq) & 
-    identical(seqorder[1:maxind], sort(seqorder[1:maxind], decreasing = FALSE)) & 
-    identical(seqorder[(maxind+1):n], sort(seqorder[(maxind+1):n], decreasing = TRUE))){
-    return("cap")
-  }else {
+  if((firstq) <= minind & minind <= (thirdq)){
+        firsthalf <- sum(diff(seqorder[1:minind])>=0)
+        secondhalf <- sum(diff(seqorder[(minind+1):n])<=0)
+        if(firsthalf/n <= 0.1 & secondhalf/n <= 0.1){
+            return("cup")
+        } else {
+            return("no shape found")
+        }
+  } else if ((firstq) <= maxind & maxind <= (thirdq)){
+        firsthalf <- sum(diff(seqorder[1:maxind])<=0)
+        secondhalf <- sum(diff(seqorder[(maxind+1):n])>=0)
+        if(firsthalf/n <= 0.1 & secondhalf/n <= 0.1){
+            return("cap")
+        } else {
+            return("no shape found")
+        }
+  } else {
     return("no shape found")
   }
 }
