@@ -26,7 +26,7 @@ methods <-
                         <div class="modal-header">
                             <h4 class="modal-title">Congratulations!</h4>
                         </div>
-                        <div class="modal-body"> <p> You finished this exercise successfully. Please select another exercise to continue. </p>
+                        <div class="modal-body"> <p> You finished this exercise successfully. Please select another modelling method to continue. </p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" id="stop_modal_confetti" data-dismiss="modal">Dismiss</button>
