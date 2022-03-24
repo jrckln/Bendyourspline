@@ -640,7 +640,7 @@ function(input, output, session){
         tagList(
           HTML('Introductory exercise:'),
           actionButton('exercisestart', 'Start'),
-          HTML(' <a href="https://github.com/jrckln/Bendyourspline"  target="_blank"> Download all exercises here. </a>')
+          HTML('<br> <br> <a href="https://github.com/jrckln/Bendyourspline"  target="_blank">  Download all exercises here. </a>')
         )
         
       } else {
