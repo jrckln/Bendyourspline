@@ -13,7 +13,7 @@ bootstrapPage(
         )
     ),
     navbarPage(
-        "Bend your (sp)line!",
+        "Bend your (sp)line",
         id = "navbar",
         position = "fixed-top",
         home,

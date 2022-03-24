@@ -637,9 +637,12 @@ function(input, output, session){
     output$exerciseout <- renderUI({
       countervalue <- exercisecounter()
       if(countervalue==0){
-        return(
-          actionButton('exercisestart', 'Start')
+        tagList(
+          HTML('Introductory exercise:'),
+          actionButton('exercisestart', 'Start'),
+          HTML(' <a href="https://github.com/jrckln/Bendyourspline"  target="_blank"> Download all exercises here. </a>')
         )
+        
       } else {
           if(startedexercise()!=input$inputsindividual){
                return(HTML(paste0('<p>Please switch to ', startedexercise(), ' Input panel to continue.</p>')))
