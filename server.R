@@ -299,6 +299,7 @@ function(input, output, session){
         fpslider$reset()
         bsslider$reset()
         nspslider$reset()
+        interceptslider$reset()
     })
     
     observeEvent(input$variable, {
