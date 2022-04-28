@@ -50,13 +50,13 @@ fp <- tabPanel(
             span('Powers'),
           id = "powers_fp",
           sliderTextInput(
-            inputId = "power1.fp",
+            inputId = "power1_fp",
             label = "First",
             choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3),
             selected = 1
           ),
           sliderTextInput(
-            inputId = "power2.fp",
+            inputId = "power2_fp",
             label = "Second",
             choices = c(-2, -1, -0.5, 0, 0.5, 1, 2, 3),
             selected = 1

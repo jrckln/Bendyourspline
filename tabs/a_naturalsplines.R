@@ -39,7 +39,7 @@ naturalsplines <- tabPanel(
       )
     ),
     fluidRow(column(6,
-                    wellPanel(
+                    div(class = 'well', id = 'placeholder_boundary_nsp', 
                       span('Boundary knot positions (quantiles)'), 
                       sliderInput("boundary1.nsp", '', min=0, max=100, 
                                   value=5, step=1, ticks = FALSE),

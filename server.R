@@ -220,8 +220,8 @@ function(input, output, session){
       updateSliderInput(session, 'interceptslider-interceptslider1-slider', value = intercept, max = ceiling(intercept/10)*10) 
       
       if(input$inputsindividual == "Fractional Polynomials"){
-          updateSliderTextInput(session, "power1.fp", selected = getoptfit()$powers[1])
-          updateSliderTextInput(session, "power2.fp", selected = getoptfit()$powers[2])
+          updateSliderTextInput(session, "power1_fp", selected = getoptfit()$powers[1])
+          updateSliderTextInput(session, "power2_fp", selected = getoptfit()$powers[2])
           opentab <- 'fp'
           fpslider$setRange(min = mincoef, max = maxcoef) 
       } else if(input$inputsindividual == "B-Splines"){
@@ -290,9 +290,15 @@ function(input, output, session){
   
     #reset button
     observeEvent(c(input$resetinput, input$variable), {
-      fpslider$reset()
-      bsslider$reset()
-      nspslider$reset()
+        updateSliderTextInput(session, 'power1_fp', selected = 1)
+        updateSliderTextInput(session, 'power2_fp', selected = 1)
+        reset('placeholder_pos_bs')
+        reset('placeholder_pos_nsp')
+        reset('placeholder_boundary_nsp')
+        
+        fpslider$reset()
+        bsslider$reset()
+        nspslider$reset()
     })
     
     observeEvent(input$variable, {
@@ -320,7 +326,7 @@ function(input, output, session){
         x <- paste0(
             "\\frac{ \\text{", data$names_vars[1] , "} + ", pT$shift, "}{", pT$scale ,"}"
         )
-        pow1 <- as.numeric(input$power1.fp)
+        pow1 <- as.numeric(input$power1_fp)
         trans1 <- paste0('\\left(',x,"\\right) ^{", pow1, "}")
         if(pow1 == 0) trans1 <- paste0("\\log \\left(",x,"\\right)")
         if(pow1 == 1) trans1 <- x
@@ -331,7 +337,7 @@ function(input, output, session){
           coef1 <- coef1
         }
         fp_fun <- paste(round(getintercept(),2), coef1, "\\cdot", trans1)
-        pow2 <- as.numeric(input$power2.fp)
+        pow2 <- as.numeric(input$power2_fp)
         trans2 <-paste0('\\left(',x,"\\right) ^{", pow2, "}")
         if(pow2 == 0) trans2 <- paste0("\\log \\left(",x,"\\right)")
         if(pow2 == 1) trans2 <- x
@@ -349,18 +355,18 @@ function(input, output, session){
     })
     
     getbasis.fp <- reactive({
-        req(input$power1.fp, input$power2.fp)
+        req(input$power1_fp, input$power2_fp)
         data <- getdata()
         x <- data$x
         pT <- fp.scale(x)
         transformed <- (x + pT$shift)/pT$scale
-        pow1 <- as.numeric(input$power1.fp)
+        pow1 <- as.numeric(input$power1_fp)
         if(pow1 == 0) {
             fp1<-log(transformed)
         } else {
             fp1 <- transformed^pow1
         }
-        pow2 <- as.numeric(input$power2.fp)
+        pow2 <- as.numeric(input$power2_fp)
         if (pow2==0){
             fp2 <- log(transformed)
         } else {
@@ -710,13 +716,13 @@ function(input, output, session){
                 c(input$variable == 'No data',
                   TRUE,
                   coefs[1] == 1,
-                  input$power2.fp == 2 & coefs[1] == 1 & coefs[2] == 1,
-                  input$power2.fp == 2 & coefs[1] == -1 & coefs[2] == 1,
-                  input$power2.fp == 2 & coefs[1] == 1 & coefs[2] == -1,
+                  input$power2_fp == 2 & coefs[1] == 1 & coefs[2] == 1,
+                  input$power2_fp == 2 & coefs[1] == -1 & coefs[2] == 1,
+                  input$power2_fp == 2 & coefs[1] == 1 & coefs[2] == -1,
                   TRUE, 
-                  input$power2.fp == 2 & input$power1.fp == 2,
-                  input$power2.fp == 2 & input$power1.fp == 2 & getshape(response)=="cup",
-                  input$power2.fp == 2 & input$power1.fp == 2 & getshape(response)=="cap"
+                  input$power2_fp == 2 & input$power1_fp == 2,
+                  input$power2_fp == 2 & input$power1_fp == 2 & getshape(response)=="cup",
+                  input$power2_fp == 2 & input$power1_fp == 2 & getshape(response)=="cap"
                 )
     })
     
