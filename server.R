@@ -674,6 +674,8 @@ function(input, output, session){
               actionButton('exercisequit', 'Quit'), 
               actionButton('exercisenext', 'Next')
               )
+            } else {
+                actionButton('exercisequit', 'Quit')
             }
           )
         } else {
