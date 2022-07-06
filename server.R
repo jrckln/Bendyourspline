@@ -85,10 +85,11 @@ function(input, output, session){
        names_vars <- data$names_vars
        data <- data.frame("x" = data$x, "y" = data$y)
        response <- getresponse()
-       col <- 'lightgrey'
+       col <- 'grey'
       
        p <- ggplot()+ 
-         geom_line(data = data, aes(x=x, y = getintercept()+response, color = "Response"))
+         geom_line(data = data, aes(x=x, y = getintercept()+response, color = "Response")) 
+         
        
        values <- c('Response'='black')
        
@@ -133,7 +134,8 @@ function(input, output, session){
        p <- p +
          scale_color_manual(values=values, name = " ", drop = TRUE) +
          theme_minimal() + 
-         theme(legend.position = "bottom")
+         theme(legend.position = "bottom") +
+         theme(text = element_text(size = 17)) 
        return(p)
     })
     
@@ -254,7 +256,8 @@ function(input, output, session){
       p <- p +
         theme_minimal() + 
         ylab("") +
-        xlab('x')
+        xlab('x') +
+        theme(text = element_text(size = 17)) 
       return(p)
     })
     

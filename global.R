@@ -17,7 +17,7 @@ library(magrittr)
 library(bsplus)
 
 col <- c("#2F4B7C", "#CE2029", "#FFA600","#2FA39B", "#97D8C4", "#F0E825", "#91B5D6", "#6BCFE8", "#F0CF44", "#136F63")
-optfitcol <- "#F0CF44"
+optfitcol <-  "#35baf6" #"#7ad7f0"
 spinnercol <- "#800000"
 loesscol <- "#136F63"
 
